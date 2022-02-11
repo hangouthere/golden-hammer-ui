@@ -1,0 +1,18 @@
+{
+  "compilerOptions": {
+    "paths": {
+      "_Shared/*": ["./src/scripts/shared/*"],
+      "-/*": ["./src/scripts/*"]
+    },
+    "checkJs": true,
+    "target": "ES2021",
+    "module": "ES2022",
+    "moduleResolution": "node",
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
+    "jsx": "react",
+    "resolveJsonModule": true,
+    "types": ["node"]
+  },
+  "exclude": ["node_modules", "dist"]
+}

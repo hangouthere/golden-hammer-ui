@@ -1,0 +1,8 @@
+version: '3.7'
+
+services:
+  golden-hammer-ui:
+    build:
+      target: production
+    environment:
+      - TZ=America/Chicago

@@ -1,0 +1,14 @@
+version: '3.7'
+
+services:
+  golden-hammer-ui:
+    build:
+      target: development
+    volumes:
+      - .:/build
+      # - /build/node_modules
+    environment:
+      - NODE_OPTIONS=--enable-source-maps --trace-warnings
+    ports:
+      - '10229:9229'
+      - '1234:1234'
