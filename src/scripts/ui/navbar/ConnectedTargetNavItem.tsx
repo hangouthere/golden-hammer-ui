@@ -1,13 +1,13 @@
 import { TargetClassMap } from '-/store';
 import { StyledButton } from '-/styles/buttons';
-import { ActionIcon, Group, Title, Tooltip } from '@mantine/core';
+import { ActionIcon, Box, Group, GroupProps, Title, Tooltip } from '@mantine/core';
 import useButtonStyles from '@mantine/core/esm/components/Button/Button.styles';
 import { useBooleanToggle, useClickOutside } from '@mantine/hooks';
 import React from 'react';
 import { BsFilter } from 'react-icons/bs';
 import EventTypesSelector from '../EventTypesSelector';
 
-type Props = {
+type Props = Omit<GroupProps, 'children'> & {
   targetClassMap: TargetClassMap;
   reSubEventCategories: (TargetClassMap) => void;
   //hasUpdates: boolean;
@@ -15,10 +15,13 @@ type Props = {
 
 export default function ConnectedTargetNavItem({
   targetClassMap: { connectTarget, eventCategories },
-  reSubEventCategories
+  reSubEventCategories,
+  ...restProps
 }: Props) {
   const [showConfig, setShowConfig] = useBooleanToggle(false);
   const toolTipRef = useClickOutside(() => setShowConfig(false));
+
+  const toggleConfig = () => setShowConfig(!showConfig);
 
   const onChangeEventCategories = _eventCategories =>
     reSubEventCategories({ connectTarget, eventCategories: _eventCategories });
@@ -33,20 +36,29 @@ export default function ConnectedTargetNavItem({
   } = StyledButton({});
 
   return (
-    <Group position="apart" spacing="lg" className={cx(root, subtle, ButtonInButton)}>
+    <Group
+      position="apart"
+      spacing="lg"
+      className={cx(restProps.className, root, subtle, ButtonInButton)}
+      onClick={restProps.onClick}
+    >
       <Title order={5}>{connectTarget}</Title>
 
       <Tooltip
+        withArrow
         tooltipRef={toolTipRef}
         allowPointerEvents={true}
-        color="dark"
+        arrowSize={4}
         position="right"
-        withArrow
         width={200}
         opened={showConfig}
-        label={<EventTypesSelector selectedEvents={eventCategories} onChange={onChangeEventCategories} />}
+        label={
+          <Box m={3}>
+            <EventTypesSelector selectedEvents={eventCategories} onChange={onChangeEventCategories} />
+          </Box>
+        }
       >
-        <ActionIcon onClick={() => setShowConfig(!showConfig)}>
+        <ActionIcon onClick={toggleConfig}>
           <BsFilter />
         </ActionIcon>
       </Tooltip>

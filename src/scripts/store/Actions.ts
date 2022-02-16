@@ -9,7 +9,9 @@ const MAX_COUNT_EVENTS = 5;
 const bindSocketStatus = (set: SetState<IStore>, get: GetState<IStore>, socket: Socket) => {
   socket.on('connect', () => set({ connectionStatus: SocketStatus.Connected }));
   socket.on('connect_error', () => set({ connectionStatus: SocketStatus.Disconnected }));
-  socket.on('disconnect', () => set({ connectionStatus: SocketStatus.Disconnected, events: {}, connectedTargetMaps: new Map() }));
+  socket.on('disconnect', () =>
+    set({ connectionStatus: SocketStatus.Disconnected, events: {}, connectedTargetMaps: new Map() })
+  );
 
   socket.on('gh-chat.evented', normalizedEvent => {
     set({
@@ -22,10 +24,9 @@ const bindSocketStatus = (set: SetState<IStore>, get: GetState<IStore>, socket: 
 
 export interface IActions {
   setAutoConnect: (autoConnect: boolean) => void;
-  connect: () => void;
+  connect: (pubSubUri: string) => void;
   disconnect: () => void;
   pubsubRegisterChat: ({ connectTarget, eventCategories }: TargetClassMap) => void;
-  updatePubSubUri: (uri: string) => void;
 }
 
 export default (set: SetState<IStore>, get: GetState<IStore>): IActions => ({
@@ -35,11 +36,13 @@ export default (set: SetState<IStore>, get: GetState<IStore>): IActions => ({
     localStore('gh.autoConnect', autoConnect);
   },
 
-  connect() {
+  connect(pubSubUri: string) {
     try {
-      set({ connectionStatus: SocketStatus.Connecting });
+      localStore('gh.pubSubUri', pubSubUri);
 
-      const socket = GHSocket.connect(get().pubSubUri);
+      set({ pubSubUri, connectionStatus: SocketStatus.Connecting });
+
+      const socket = GHSocket.connect(pubSubUri);
 
       bindSocketStatus(set, get, socket);
     } catch (err) {
@@ -64,18 +67,14 @@ export default (set: SetState<IStore>, get: GetState<IStore>): IActions => ({
         throw new Error(`Registration Failed for ${connectTarget} on ${eventCategories}`);
       }
 
+      const pubSub = resp.pubsub;
+
       // Add Connected Target to the list!
       set(state => ({
-        connectedTargetMaps: new Map(state.connectedTargetMaps).set(connectTarget, { connectTarget, eventCategories })
+        connectedTargetMaps: new Map(state.connectedTargetMaps).set(pubSub.connectTarget, pubSub)
       }));
     } catch (err) {
       console.log(err);
     }
-  },
-
-  updatePubSubUri(pubSubUri: string) {
-    set({ pubSubUri });
-
-    localStore('gh.pubSubUri', pubSubUri);
   }
 });

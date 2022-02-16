@@ -9,12 +9,12 @@ let u = new URLSearchParams(globalThis.location.search);
 const isDevMode = null !== u.get('dev');
 
 export default function App(): ReactElement {
-  const { connect, autoConnect } = useStore(s => s);
+  const { connect, autoConnect, pubSubUri } = useStore(s => s);
 
   // Only autoconnect on startup!
   useEffect(() => {
     if (autoConnect) {
-      connect();
+      connect(pubSubUri);
     }
   }, []);
 

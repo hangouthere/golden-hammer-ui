@@ -19,6 +19,18 @@ render(
         } as ButtonProps
       }
     }}
+    styles={{
+      Tooltip: theme => ({
+        body: {
+          color: theme.fn.themeColor('dark', 0),
+          backgroundColor: theme.fn.themeColor('dark', 4),
+          boxShadow: `${theme.fn.themeColor('dark', 9)} 0 0 5px`
+        },
+        arrow: {
+          backgroundColor: theme.fn.themeColor('dark', 4)
+        }
+      })
+    }}
   >
     <App />
   </MantineProvider>,

@@ -1,3 +1,4 @@
+import { TargetClassMap } from '-/store';
 import io, { Socket } from 'socket.io-client';
 
 const SVC_PUBSUB_REGISTER_CHAT = 'gh-pubsub.register';
@@ -5,7 +6,7 @@ const SVC_PUBSUB_REGISTER_CHAT = 'gh-pubsub.register';
 export let socket: Socket;
 
 export const connect = (socketUri: string) => {
-  if (socket && socket.connected) {
+  if (socket) {
     disconnect();
   }
 
@@ -16,6 +17,7 @@ export const connect = (socketUri: string) => {
 
 export const disconnect = () => {
   if (!socket.connected) {
+    socket.close();
     socket = null;
     return;
   }
@@ -24,14 +26,14 @@ export const disconnect = () => {
   socket = null;
 };
 
-export const pubsubRegisterChat = async ({ connectTarget, eventCategories }): Promise<any> =>
+export const pubsubRegisterChat = async ({ connectTarget, eventCategories }: TargetClassMap): Promise<any> =>
   new Promise((resolve, reject) => {
     socket.emit(
       'call',
       SVC_PUBSUB_REGISTER_CHAT,
       {
         platformName: 'twitch',
-        connectTarget,
+        connectTarget: connectTarget.toLowerCase(),
         eventCategories
       },
       (err, resp) => {

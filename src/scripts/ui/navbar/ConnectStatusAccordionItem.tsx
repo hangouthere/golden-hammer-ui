@@ -2,22 +2,9 @@ import useStore from '-/store';
 import { SocketStatus } from '-/store/InitState';
 import { StyledButton } from '-/styles/buttons';
 import { StyledInputs } from '-/styles/inputs';
-import {
-  ActionIcon,
-  Button,
-  Checkbox,
-  ColorSwatch,
-  Group,
-  Space,
-  TextInput,
-  Title,
-  Tooltip,
-  useMantineTheme
-} from '@mantine/core';
+import { Button, Checkbox, ColorSwatch, Group, Space, TextInput, Title, Tooltip, useMantineTheme } from '@mantine/core';
 import { useBooleanToggle, useForm } from '@mantine/hooks';
-import React, { ChangeEvent, useEffect } from 'react';
-import { MdDirtyLens } from 'react-icons/md';
-import { RiSaveLine } from 'react-icons/ri';
+import React, { ChangeEvent, useEffect, useState } from 'react';
 
 export const ConnectionStatusLabel = ({ connectionStatus }) => {
   const isConnected = SocketStatus.Connected === connectionStatus;
@@ -35,15 +22,16 @@ export const ConnectionStatusLabel = ({ connectionStatus }) => {
 
 export const ConnectStatusForm = () => {
   const theme = useMantineTheme();
-  const [isDirty, setIsDirty] = useBooleanToggle(false);
   const [showWarnConnect, setShowWarnConnect] = useBooleanToggle(false);
+  const [referenceElement, setReferenceElement] = useState(null);
 
-  const { autoConnect, connect, disconnect, pubSubUri, setAutoConnect, updatePubSubUri, connectionStatus } = useStore(
-    s => s
-  );
+  const { autoConnect, connect, disconnect, pubSubUri, setAutoConnect, connectionStatus } = useStore(s => s);
 
   const isConnected = connectionStatus === SocketStatus.Connected;
-  const onFormSubmit = v => updatePubSubUri(v.pubSubUri);
+  const _connect = () => {
+    const values = ghPubSubConnectForm.values;
+    connect(values.pubSubUri);
+  };
 
   const {
     classes: { SimpleRollOver }
@@ -52,12 +40,6 @@ export const ConnectStatusForm = () => {
   const {
     classes: { SimpleTextInputWithButton }
   } = StyledInputs();
-
-  const checkDirty = _e => {
-    const isDirty = pubSubUri !== ghPubSubConnectForm.values.pubSubUri;
-
-    setIsDirty(isDirty);
-  };
 
   const toggleAutoConnect = (event: ChangeEvent<HTMLInputElement>) => {
     setAutoConnect(event.target.checked);
@@ -77,16 +59,14 @@ export const ConnectStatusForm = () => {
     setShowWarnConnect(isConnected);
   };
 
-  useEffect(() => checkDirty(null), [pubSubUri]);
+  useEffect(() => {
+    console.log(referenceElement);
+  }, [referenceElement]);
 
   return (
     <>
-      <form
-        className={SimpleTextInputWithButton}
-        onKeyUp={checkDirty}
-        onSubmit={ghPubSubConnectForm.onSubmit(onFormSubmit)}
-      >
-        <Tooltip withArrow label="Disconnect to edit PubSub URI" opened={showWarnConnect}>
+      <form className={SimpleTextInputWithButton}>
+        <Tooltip withArrow label="Disconnect to edit PubSub URI" opened={showWarnConnect} ref={referenceElement}>
           <TextInput
             style={{ flex: 1 }}
             placeholder="Enter GH PubSub URI"
@@ -96,16 +76,10 @@ export const ConnectStatusForm = () => {
             disabled={isConnected}
             onMouseOver={checkWarnConnect}
             onMouseOut={checkWarnConnect}
+            ref={setReferenceElement}
             {...ghPubSubConnectForm.getInputProps('pubSubUri')}
           />
         </Tooltip>
-
-        <Space w="sm" />
-
-        <ActionIcon disabled={isConnected} type="submit">
-          {isDirty && <MdDirtyLens />}
-          {!isDirty && <RiSaveLine />}
-        </ActionIcon>
       </form>
 
       <Space h="sm" />
@@ -118,7 +92,7 @@ export const ConnectStatusForm = () => {
         <Button compact onClick={disconnect} className={SimpleRollOver} disabled={!isConnected}>
           Disconnect
         </Button>
-        <Button compact onClick={connect} disabled={isConnected}>
+        <Button compact onClick={_connect} disabled={isConnected}>
           Connect
         </Button>
       </Group>
