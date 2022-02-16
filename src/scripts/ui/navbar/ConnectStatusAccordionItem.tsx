@@ -4,7 +4,7 @@ import { StyledButton } from '-/styles/buttons';
 import { StyledInputs } from '-/styles/inputs';
 import { Button, Checkbox, ColorSwatch, Group, Space, TextInput, Title, Tooltip, useMantineTheme } from '@mantine/core';
 import { useBooleanToggle, useForm } from '@mantine/hooks';
-import React, { ChangeEvent, useEffect, useState } from 'react';
+import React, { ChangeEvent } from 'react';
 
 export const ConnectionStatusLabel = ({ connectionStatus }) => {
   const isConnected = SocketStatus.Connected === connectionStatus;
@@ -23,7 +23,6 @@ export const ConnectionStatusLabel = ({ connectionStatus }) => {
 export const ConnectStatusForm = () => {
   const theme = useMantineTheme();
   const [showWarnConnect, setShowWarnConnect] = useBooleanToggle(false);
-  const [referenceElement, setReferenceElement] = useState(null);
 
   const { autoConnect, connect, disconnect, pubSubUri, setAutoConnect, connectionStatus } = useStore(s => s);
 
@@ -59,14 +58,10 @@ export const ConnectStatusForm = () => {
     setShowWarnConnect(isConnected);
   };
 
-  useEffect(() => {
-    console.log(referenceElement);
-  }, [referenceElement]);
-
   return (
     <>
       <form className={SimpleTextInputWithButton}>
-        <Tooltip withArrow label="Disconnect to edit PubSub URI" opened={showWarnConnect} ref={referenceElement}>
+        <Tooltip withArrow label="Disconnect to edit PubSub URI" opened={showWarnConnect}>
           <TextInput
             style={{ flex: 1 }}
             placeholder="Enter GH PubSub URI"
@@ -76,7 +71,6 @@ export const ConnectStatusForm = () => {
             disabled={isConnected}
             onMouseOver={checkWarnConnect}
             onMouseOut={checkWarnConnect}
-            ref={setReferenceElement}
             {...ghPubSubConnectForm.getInputProps('pubSubUri')}
           />
         </Tooltip>

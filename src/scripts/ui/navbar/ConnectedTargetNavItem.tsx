@@ -1,23 +1,43 @@
 import { TargetClassMap } from '-/store';
 import { StyledButton } from '-/styles/buttons';
-import { ActionIcon, Box, Group, GroupProps, Title, Tooltip } from '@mantine/core';
+import { ActionIcon, Button, Group, GroupProps, Title, Tooltip, useMantineTheme } from '@mantine/core';
 import useButtonStyles from '@mantine/core/esm/components/Button/Button.styles';
 import { useBooleanToggle, useClickOutside } from '@mantine/hooks';
 import React from 'react';
 import { BsFilter } from 'react-icons/bs';
 import EventTypesSelector from '../EventTypesSelector';
 
+const ConnectTargetEventSelector = ({
+  eventCategories,
+  onChangeEventCategories,
+  SimpleRollOverClassName,
+  unregisterPubSub
+}) => (
+  <Group m={3} direction="column">
+    <EventTypesSelector selectedEvents={eventCategories} onChange={onChangeEventCategories} />
+
+    <Group position="right" grow>
+      <Button radius="xl" size="xs" className={SimpleRollOverClassName} onClick={unregisterPubSub}>
+        Unregister
+      </Button>
+    </Group>
+  </Group>
+);
+
 type Props = Omit<GroupProps, 'children'> & {
   targetClassMap: TargetClassMap;
   reSubEventCategories: (TargetClassMap) => void;
+  unregisterPubSub: (connectTarget: string) => void;
   //hasUpdates: boolean;
 };
 
 export default function ConnectedTargetNavItem({
   targetClassMap: { connectTarget, eventCategories },
   reSubEventCategories,
+  unregisterPubSub,
   ...restProps
 }: Props) {
+  const theme = useMantineTheme();
   const [showConfig, setShowConfig] = useBooleanToggle(false);
   const toolTipRef = useClickOutside(() => setShowConfig(false));
 
@@ -32,8 +52,21 @@ export default function ConnectedTargetNavItem({
   } = useButtonStyles({ radius: 'md' }, { classNames: {}, styles: {}, name: 'ButtonInButton' });
 
   const {
-    classes: { ButtonInButton }
-  } = StyledButton({});
+    classes: { ButtonInButton, SimpleRollOver }
+  } = StyledButton(theme.other.CautionButton);
+
+  const onUnregisterPubSub = () => {
+    unregisterPubSub(connectTarget);
+  };
+
+  const TooltipLabel = () => (
+    <ConnectTargetEventSelector
+      SimpleRollOverClassName={SimpleRollOver}
+      eventCategories={eventCategories}
+      onChangeEventCategories={onChangeEventCategories}
+      unregisterPubSub={onUnregisterPubSub}
+    />
+  );
 
   return (
     <Group
@@ -52,11 +85,7 @@ export default function ConnectedTargetNavItem({
         position="right"
         width={200}
         opened={showConfig}
-        label={
-          <Box m={3}>
-            <EventTypesSelector selectedEvents={eventCategories} onChange={onChangeEventCategories} />
-          </Box>
-        }
+        label={<TooltipLabel />}
       >
         <ActionIcon onClick={toggleConfig}>
           <BsFilter />

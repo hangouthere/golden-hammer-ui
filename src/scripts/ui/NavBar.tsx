@@ -12,7 +12,9 @@ interface Props extends Omit<NavbarProps, 'children'> {}
 
 export default function NavBar(props: Props) {
   const { cx } = useCss();
-  const { autoConnect, connectionStatus, pubsubRegisterChat, connectedTargetMaps } = useStore(s => s);
+  const { autoConnect, connectionStatus, pubsubRegisterChat, pubsubUnregisterChat, connectedTargetMaps } = useStore(
+    s => s
+  );
   const [activeConnectTarget, setActiveConnectTarget] = useState<TargetClassMap>();
 
   const chosenInitialAccordionItem = !autoConnect ? 0 : -1;
@@ -30,6 +32,7 @@ export default function NavBar(props: Props) {
       key={cT.connectTarget}
       targetClassMap={cT}
       reSubEventCategories={pubsubRegisterChat}
+      unregisterPubSub={pubsubUnregisterChat}
       onClick={() => selectConnectTarget(cT)}
       className={cx({ active: activeConnectTarget?.connectTarget === cT.connectTarget })}
     />

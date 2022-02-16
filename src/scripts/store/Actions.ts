@@ -14,11 +14,11 @@ const bindSocketStatus = (set: SetState<IStore>, get: GetState<IStore>, socket: 
   );
 
   socket.on('gh-chat.evented', normalizedEvent => {
-    set({
+    set(s => ({
       events: {
-        [normalizedEvent.connectTarget]: [normalizedEvent]
+        [normalizedEvent.connectTarget]: [...(s.events[normalizedEvent.connectTarget] || []), normalizedEvent]
       }
-    });
+    }));
   });
 };
 
@@ -27,6 +27,7 @@ export interface IActions {
   connect: (pubSubUri: string) => void;
   disconnect: () => void;
   pubsubRegisterChat: ({ connectTarget, eventCategories }: TargetClassMap) => void;
+  pubsubUnregisterChat: (connectTarget: string) => void;
 }
 
 export default (set: SetState<IStore>, get: GetState<IStore>): IActions => ({
@@ -73,6 +74,28 @@ export default (set: SetState<IStore>, get: GetState<IStore>): IActions => ({
       set(state => ({
         connectedTargetMaps: new Map(state.connectedTargetMaps).set(pubSub.connectTarget, pubSub)
       }));
+    } catch (err) {
+      console.log(err);
+    }
+  },
+
+  async pubsubUnregisterChat(connectTarget) {
+    try {
+      const resp = await GHSocket.pubsubUnregisterChat(connectTarget);
+
+      if (!resp.unregistered) {
+        throw new Error(`Unregistration Failed for ${connectTarget}`);
+      }
+
+      // Add Connected Target to the list!
+      set(state => {
+        const newMap = new Map(state.connectedTargetMaps);
+        newMap.delete(resp.pubsub.connectTarget);
+
+        return {
+          connectedTargetMaps: newMap
+        };
+      });
     } catch (err) {
       console.log(err);
     }

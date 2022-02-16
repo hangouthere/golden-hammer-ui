@@ -9,7 +9,7 @@ let u = new URLSearchParams(globalThis.location.search);
 const isDevMode = null !== u.get('dev');
 
 export default function App(): ReactElement {
-  const { connect, autoConnect, pubSubUri } = useStore(s => s);
+  const { connect, autoConnect, pubSubUri, events } = useStore(s => s);
 
   // Only autoconnect on startup!
   useEffect(() => {
@@ -27,7 +27,7 @@ export default function App(): ReactElement {
         main: { backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[8] : theme.colors.gray[0] }
       })}
     >
-      Join a Channel
+      <pre>{JSON.stringify(events)}</pre>
     </AppShell>
   );
 }
