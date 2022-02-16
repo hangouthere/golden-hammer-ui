@@ -24,10 +24,22 @@ export const disconnect = () => {
   socket = null;
 };
 
-export const pubsubRegisterChat = ({ connectTarget, platformEvents }) => {
-  socket.emit('call', SVC_PUBSUB_REGISTER_CHAT, {
-    platformName: 'twitch',
-    connectTarget,
-    platformEvents
+export const pubsubRegisterChat = async ({ connectTarget, eventCategories }): Promise<any> =>
+  new Promise((resolve, reject) => {
+    socket.emit(
+      'call',
+      SVC_PUBSUB_REGISTER_CHAT,
+      {
+        platformName: 'twitch',
+        connectTarget,
+        eventCategories
+      },
+      (err, resp) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve(resp);
+        }
+      }
+    );
   });
-};

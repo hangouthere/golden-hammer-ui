@@ -10,7 +10,10 @@ export const StyledInputs = createStyles(theme => ({
       flex: 1
     },
 
-    '.mantine-ActionIcon-root': {
+    [`
+      .mantine-ActionIcon-root,
+      .mantine-Button-root
+    `]: {
       marginBottom: '2px'
     },
 

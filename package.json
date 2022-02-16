@@ -6,7 +6,7 @@
   "license": "MIT",
   "source": "./src/index.html",
   "scripts": {
-    "clean": "rimraf ./dist",
+    "clean": "rimraf ./dist ./.parcel-cache",
     "docker-compose": "npm i --force && echo \"Running in docker-compose... You should run interactively by attaching:\n\t\tdocker exec -it `hostname` npm run dev\" && tail -f /dev/null",
     "build": "parcel build --no-source-maps",
     "start": "node ./app",

@@ -1,12 +1,19 @@
+import { IStore } from '-/store';
 import { StyledAccordion } from '-/styles/accordion';
 import { StyledInputs } from '-/styles/inputs';
-import { Accordion, ActionIcon, Divider, Group, TextInput, Title } from '@mantine/core';
+import { Accordion, Button, Divider, Space, TextInput, Title } from '@mantine/core';
+import { useBooleanToggle, useForm } from '@mantine/hooks';
 import React, { useState } from 'react';
 import { MdLeakAdd } from 'react-icons/md';
 import EventTypesSelector, { GHPubSub_EventTypes } from '../EventTypesSelector';
 
-export default function PubSubRegisterPanel() {
-  const [selectedEvents, setSelectedEvents] = useState(GHPubSub_EventTypes);
+type Props = {
+  pubSubRegister: IStore['pubsubRegisterChat'];
+};
+
+export default function PubSubRegisterPanel({ pubSubRegister }: Props) {
+  const [isValid, setIsValid] = useBooleanToggle(false);
+  const [selectedEvents, setSelectedEvents] = useState([...GHPubSub_EventTypes]);
 
   const {
     classes: { SimpleTextInputWithButton }
@@ -16,28 +23,45 @@ export default function PubSubRegisterPanel() {
     classes: { Compact }
   } = StyledAccordion();
 
-  const onChangeEvents = registerEvents => {
-    console.log('New Events', registerEvents);
+  const pubSubReg = useForm({
+    initialValues: {
+      connectTarget: ''
+    },
+    validationRules: {
+      connectTarget: (v: string) => v.length >= 3
+    }
+  });
 
-    setSelectedEvents(registerEvents);
+  const onChangeEvents = registerEvents => setSelectedEvents(registerEvents);
+
+  const onFormChange = () => setIsValid(pubSubReg.validate());
+  const onFormSubmitted = ({ connectTarget }) => {
+    pubSubRegister({ connectTarget, eventCategories: selectedEvents });
+    setSelectedEvents([...GHPubSub_EventTypes]);
+    setIsValid(false);
+    pubSubReg.reset();
+    pubSubReg.resetErrors();
   };
 
   return (
     <>
       <Divider />
 
-      <Group className={SimpleTextInputWithButton}>
+      <form className={SimpleTextInputWithButton} onKeyUp={onFormChange} onSubmit={pubSubReg.onSubmit(onFormSubmitted)}>
         <TextInput
           placeholder="Enter Twitch Channel Name"
           label="Twitch Channel Name"
           description="Listen to GH PubSub Events for a specified Twitch Channel"
           size="xs"
+          {...pubSubReg.getInputProps('connectTarget')}
         />
 
-        <ActionIcon>
-          <MdLeakAdd />
-        </ActionIcon>
-      </Group>
+        <Space w="sm" />
+
+        <Button leftIcon={<MdLeakAdd />} compact type="submit" disabled={!isValid}>
+          PubSub
+        </Button>
+      </form>
 
       <Accordion className={Compact}>
         <Accordion.Item label={<Title order={6}>Select PubSub Events</Title>}>

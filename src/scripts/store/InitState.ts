@@ -1,5 +1,5 @@
 import { GetState, SetState } from 'zustand';
-import { IStore, localGet } from '.';
+import { IStore, localGet, TargetClassMap } from '.';
 
 export enum SocketStatus {
   Disconnected,
@@ -12,7 +12,10 @@ export interface IState {
   connectionStatus: SocketStatus;
   autoConnect: any;
   connectTarget: string;
-  connectedTargets: Set<string>;
+  connectedTargetMaps: Map<string, TargetClassMap>;
+  events: {
+    [connectTarget: string]: any[];
+  };
 }
 
 export default (_set: SetState<IStore>, _get: GetState<IStore>): IState => {
@@ -20,10 +23,11 @@ export default (_set: SetState<IStore>, _get: GetState<IStore>): IState => {
 
   const InitState: IState = {
     autoConnect: shouldAutoConnect,
-    connectedTargets: new Set<string>(),
+    connectedTargetMaps: new Map(),
     connectionStatus: SocketStatus.Disconnected,
     connectTarget: 'nfgCodex',
-    pubSubUri: localGet('gh.pubSubUri') || process.env.URI_GH_PUBSUB || '//'
+    pubSubUri: localGet('gh.pubSubUri') || process.env.URI_GH_PUBSUB || '//',
+    events: {}
   };
 
   return InitState;
