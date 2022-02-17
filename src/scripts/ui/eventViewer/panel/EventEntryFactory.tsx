@@ -1,10 +1,18 @@
 import { NormalizedMessagingEvent } from '-/store/PubSubMessaging';
+import { StyledEventViewer } from '-/styles/eventViewer';
+import { Group } from '@mantine/core';
 import React from 'react';
 import AdministrativeEventEntry from '../entries/AdministrativeEventEntry';
 import MonetizationEventEntry from '../entries/MonetizationEventEntry';
 import UserChatEventEntry from '../entries/UserChatEventEntry';
 
-const EventClassEntryMap: { [eventClass: string]: ({ normalizedEvent: NormalizedMessagingEvent }) => JSX.Element } = {
+type EntryViewProps = { normalizedEvent: NormalizedMessagingEvent };
+
+type EventClassEntryViewMapType = {
+  [eventClass: string]: (props: EntryViewProps) => JSX.Element;
+};
+
+const EventClassEntryViewMap: EventClassEntryViewMapType = {
   UserChat: UserChatEventEntry,
   Administration: AdministrativeEventEntry,
   Monetization: MonetizationEventEntry
@@ -16,12 +24,21 @@ type Props = {
 
 export const EventEntryFactory = ({ events }: Props) => {
   const entryViews = events.map(nEvent => {
-    const EntryType = EventClassEntryMap[nEvent.eventClassification.category];
+    const EntryType = EventClassEntryViewMap[nEvent.eventClassification.category];
+    const key = nEvent.pubSubMsgId;
 
-    return <EntryType normalizedEvent={nEvent} />;
+    return <EntryType key={key} normalizedEvent={nEvent} />;
   });
+
+  const {
+    classes: { PanelList }
+  } = StyledEventViewer();
 
   //!FIXME Add virtualized scroller!
 
-  return <>{entryViews}</>;
+  return (
+    <Group direction="column" className={PanelList}>
+      {entryViews}
+    </Group>
+  );
 };

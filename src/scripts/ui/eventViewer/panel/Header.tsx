@@ -28,11 +28,11 @@ export const EntryHeader = ({ desiredEventTypes, setDesiredEventTypes }) => {
   const { connectTarget } = activeTargetClassMap;
 
   const {
-    classes: { Header: HeaderClassName }
+    classes: { PanelHeader }
   } = StyledEventViewer();
 
   return (
-    <Header height={56} className={HeaderClassName}>
+    <Header height={56} className={PanelHeader}>
       <Title order={4}>{activeTargetClassMap.connectTarget}</Title>
 
       <Group className="options">
@@ -40,6 +40,7 @@ export const EntryHeader = ({ desiredEventTypes, setDesiredEventTypes }) => {
           opened={showDesiredFilterTooltip}
           onClose={() => setShowDesiredFilterTooltip(false)}
           withArrow
+          withinPortal={false}
           arrowSize={4}
           position="bottom"
           placement="end"
@@ -61,6 +62,7 @@ export const EntryHeader = ({ desiredEventTypes, setDesiredEventTypes }) => {
           opened={showPubSubTooltip}
           onClose={() => setShowPubSubTooltip(false)}
           withArrow
+          withinPortal={false}
           arrowSize={4}
           position="bottom"
           placement="end"
@@ -78,7 +80,7 @@ export const EntryHeader = ({ desiredEventTypes, setDesiredEventTypes }) => {
           />
         </Popover>
 
-        <Tooltip withArrow arrowSize={4} position="left" label="Unregister">
+        <Tooltip withArrow arrowSize={4} position="left" label="Unregister" withinPortal={false}>
           <ActionIcon variant="filled" color="red">
             <MdLeakRemove />
           </ActionIcon>

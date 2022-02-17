@@ -1,8 +1,8 @@
 import { TargetClassMap } from '-/store';
 import { StyledButton } from '-/styles/buttons';
-import { ActionIcon, Button, Group, GroupProps, Title, Tooltip, useMantineTheme } from '@mantine/core';
+import { ActionIcon, Button, Group, GroupProps, Popover, Title, useMantineTheme } from '@mantine/core';
 import useButtonStyles from '@mantine/core/esm/components/Button/Button.styles';
-import { useBooleanToggle, useClickOutside } from '@mantine/hooks';
+import { useBooleanToggle } from '@mantine/hooks';
 import React from 'react';
 import { MdLeakAdd } from 'react-icons/md';
 import EventTypesSelector from '../_shared/EventTypesSelector';
@@ -39,7 +39,6 @@ export default function ConnectedTargetNavItem({
 }: Props) {
   const theme = useMantineTheme();
   const [showConfig, setShowConfig] = useBooleanToggle(false);
-  const toolTipRef = useClickOutside(() => setShowConfig(false));
 
   const toggleConfig = () => setShowConfig(!showConfig);
 
@@ -68,27 +67,27 @@ export default function ConnectedTargetNavItem({
     >
       <Title order={5}>{connectTarget}</Title>
 
-      <Tooltip
+      <Popover
         withArrow
-        tooltipRef={toolTipRef}
-        allowPointerEvents={true}
+        withinPortal={false}
         arrowSize={4}
         position="right"
         width={200}
         opened={showConfig}
-        label={
-          <ConnectTargetEventSelector
-            onChangeEventCategories={onChangeEventCategories}
-            SimpleRollOverClassName={SimpleRollOver}
-            eventCategories={eventCategories}
-            unregisterPubSub={onUnregisterPubSub}
-          />
+        onClose={() => setShowConfig(false)}
+        target={
+          <ActionIcon onClick={toggleConfig}>
+            <MdLeakAdd />
+          </ActionIcon>
         }
       >
-        <ActionIcon onClick={toggleConfig}>
-          <MdLeakAdd />
-        </ActionIcon>
-      </Tooltip>
+        <ConnectTargetEventSelector
+          onChangeEventCategories={onChangeEventCategories}
+          SimpleRollOverClassName={SimpleRollOver}
+          eventCategories={eventCategories}
+          unregisterPubSub={onUnregisterPubSub}
+        />
+      </Popover>
     </Group>
   );
 }

@@ -78,6 +78,7 @@ export type EventClassificationTypes =
 export type EventDataTypes = AdministrationEventData | MonetizationEventData | UserChatEventData;
 
 export interface NormalizedMessagingEvent {
+  pubSubMsgId: string;
   timestamp: number;
   platform: Platform;
   connectTarget: string; // ChannelName, Discord URI, etc?

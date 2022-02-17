@@ -12,7 +12,7 @@ export const StyledEventViewer = createStyles(theme => ({
     }
   },
 
-  Header: {
+  PanelHeader: {
     display: 'flex',
     alignItems: 'center',
     padding: '10px',
@@ -21,5 +21,9 @@ export const StyledEventViewer = createStyles(theme => ({
       justifyContent: 'right',
       flex: 1
     }
+  },
+
+  PanelList: {
+    flexDirection: 'column-reverse'
   }
 }));
