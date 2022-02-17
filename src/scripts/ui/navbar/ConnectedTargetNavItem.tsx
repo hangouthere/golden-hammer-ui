@@ -4,8 +4,8 @@ import { ActionIcon, Button, Group, GroupProps, Title, Tooltip, useMantineTheme 
 import useButtonStyles from '@mantine/core/esm/components/Button/Button.styles';
 import { useBooleanToggle, useClickOutside } from '@mantine/hooks';
 import React from 'react';
-import { BsFilter } from 'react-icons/bs';
-import EventTypesSelector from '../EventTypesSelector';
+import { MdLeakAdd } from 'react-icons/md';
+import EventTypesSelector from '../_shared/EventTypesSelector';
 
 const ConnectTargetEventSelector = ({
   eventCategories,
@@ -13,10 +13,10 @@ const ConnectTargetEventSelector = ({
   SimpleRollOverClassName,
   unregisterPubSub
 }) => (
-  <Group m={3} direction="column">
+  <Group m={3} direction="column" grow>
     <EventTypesSelector selectedEvents={eventCategories} onChange={onChangeEventCategories} />
 
-    <Group position="right" grow>
+    <Group position="right">
       <Button radius="xl" size="xs" className={SimpleRollOverClassName} onClick={unregisterPubSub}>
         Unregister
       </Button>
@@ -59,15 +59,6 @@ export default function ConnectedTargetNavItem({
     unregisterPubSub(connectTarget);
   };
 
-  const TooltipLabel = () => (
-    <ConnectTargetEventSelector
-      SimpleRollOverClassName={SimpleRollOver}
-      eventCategories={eventCategories}
-      onChangeEventCategories={onChangeEventCategories}
-      unregisterPubSub={onUnregisterPubSub}
-    />
-  );
-
   return (
     <Group
       position="apart"
@@ -85,10 +76,17 @@ export default function ConnectedTargetNavItem({
         position="right"
         width={200}
         opened={showConfig}
-        label={<TooltipLabel />}
+        label={
+          <ConnectTargetEventSelector
+            onChangeEventCategories={onChangeEventCategories}
+            SimpleRollOverClassName={SimpleRollOver}
+            eventCategories={eventCategories}
+            unregisterPubSub={onUnregisterPubSub}
+          />
+        }
       >
         <ActionIcon onClick={toggleConfig}>
-          <BsFilter />
+          <MdLeakAdd />
         </ActionIcon>
       </Tooltip>
     </Group>

@@ -2,7 +2,7 @@ import useStore, { TargetClassMap } from '-/store';
 import { SocketStatus } from '-/store/InitState';
 import { StyledNavBar } from '-/styles/navbar';
 import { Accordion, AccordionItem, Group, Navbar, NavbarProps, ScrollArea, useCss } from '@mantine/core';
-import React, { useState } from 'react';
+import React from 'react';
 import ConnectedTargetNavItem from './navbar/ConnectedTargetNavItem';
 import { ConnectionStatusLabel, ConnectStatusForm } from './navbar/ConnectStatusAccordionItem';
 import NoConnectedTargetsNavItem from './navbar/NoConnectedTargetsNavItem';
@@ -12,10 +12,15 @@ interface Props extends Omit<NavbarProps, 'children'> {}
 
 export default function NavBar(props: Props) {
   const { cx } = useCss();
-  const { autoConnect, connectionStatus, pubsubRegisterChat, pubsubUnregisterChat, connectedTargetMaps } = useStore(
-    s => s
-  );
-  const [activeConnectTarget, setActiveConnectTarget] = useState<TargetClassMap>();
+  const {
+    autoConnect,
+    connectionStatus,
+    pubsubRegisterChat,
+    pubsubUnregisterChat,
+    connectedTargetMaps,
+    activeTargetClassMap,
+    setActiveTargetClassMap
+  } = useStore(s => s);
 
   const chosenInitialAccordionItem = !autoConnect ? 0 : -1;
   const hasTargetMaps = !!connectedTargetMaps.size;
@@ -24,7 +29,7 @@ export default function NavBar(props: Props) {
   const noTargetsView = <NoConnectedTargetsNavItem isConnected={isConnected} />;
 
   const selectConnectTarget = (targetClassMap: TargetClassMap) => {
-    setActiveConnectTarget(targetClassMap);
+    setActiveTargetClassMap(targetClassMap);
   };
 
   const connectedTargetViews = [...connectedTargetMaps.values()].map(cT => (
@@ -34,7 +39,7 @@ export default function NavBar(props: Props) {
       reSubEventCategories={pubsubRegisterChat}
       unregisterPubSub={pubsubUnregisterChat}
       onClick={() => selectConnectTarget(cT)}
-      className={cx({ active: activeConnectTarget?.connectTarget === cT.connectTarget })}
+      className={cx({ active: activeTargetClassMap?.connectTarget === cT.connectTarget })}
     />
   ));
 
@@ -43,7 +48,6 @@ export default function NavBar(props: Props) {
   } = StyledNavBar();
 
   const onAddPubSubRegister = (targetClassMap: TargetClassMap) => {
-    setActiveConnectTarget(targetClassMap);
     pubsubRegisterChat(targetClassMap);
   };
 
@@ -62,7 +66,7 @@ export default function NavBar(props: Props) {
       </Navbar.Section>
 
       <Navbar.Section>
-        <PubSubRegisterPanel pubSubRegister={onAddPubSubRegister} />
+        <PubSubRegisterPanel disabled={!isConnected} pubSubRegister={onAddPubSubRegister} />
       </Navbar.Section>
     </Navbar>
   );

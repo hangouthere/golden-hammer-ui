@@ -14,9 +14,10 @@ const bindSocketStatus = (set: SetState<IStore>, get: GetState<IStore>, socket: 
   );
 
   socket.on('gh-chat.evented', normalizedEvent => {
-    set(s => ({
+    set(state => ({
       events: {
-        [normalizedEvent.connectTarget]: [...(s.events[normalizedEvent.connectTarget] || []), normalizedEvent]
+        ...state.events,
+        [normalizedEvent.connectTarget]: [...state.events[normalizedEvent.connectTarget], normalizedEvent]
       }
     }));
   });
@@ -28,6 +29,7 @@ export interface IActions {
   disconnect: () => void;
   pubsubRegisterChat: ({ connectTarget, eventCategories }: TargetClassMap) => void;
   pubsubUnregisterChat: (connectTarget: string) => void;
+  setActiveTargetClassMap(targetClassMap: TargetClassMap);
 }
 
 export default (set: SetState<IStore>, get: GetState<IStore>): IActions => ({
@@ -72,7 +74,12 @@ export default (set: SetState<IStore>, get: GetState<IStore>): IActions => ({
 
       // Add Connected Target to the list!
       set(state => ({
-        connectedTargetMaps: new Map(state.connectedTargetMaps).set(pubSub.connectTarget, pubSub)
+        activeTargetClassMap: pubSub,
+        connectedTargetMaps: new Map(state.connectedTargetMaps).set(pubSub.connectTarget, pubSub),
+        events: {
+          ...state.events,
+          [pubSub.connectTarget]: state.events[pubSub.connectTarget] || []
+        }
       }));
     } catch (err) {
       console.log(err);
@@ -99,5 +106,9 @@ export default (set: SetState<IStore>, get: GetState<IStore>): IActions => ({
     } catch (err) {
       console.log(err);
     }
+  },
+
+  setActiveTargetClassMap(activeTargetClassMap: TargetClassMap) {
+    set({ activeTargetClassMap });
   }
 });

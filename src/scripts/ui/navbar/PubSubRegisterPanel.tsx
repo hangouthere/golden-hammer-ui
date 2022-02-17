@@ -5,13 +5,14 @@ import { Accordion, Button, Divider, Space, TextInput, Title } from '@mantine/co
 import { useBooleanToggle, useForm } from '@mantine/hooks';
 import React, { useState } from 'react';
 import { MdLeakAdd } from 'react-icons/md';
-import EventTypesSelector, { GHPubSub_EventTypes } from '../EventTypesSelector';
+import EventTypesSelector, { GHPubSub_EventTypes } from '../_shared/EventTypesSelector';
 
 type Props = {
   pubSubRegister: IStore['pubsubRegisterChat'];
+  disabled: boolean;
 };
 
-export default function PubSubRegisterPanel({ pubSubRegister }: Props) {
+export default function PubSubRegisterPanel({ disabled, pubSubRegister }: Props) {
   const [isValid, setIsValid] = useBooleanToggle(false);
   const [selectedEvents, setSelectedEvents] = useState([...GHPubSub_EventTypes]);
 
@@ -53,12 +54,13 @@ export default function PubSubRegisterPanel({ pubSubRegister }: Props) {
           label="Twitch Channel Name"
           description="Listen to GH PubSub Events for a specified Twitch Channel"
           size="xs"
+          disabled={disabled}
           {...pubSubReg.getInputProps('connectTarget')}
         />
 
         <Space w="sm" />
 
-        <Button leftIcon={<MdLeakAdd />} compact type="submit" disabled={!isValid}>
+        <Button leftIcon={<MdLeakAdd />} compact type="submit" disabled={disabled || !isValid}>
           PubSub
         </Button>
       </form>
