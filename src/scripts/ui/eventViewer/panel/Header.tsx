@@ -1,7 +1,7 @@
 import useStore from '-/store';
 import { StyledEventViewer } from '-/styles/eventViewer';
 import EventTypesSelector from '-/ui/_shared/EventTypesSelector';
-import { ActionIcon, Box, Divider, Group, Header, Popover, Title, Tooltip } from '@mantine/core';
+import { ActionIcon, Box, Divider, Group, Popover, Title, Tooltip } from '@mantine/core';
 import { useBooleanToggle } from '@mantine/hooks';
 import React from 'react';
 import { BsFilter } from 'react-icons/bs';
@@ -15,8 +15,8 @@ const ConnectTargetEventSelector = ({ eventCategories, onChangeEventCategories, 
   </Group>
 );
 
-export const EntryHeader = ({ desiredEventTypes, setDesiredEventTypes }) => {
-  const { activeTargetClassMap, pubsubRegisterChat, pubsubUnregisterChat } = useStore(s => s);
+export const EntryHeader = ({ className, desiredEventTypes, setDesiredEventTypes }) => {
+  const { activePubSub, pubsubRegisterChat, pubsubUnregisterChat } = useStore(s => s);
 
   const [showPubSubTooltip, setShowPubSubTooltip] = useBooleanToggle(false);
   const [showDesiredFilterTooltip, setShowDesiredFilterTooltip] = useBooleanToggle(false);
@@ -24,23 +24,21 @@ export const EntryHeader = ({ desiredEventTypes, setDesiredEventTypes }) => {
   const toggleToolTip_desired = () => setShowDesiredFilterTooltip(!showDesiredFilterTooltip);
 
   const onPubSubChange = _eventCategories => pubsubRegisterChat({ connectTarget, eventCategories: _eventCategories });
-
-  const { connectTarget } = activeTargetClassMap;
+  const onUnregister = () => pubsubUnregisterChat(connectTarget);
 
   const {
-    classes: { PanelHeader }
-  } = StyledEventViewer();
+    pubsub: { connectTarget, eventCategories }
+  } = activePubSub;
 
   return (
-    <Header height={56} className={PanelHeader}>
-      <Title order={4}>{activeTargetClassMap.connectTarget}</Title>
+    <Group className={className}>
+      <Title order={4}>{connectTarget}</Title>
 
       <Group className="options">
         <Popover
           opened={showDesiredFilterTooltip}
           onClose={() => setShowDesiredFilterTooltip(false)}
           withArrow
-          withinPortal={false}
           arrowSize={4}
           position="bottom"
           placement="end"
@@ -62,7 +60,6 @@ export const EntryHeader = ({ desiredEventTypes, setDesiredEventTypes }) => {
           opened={showPubSubTooltip}
           onClose={() => setShowPubSubTooltip(false)}
           withArrow
-          withinPortal={false}
           arrowSize={4}
           position="bottom"
           placement="end"
@@ -76,16 +73,16 @@ export const EntryHeader = ({ desiredEventTypes, setDesiredEventTypes }) => {
           <ConnectTargetEventSelector
             titleLabel="Modify which Events to Subscribe to"
             onChangeEventCategories={onPubSubChange}
-            eventCategories={activeTargetClassMap.eventCategories}
+            eventCategories={eventCategories}
           />
         </Popover>
 
-        <Tooltip withArrow arrowSize={4} position="left" label="Unregister" withinPortal={false}>
-          <ActionIcon variant="filled" color="red">
+        <Tooltip withArrow arrowSize={4} position="left" label="Unregister">
+          <ActionIcon variant="filled" color="red" onClick={onUnregister}>
             <MdLeakRemove />
           </ActionIcon>
         </Tooltip>
       </Group>
-    </Header>
+    </Group>
   );
 };

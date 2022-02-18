@@ -1,4 +1,4 @@
-import { TargetClassMap } from '-/store';
+import { TargetClassMap } from '-/store/PubSubMessaging';
 import { StyledButton } from '-/styles/buttons';
 import { ActionIcon, Button, Group, GroupProps, Popover, Title, useMantineTheme } from '@mantine/core';
 import useButtonStyles from '@mantine/core/esm/components/Button/Button.styles';
@@ -26,7 +26,7 @@ const ConnectTargetEventSelector = ({
 
 type Props = Omit<GroupProps, 'children'> & {
   targetClassMap: TargetClassMap;
-  reSubEventCategories: (TargetClassMap) => void;
+  reSubEventCategories: (targetClassMap: TargetClassMap) => void;
   unregisterPubSub: (connectTarget: string) => void;
   //hasUpdates: boolean;
 };
@@ -69,11 +69,11 @@ export default function ConnectedTargetNavItem({
 
       <Popover
         withArrow
-        withinPortal={false}
         arrowSize={4}
-        position="right"
-        width={200}
         opened={showConfig}
+        width={200}
+        position="right"
+        placement="start"
         onClose={() => setShowConfig(false)}
         target={
           <ActionIcon onClick={toggleConfig}>

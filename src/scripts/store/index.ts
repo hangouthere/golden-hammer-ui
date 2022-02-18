@@ -10,10 +10,5 @@ const useStore = create<IStore>((s, g) => ({
   ...InitState(s, g)
 }));
 
-export type TargetClassMap = {
-  connectTarget: string;
-  eventCategories: string[];
-};
-
 export default useStore;
 export type IStore = IState & IActions;

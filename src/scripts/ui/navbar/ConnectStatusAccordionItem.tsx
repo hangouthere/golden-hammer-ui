@@ -61,7 +61,7 @@ export const ConnectStatusForm = () => {
   return (
     <>
       <form className={SimpleTextInputWithButton}>
-        <Tooltip withArrow label="Disconnect to edit PubSub URI" opened={showWarnConnect} withinPortal={false}>
+        <Tooltip withArrow label="Disconnect to edit PubSub URI" opened={showWarnConnect}>
           <TextInput
             style={{ flex: 1 }}
             placeholder="Enter GH PubSub URI"

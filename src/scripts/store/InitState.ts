@@ -1,6 +1,6 @@
 import { GetState, SetState } from 'zustand';
-import { IStore, localGet, TargetClassMap } from '.';
-import { ConnectTargetEventMap } from './PubSubMessaging';
+import { IStore, localGet } from '.';
+import { ConnectTargetEventMap, PubSubConnectionResponse, TargetClassMap } from './PubSubMessaging';
 
 export enum SocketStatus {
   Disconnected,
@@ -13,8 +13,8 @@ export interface IState {
   connectionStatus: SocketStatus;
   autoConnect: any;
   connectTarget: string;
-  connectedTargetMaps: Map<string, TargetClassMap>;
-  activeTargetClassMap: TargetClassMap;
+  connectedPubSubs: Map<string, PubSubConnectionResponse>;
+  activePubSub: PubSubConnectionResponse;
   events: ConnectTargetEventMap;
 }
 
@@ -23,10 +23,10 @@ export default (_set: SetState<IStore>, _get: GetState<IStore>): IState => {
 
   const InitState: IState = {
     autoConnect: shouldAutoConnect,
-    connectedTargetMaps: new Map(),
+    connectedPubSubs: new Map(),
     connectionStatus: SocketStatus.Disconnected,
     connectTarget: '',
-    activeTargetClassMap: null,
+    activePubSub: null,
     pubSubUri: localGet('gh.pubSubUri') || process.env.URI_GH_PUBSUB || '//',
     events: {}
   };

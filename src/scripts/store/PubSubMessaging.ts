@@ -1,4 +1,4 @@
-// ! FIXME : This should reference the golden-hammer microservice definitions/types, and not re-defined in this project as well
+// ! FIXME : This ENTIRE file should reference the golden-hammer microservice definitions/types, and not re-defined in this project as well
 
 export interface Platform {
   name: 'twitch'; // | 'discord' | 'youtube'; // Platform name, maps to which services to rely on
@@ -6,14 +6,28 @@ export interface Platform {
   eventData: any; // Original Event Data as it was received from the platform directly
 }
 
+export type EventClassifications =
+  | 'Administration.Ban'
+  | 'Administration.MessageRemoval'
+  | 'Administration.Timeout'
+  | 'Administration' // ! TODO Remove this
+  | 'Monetization.Subscription'
+  | 'Monetization.Tip'
+  | 'Monetization' // ! TODO Remove this
+  | 'PlatformSpecific'
+  | 'System' // ! TODO Remove this
+  | 'UserChat.Message'
+  | 'UserChat.Presence'
+  | 'UserChat'; // ! TODO Remove this
+
 export interface EventClassification {
-  category: 'UserChat' | 'Administration' | 'Monetization' | 'System' | 'PlatformSpecific';
+  category: EventClassifications;
   subCategory: any;
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-declare namespace UserChatEventData {
+export declare namespace UserChatEventData {
   export interface EmoteMeta {
     emoteId: string;
     uri: string;
@@ -85,6 +99,24 @@ export interface NormalizedMessagingEvent {
   eventClassification: EventClassificationTypes;
   eventData: EventDataTypes;
 }
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+export type TargetClassMap = {
+  connectTarget: string;
+  eventCategories: string[];
+};
+
+export type PubSubConnectionResponse = {
+  registered?: boolean;
+  unregistered?: boolean;
+  type: 'messaging'; //TODO: Move this into the `pubsub` property
+  pubsub: PubSubMessagingInfo; // TODO: This could be many other types, we only support messaing for now
+};
+
+export type PubSubMessagingInfo = TargetClassMap & {
+  platformName: Platform['name'];
+};
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 

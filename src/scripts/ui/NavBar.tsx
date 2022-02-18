@@ -1,5 +1,6 @@
-import useStore, { TargetClassMap } from '-/store';
+import useStore from '-/store';
 import { SocketStatus } from '-/store/InitState';
+import { TargetClassMap } from '-/store/PubSubMessaging';
 import { StyledNavBar } from '-/styles/navbar';
 import { Accordion, AccordionItem, Group, Navbar, NavbarProps, ScrollArea, useCss } from '@mantine/core';
 import React from 'react';
@@ -17,29 +18,25 @@ export default function NavBar(props: Props) {
     connectionStatus,
     pubsubRegisterChat,
     pubsubUnregisterChat,
-    connectedTargetMaps,
-    activeTargetClassMap,
-    setActiveTargetClassMap
+    connectedPubSubs,
+    activePubSub,
+    setActivePubSub
   } = useStore(s => s);
 
   const chosenInitialAccordionItem = !autoConnect ? 0 : -1;
-  const hasTargetMaps = !!connectedTargetMaps.size;
+  const hasTargetMaps = !!connectedPubSubs.size;
   const isConnected = SocketStatus.Connected === connectionStatus;
 
   const noTargetsView = <NoConnectedTargetsNavItem isConnected={isConnected} />;
 
-  const selectConnectTarget = (targetClassMap: TargetClassMap) => {
-    setActiveTargetClassMap(targetClassMap);
-  };
-
-  const connectedTargetViews = [...connectedTargetMaps.values()].map(cT => (
+  const pubSubNavItems = [...connectedPubSubs.values()].map(pubSubConn => (
     <ConnectedTargetNavItem
-      key={cT.connectTarget}
-      targetClassMap={cT}
+      key={pubSubConn.pubsub.connectTarget}
+      targetClassMap={pubSubConn.pubsub}
       reSubEventCategories={pubsubRegisterChat}
       unregisterPubSub={pubsubUnregisterChat}
-      onClick={() => selectConnectTarget(cT)}
-      className={cx({ active: activeTargetClassMap?.connectTarget === cT.connectTarget })}
+      onClick={() => setActivePubSub(pubSubConn)}
+      className={cx({ active: activePubSub?.pubsub.connectTarget === pubSubConn.pubsub.connectTarget })}
     />
   ));
 
@@ -62,7 +59,7 @@ export default function NavBar(props: Props) {
       </Navbar.Section>
 
       <Navbar.Section grow className={ScrollAreaContainer} component={hasTargetMaps ? ScrollArea : Group}>
-        {hasTargetMaps ? connectedTargetViews : noTargetsView}
+        {hasTargetMaps ? pubSubNavItems : noTargetsView}
       </Navbar.Section>
 
       <Navbar.Section>

@@ -1,15 +1,21 @@
-import { NormalizedMessagingEvent } from '-/store/PubSubMessaging';
+import { EventClassifications, NormalizedMessagingEvent, PubSubConnectionResponse } from '-/store/PubSubMessaging';
 import { StyledEventViewer } from '-/styles/eventViewer';
-import { Group } from '@mantine/core';
+import { useMantineTheme } from '@mantine/core';
 import React from 'react';
+import BaseTable, { AutoResizer, Column } from 'react-base-table';
 import AdministrativeEventEntry from '../entries/AdministrativeEventEntry';
 import MonetizationEventEntry from '../entries/MonetizationEventEntry';
 import UserChatEventEntry from '../entries/UserChatEventEntry';
 
-type EntryViewProps = { normalizedEvent: NormalizedMessagingEvent };
+////////////////////////////////////////////////////////////////////////////////////////////
+// Entry View Mapping for Factory
+
+export type EntryViewProps = {
+  normalizedEvent: NormalizedMessagingEvent;
+};
 
 type EventClassEntryViewMapType = {
-  [eventClass: string]: (props: EntryViewProps) => JSX.Element;
+  [eventClass in EventClassifications]?: (props: EntryViewProps) => JSX.Element;
 };
 
 const EventClassEntryViewMap: EventClassEntryViewMapType = {
@@ -18,27 +24,54 @@ const EventClassEntryViewMap: EventClassEntryViewMapType = {
   Monetization: MonetizationEventEntry
 };
 
-type Props = {
+////////////////////////////////////////////////////////////////////////////////////////////
+// EventEntryFactory
+
+type EventEntryFactoryProps = {
+  pubSubConnection: PubSubConnectionResponse;
   events: NormalizedMessagingEvent[];
 };
 
-export const EventEntryFactory = ({ events }: Props) => {
-  const entryViews = events.map(nEvent => {
-    const EntryType = EventClassEntryViewMap[nEvent.eventClassification.category];
+export const EventEntryFactory = ({ pubSubConnection, events }: EventEntryFactoryProps) => {
+  const theme = useMantineTheme();
+  const { cx, classes: cssClasses } = StyledEventViewer(
+    theme.other.Platforms[pubSubConnection.pubsub.platformName] || theme.other.Platforms.default
+  );
+
+  const createDecoratedEventEntry = ({ rowData: nEvent }) => {
+    const EntryContent = EventClassEntryViewMap[nEvent.eventClassification.category];
     const key = nEvent.pubSubMsgId;
 
-    return <EntryType key={key} normalizedEvent={nEvent} />;
-  });
+    const eventEntryClassNames = [
+      cssClasses.EventLogEntry,
+      `${nEvent.eventClassification.category}-${nEvent.eventClassification.subCategory}`
+    ];
 
-  const {
-    classes: { PanelList }
-  } = StyledEventViewer();
+    return (
+      <div key={key} className={cx.apply(null, eventEntryClassNames)}>
+        <EntryContent normalizedEvent={nEvent} />
+      </div>
+    );
+  };
 
-  //!FIXME Add virtualized scroller!
+  const scrollAreaClassNames = [
+    cssClasses.PanelScrollArea,
+    cssClasses[`Platform-${pubSubConnection.pubsub.platformName}`]
+  ];
 
-  return (
-    <Group direction="column" className={PanelList}>
-      {entryViews}
-    </Group>
+  const ScrollArea = ({ width, height }) => (
+    <BaseTable
+      headerHeight={0}
+      data={events}
+      rowKey="pubSubMsgId"
+      rowRenderer={createDecoratedEventEntry}
+      estimatedRowHeight={50}
+      className={cx.apply(null, scrollAreaClassNames)}
+      {...{ width, height }}
+    >
+      <Column key="col0" width={0} flexGrow={1} />
+    </BaseTable>
   );
+
+  return <AutoResizer>{ScrollArea}</AutoResizer>;
 };

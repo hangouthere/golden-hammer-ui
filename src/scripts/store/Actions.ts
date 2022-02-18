@@ -1,8 +1,9 @@
 import { Socket } from 'socket.io-client';
 import { GetState, SetState } from 'zustand';
-import { IStore, localStore, TargetClassMap } from '.';
+import { IStore, localStore } from '.';
 import * as GHSocket from '../services/GHSocket';
 import { SocketStatus } from './InitState';
+import { PubSubConnectionResponse, TargetClassMap } from './PubSubMessaging';
 
 const MAX_COUNT_EVENTS = 5;
 
@@ -10,7 +11,7 @@ const bindSocketStatus = (set: SetState<IStore>, get: GetState<IStore>, socket: 
   socket.on('connect', () => set({ connectionStatus: SocketStatus.Connected }));
   socket.on('connect_error', () => set({ connectionStatus: SocketStatus.Disconnected }));
   socket.on('disconnect', () =>
-    set({ connectionStatus: SocketStatus.Disconnected, events: {}, connectedTargetMaps: new Map() })
+    set({ connectionStatus: SocketStatus.Disconnected, events: {}, connectedPubSubs: new Map() })
   );
 
   socket.on('gh-chat.evented', normalizedEvent => {
@@ -29,7 +30,7 @@ export interface IActions {
   disconnect: () => void;
   pubsubRegisterChat: ({ connectTarget, eventCategories }: TargetClassMap) => void;
   pubsubUnregisterChat: (connectTarget: string) => void;
-  setActiveTargetClassMap(targetClassMap: TargetClassMap);
+  setActivePubSub(activePubSub: PubSubConnectionResponse);
 }
 
 export default (set: SetState<IStore>, get: GetState<IStore>): IActions => ({
@@ -64,18 +65,18 @@ export default (set: SetState<IStore>, get: GetState<IStore>): IActions => ({
 
   async pubsubRegisterChat({ connectTarget, eventCategories }) {
     try {
-      const resp = await GHSocket.pubsubRegisterChat({ connectTarget, eventCategories });
+      const pubSubConnection = await GHSocket.pubsubRegisterChat({ connectTarget, eventCategories });
 
-      if (!resp.registered) {
+      if (!pubSubConnection.registered) {
         throw new Error(`Registration Failed for ${connectTarget} on ${eventCategories}`);
       }
 
-      const pubSub = resp.pubsub;
+      const pubSub = pubSubConnection.pubsub;
 
       // Add Connected Target to the list!
       set(state => ({
-        activeTargetClassMap: pubSub,
-        connectedTargetMaps: new Map(state.connectedTargetMaps).set(pubSub.connectTarget, pubSub),
+        activePubSub: pubSubConnection,
+        connectedPubSubs: new Map(state.connectedPubSubs).set(pubSub.connectTarget, pubSubConnection),
         events: {
           ...state.events,
           [pubSub.connectTarget]: state.events[pubSub.connectTarget] || []
@@ -88,19 +89,19 @@ export default (set: SetState<IStore>, get: GetState<IStore>): IActions => ({
 
   async pubsubUnregisterChat(connectTarget) {
     try {
-      const resp = await GHSocket.pubsubUnregisterChat(connectTarget);
+      const pubSubConnection = await GHSocket.pubsubUnregisterChat(connectTarget);
 
-      if (!resp.unregistered) {
+      if (!pubSubConnection.unregistered) {
         throw new Error(`Unregistration Failed for ${connectTarget}`);
       }
 
       // Add Connected Target to the list!
       set(state => {
-        const newMap = new Map(state.connectedTargetMaps);
-        newMap.delete(resp.pubsub.connectTarget);
+        const newMap = new Map(state.connectedPubSubs);
+        newMap.delete(pubSubConnection.pubsub.connectTarget);
 
         return {
-          connectedTargetMaps: newMap
+          connectedPubSubs: newMap
         };
       });
     } catch (err) {
@@ -108,7 +109,7 @@ export default (set: SetState<IStore>, get: GetState<IStore>): IActions => ({
     }
   },
 
-  setActiveTargetClassMap(activeTargetClassMap: TargetClassMap) {
-    set({ activeTargetClassMap });
+  setActivePubSub(activePubSub: PubSubConnectionResponse) {
+    set({ activePubSub });
   }
 });
