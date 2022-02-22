@@ -1,11 +1,11 @@
-import { Group, Header, HeaderProps, Image, Title } from '@mantine/core';
+import { Group, Header as MHeader, HeaderProps, Image, Title } from '@mantine/core';
 import React from 'react';
 
 const ImageLogo = new URL('../../assets/logo.png', import.meta.url);
 
-export default function index(props: Omit<HeaderProps, 'children'>) {
+export default function Header(props: Omit<HeaderProps, 'children'>) {
   return (
-    <Header {...props}>
+    <MHeader {...props}>
       <Group>
         <Image src={ImageLogo.href} width={48} />
 
@@ -14,6 +14,6 @@ export default function index(props: Omit<HeaderProps, 'children'>) {
           <Title order={6}>by nfgCodex!</Title>
         </Group>
       </Group>
-    </Header>
+    </MHeader>
   );
 }

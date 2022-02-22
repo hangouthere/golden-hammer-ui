@@ -1,15 +1,10 @@
 import useStore from '-/store';
-import { StyledEventViewer } from '-/styles/eventViewer';
-import { useMantineTheme } from '@mantine/core';
 import React, { useMemo, useState } from 'react';
 import { EventEntryFactory } from './EventEntryFactory';
-import { EntryHeader } from './Header';
+import EntryHeader from './Header';
 
 export const EventEntryPanel = () => {
-  const colors = useMantineTheme().other.Platforms.default;
-
   const { activePubSub, events } = useStore(s => s);
-  const { classes: cssClasses } = StyledEventViewer(colors);
 
   const chatInfo = activePubSub.pubsub;
   const { connectTarget } = chatInfo;
@@ -24,7 +19,7 @@ export const EventEntryPanel = () => {
 
   return (
     <>
-      <EntryHeader className={cssClasses.PanelHeader} {...{ desiredEventTypes, setDesiredEventTypes }} />
+      <EntryHeader {...{ desiredEventTypes, setDesiredEventTypes }} />
 
       <EventEntryFactory pubSubConnection={activePubSub} events={filteredEvents} />
     </>

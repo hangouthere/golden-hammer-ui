@@ -44,7 +44,7 @@ export const EventEntryFactory = ({ pubSubConnection, events }: EventEntryFactor
 
     const eventEntryClassNames = [
       cssClasses.EventLogEntry,
-      `${nEvent.eventClassification.category}-${nEvent.eventClassification.subCategory}`
+      cssClasses[`${nEvent.eventClassification.category}-${nEvent.eventClassification.subCategory}`]
     ];
 
     return (
@@ -54,10 +54,8 @@ export const EventEntryFactory = ({ pubSubConnection, events }: EventEntryFactor
     );
   };
 
-  const scrollAreaClassNames = [
-    cssClasses.PanelScrollArea,
-    cssClasses[`Platform-${pubSubConnection.pubsub.platformName}`]
-  ];
+  //!FIXME Make this a knob
+  events.reverse();
 
   const ScrollArea = ({ width, height }) => (
     <BaseTable
@@ -66,7 +64,8 @@ export const EventEntryFactory = ({ pubSubConnection, events }: EventEntryFactor
       rowKey="pubSubMsgId"
       rowRenderer={createDecoratedEventEntry}
       estimatedRowHeight={50}
-      className={cx.apply(null, scrollAreaClassNames)}
+      className={cssClasses.PanelScrollArea}
+      sortBy={{ key: 'timestamp', order: 'desc' }}
       {...{ width, height }}
     >
       <Column key="col0" width={0} flexGrow={1} />

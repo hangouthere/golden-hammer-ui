@@ -13,7 +13,7 @@ const buildMessageChunk = (chunk: UserChatEventData.MessageBuffer) => {
         </a>
       );
     case 'emote':
-      return <img src={chunk.meta.uri} />;
+      return <img src={chunk.meta.uri} className="emote" />;
   }
 };
 
@@ -25,16 +25,16 @@ export default function UserChatEventEntry({ normalizedEvent }: EntryViewProps) 
   switch (normalizedEvent.eventClassification.subCategory) {
     case 'Presence':
       return (
-        <>
+        <span>
           {prefix} {data.presence}ed the Chat.
-        </>
+        </span>
       );
     case 'Message':
       const children = data.messageBuffers.map(buildMessageChunk).reduce((c, chunkChild, idx, arr) => {
         c.push(chunkChild);
 
         if (idx <= arr.length) {
-          c.push(<span>&nbsp;</span>);
+          c.push(<span> </span>);
         }
 
         return c;
@@ -42,7 +42,7 @@ export default function UserChatEventEntry({ normalizedEvent }: EntryViewProps) 
 
       return (
         <>
-          {prefix} {children}
+          {prefix} {children.map((c, key) => React.cloneElement(c, { key }))}
         </>
       );
   }

@@ -12,7 +12,7 @@ type Props = {
   disabled: boolean;
 };
 
-export default function PubSubRegisterPanel({ disabled, pubSubRegister }: Props) {
+function PubSubRegisterPanel({ disabled, pubSubRegister }: Props) {
   const [isValid, setIsValid] = useBooleanToggle(false);
   const [selectedEvents, setSelectedEvents] = useState([...GHPubSub_EventTypes]);
 
@@ -73,3 +73,5 @@ export default function PubSubRegisterPanel({ disabled, pubSubRegister }: Props)
     </>
   );
 }
+
+export default React.memo(PubSubRegisterPanel);

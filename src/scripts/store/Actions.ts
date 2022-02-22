@@ -5,7 +5,7 @@ import * as GHSocket from '../services/GHSocket';
 import { SocketStatus } from './InitState';
 import { PubSubConnectionResponse, TargetClassMap } from './PubSubMessaging';
 
-const MAX_COUNT_EVENTS = 5;
+const MAX_COUNT_EVENTS = 100;
 
 const bindSocketStatus = (set: SetState<IStore>, get: GetState<IStore>, socket: Socket) => {
   socket.on('connect', () => set({ connectionStatus: SocketStatus.Connected }));
@@ -15,12 +15,20 @@ const bindSocketStatus = (set: SetState<IStore>, get: GetState<IStore>, socket: 
   );
 
   socket.on('gh-chat.evented', normalizedEvent => {
-    set(state => ({
-      events: {
-        ...state.events,
-        [normalizedEvent.connectTarget]: [...state.events[normalizedEvent.connectTarget], normalizedEvent]
+    set(state => {
+      const newEventList = [...state.events[normalizedEvent.connectTarget], normalizedEvent];
+
+      if (newEventList.length > MAX_COUNT_EVENTS) {
+        newEventList.shift();
       }
-    }));
+
+      return {
+        events: {
+          ...state.events,
+          [normalizedEvent.connectTarget]: newEventList
+        }
+      };
+    });
   });
 };
 

@@ -2,8 +2,8 @@ import useStore from '-/store';
 import { SocketStatus } from '-/store/InitState';
 import { TargetClassMap } from '-/store/PubSubMessaging';
 import { StyledNavBar } from '-/styles/navbar';
-import { Accordion, AccordionItem, Group, Navbar, NavbarProps, ScrollArea, useCss } from '@mantine/core';
-import React from 'react';
+import { Accordion, AccordionItem, Navbar, NavbarProps, ScrollArea, useCss } from '@mantine/core';
+import React, { useCallback, useMemo } from 'react';
 import ConnectedTargetNavItem from './navbar/ConnectedTargetNavItem';
 import { ConnectionStatusLabel, ConnectStatusForm } from './navbar/ConnectStatusAccordionItem';
 import NoConnectedTargetsNavItem from './navbar/NoConnectedTargetsNavItem';
@@ -11,7 +11,7 @@ import PubSubRegisterPanel from './navbar/PubSubRegisterPanel';
 
 interface Props extends Omit<NavbarProps, 'children'> {}
 
-export default function NavBar(props: Props) {
+function NavBar(props: Props) {
   const { cx } = useCss();
   const {
     autoConnect,
@@ -21,7 +21,7 @@ export default function NavBar(props: Props) {
     connectedPubSubs,
     activePubSub,
     setActivePubSub
-  } = useStore(s => s);
+  } = useStore(useCallback(s => s, []));
 
   const chosenInitialAccordionItem = !autoConnect ? 0 : -1;
   const hasTargetMaps = !!connectedPubSubs.size;
@@ -29,24 +29,31 @@ export default function NavBar(props: Props) {
 
   const noTargetsView = <NoConnectedTargetsNavItem isConnected={isConnected} />;
 
-  const pubSubNavItems = [...connectedPubSubs.values()].map(pubSubConn => (
-    <ConnectedTargetNavItem
-      key={pubSubConn.pubsub.connectTarget}
-      targetClassMap={pubSubConn.pubsub}
-      reSubEventCategories={pubsubRegisterChat}
-      unregisterPubSub={pubsubUnregisterChat}
-      onClick={() => setActivePubSub(pubSubConn)}
-      className={cx({ active: activePubSub?.pubsub.connectTarget === pubSubConn.pubsub.connectTarget })}
-    />
-  ));
+  const pubSubNavItems = useMemo(
+    () =>
+      [...connectedPubSubs.values()].map(pubSubConn => (
+        <ConnectedTargetNavItem
+          key={pubSubConn.pubsub.connectTarget}
+          targetClassMap={pubSubConn.pubsub}
+          reSubEventCategories={pubsubRegisterChat}
+          unregisterPubSub={pubsubUnregisterChat}
+          onClick={() => setActivePubSub(pubSubConn)}
+          className={cx({ active: activePubSub?.pubsub.connectTarget === pubSubConn.pubsub.connectTarget })}
+        />
+      )),
+    [connectedPubSubs, activePubSub]
+  );
 
   const {
     classes: { NavBarContainer, ScrollAreaContainer }
   } = StyledNavBar();
 
-  const onAddPubSubRegister = (targetClassMap: TargetClassMap) => {
-    pubsubRegisterChat(targetClassMap);
-  };
+  const onAddPubSubRegister = useCallback(
+    (targetClassMap: TargetClassMap) => {
+      pubsubRegisterChat(targetClassMap);
+    },
+    [pubsubRegisterChat]
+  );
 
   return (
     <Navbar {...props} className={NavBarContainer}>
@@ -58,8 +65,8 @@ export default function NavBar(props: Props) {
         </Accordion>
       </Navbar.Section>
 
-      <Navbar.Section grow className={ScrollAreaContainer} component={hasTargetMaps ? ScrollArea : Group}>
-        {hasTargetMaps ? pubSubNavItems : noTargetsView}
+      <Navbar.Section grow className={ScrollAreaContainer}>
+        <ScrollArea>{hasTargetMaps ? pubSubNavItems : noTargetsView}</ScrollArea>
       </Navbar.Section>
 
       <Navbar.Section>
@@ -68,3 +75,5 @@ export default function NavBar(props: Props) {
     </Navbar>
   );
 }
+
+export default React.memo(NavBar);
