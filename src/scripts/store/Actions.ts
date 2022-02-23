@@ -1,11 +1,11 @@
-import { TargetClassMap, PubSubConnectionResponse } from 'golden-hammer-shared';
+import { PubSubConnectionResponse, TargetClassMap } from 'golden-hammer-shared';
 import { Socket } from 'socket.io-client';
 import { GetState, SetState } from 'zustand';
 import { IStore, localStore } from '.';
 import * as GHSocket from '../services/GHSocket';
 import { SocketStatus } from './InitState';
 
-const MAX_COUNT_EVENTS = 100;
+const MAX_COUNT_EVENTS = 500;
 
 const bindSocketStatus = (set: SetState<IStore>, get: GetState<IStore>, socket: Socket) => {
   socket.on('connect', () => set({ connectionStatus: SocketStatus.Connected }));
@@ -109,7 +109,8 @@ export default (set: SetState<IStore>, get: GetState<IStore>): IActions => ({
         newMap.delete(pubSubConnection.pubsub.connectTarget);
 
         return {
-          connectedPubSubs: newMap
+          connectedPubSubs: newMap,
+          activePubSub: null
         };
       });
     } catch (err) {

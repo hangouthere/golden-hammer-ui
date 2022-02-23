@@ -1,3 +1,4 @@
+import { NormalizedMessagingEvent } from 'golden-hammer-shared';
 import create from 'zustand';
 import Actions, { IActions } from './Actions';
 import InitState, { IState } from './InitState';

@@ -1,6 +1,7 @@
 import { AppShell } from '@mantine/core';
 import React, { ReactElement, useEffect } from 'react';
-import useStore from './store';
+import shallow from 'zustand/shallow';
+import useStore, { IStore } from './store';
 import EventViewerContainer from './ui/eventViewer/EventViewerContainer';
 import Header from './ui/Header';
 import Navbar from './ui/NavBar';
@@ -10,8 +11,15 @@ import { GHPubSub_EventTypes } from './ui/_shared/EventTypesSelector';
 let u = new URLSearchParams(globalThis.location.search);
 const isDevMode = null !== u.get('dev');
 
+const getState = (s: IStore) => ({
+  connect: s.connect,
+  autoConnect: s.autoConnect,
+  pubSubUri: s.pubSubUri,
+  pubsubRegisterChat: s.pubsubRegisterChat
+});
+
 export default function App(): ReactElement {
-  const { connect, autoConnect, pubSubUri, pubsubRegisterChat } = useStore(s => s);
+  const { connect, autoConnect, pubSubUri, pubsubRegisterChat } = useStore(getState, shallow);
 
   // Only autoconnect on startup!
   useEffect(() => {

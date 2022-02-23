@@ -1,7 +1,8 @@
+import useStore from '-/store';
 import { StyledEventViewer } from '-/styles/eventViewer';
 import { useMantineTheme } from '@mantine/core';
 import { EventClassifications, NormalizedMessagingEvent, PubSubConnectionResponse } from 'golden-hammer-shared';
-import React from 'react';
+import React, { useCallback, useMemo } from 'react';
 import BaseTable, { AutoResizer, Column } from 'react-base-table';
 import AdministrativeEventEntry from '../entries/AdministrativeEventEntry';
 import MonetizationEventEntry from '../entries/MonetizationEventEntry';
@@ -29,42 +30,51 @@ const EventClassEntryViewMap: EventClassEntryViewMapType = {
 
 type EventEntryFactoryProps = {
   pubSubConnection: PubSubConnectionResponse;
-  events: NormalizedMessagingEvent[];
+  desiredEventTypes: string[];
 };
 
-export const EventEntryFactory = ({ pubSubConnection, events }: EventEntryFactoryProps) => {
+export const EventEntryFactory = ({ pubSubConnection, desiredEventTypes }: EventEntryFactoryProps) => {
+  const connectTarget = pubSubConnection.pubsub.connectTarget;
+  const activeEvents = useStore(s => s.events[connectTarget]);
+
   const theme = useMantineTheme();
+
   const { cx, classes: cssClasses } = StyledEventViewer(
     theme.other.Platforms[pubSubConnection.pubsub.platformName] || theme.other.Platforms.default
   );
 
-  const createDecoratedEventEntry = ({ rowData: nEvent }) => {
-    const EntryContent = EventClassEntryViewMap[nEvent.eventClassification.category];
-    const key = nEvent.pubSubMsgId;
+  const createDecoratedEventEntry = useCallback(
+    ({ rowData: nEvent }) => {
+      const EntryContent = EventClassEntryViewMap[nEvent.eventClassification.category];
+      const key = nEvent.pubSubMsgId;
 
-    const eventEntryClassNames = [
-      cssClasses.EventLogEntry,
-      cssClasses[`${nEvent.eventClassification.category}-${nEvent.eventClassification.subCategory}`]
-    ];
+      const eventEntryClassNames = [
+        cssClasses.EventLogEntry,
+        cssClasses[`${nEvent.eventClassification.category}-${nEvent.eventClassification.subCategory}`]
+      ];
 
-    return (
-      <div key={key} className={cx.apply(null, eventEntryClassNames)}>
-        <EntryContent normalizedEvent={nEvent} />
-      </div>
-    );
-  };
+      return (
+        <div key={key} className={cx.apply(null, eventEntryClassNames)}>
+          <EntryContent normalizedEvent={nEvent} />
+        </div>
+      );
+    },
+    [activeEvents]
+  );
 
-  //!FIXME Make this a knob
-  events.reverse();
+  const filteredEvents = useMemo(
+    //!FIXME Make reversing this a "knob"
+    () => activeEvents.filter(aE => desiredEventTypes.includes(aE.eventClassification.category)).reverse(),
+    [activeEvents, desiredEventTypes]
+  );
 
   const ScrollArea = ({ width, height }) => (
     <BaseTable
       headerHeight={0}
-      data={events}
+      data={filteredEvents}
       rowKey="pubSubMsgId"
       rowRenderer={createDecoratedEventEntry}
       estimatedRowHeight={50}
-      className={cssClasses.PanelScrollArea}
       sortBy={{ key: 'timestamp', order: 'desc' }}
       {...{ width, height }}
     >

@@ -3,7 +3,7 @@ import { StyledAccordion } from '-/styles/accordion';
 import { StyledInputs } from '-/styles/inputs';
 import { Accordion, Button, Divider, Space, TextInput, Title } from '@mantine/core';
 import { useBooleanToggle, useForm } from '@mantine/hooks';
-import React, { useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { MdLeakAdd } from 'react-icons/md';
 import EventTypesSelector, { GHPubSub_EventTypes } from '../_shared/EventTypesSelector';
 
@@ -33,16 +33,16 @@ function PubSubRegisterPanel({ disabled, pubSubRegister }: Props) {
     }
   });
 
-  const onChangeEvents = registerEvents => setSelectedEvents(registerEvents);
+  const onChangeEvents = useCallback(registerEvents => setSelectedEvents(registerEvents), []);
 
-  const onFormChange = () => setIsValid(pubSubReg.validate());
-  const onFormSubmitted = ({ connectTarget }) => {
+  const onFormChange = useCallback(() => setIsValid(pubSubReg.validate()), [pubSubReg.values]);
+  const onFormSubmitted = useCallback(({ connectTarget }) => {
     pubSubRegister({ connectTarget, eventCategories: selectedEvents });
     setSelectedEvents([...GHPubSub_EventTypes]);
     setIsValid(false);
     pubSubReg.reset();
     pubSubReg.resetErrors();
-  };
+  }, []);
 
   return (
     <>

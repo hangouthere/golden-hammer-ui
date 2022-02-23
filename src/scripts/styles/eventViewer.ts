@@ -17,6 +17,8 @@ export interface Inner {
   monetized: string;
 }
 
+// !FIXME - Need to utilize colors for actual theming!!!
+
 export const StyledEventViewer = createStyles((theme, colors: StyledEventViewerProps) => {
   return {
     Reminder: {
@@ -31,6 +33,11 @@ export const StyledEventViewer = createStyles((theme, colors: StyledEventViewerP
       alignItems: 'center',
       padding: '10px',
       background: theme.fn.darken(theme.colors[theme.primaryColor][9], 0.2),
+
+      a: {
+        color: '#FF0',
+        fontWeight: 'normal'
+      },
 
       '& > .mantine-Group-root': {
         width: '100%',
@@ -70,9 +77,8 @@ export const StyledEventViewer = createStyles((theme, colors: StyledEventViewerP
       }
     },
 
-    PanelScrollArea: {
-      height: '100%',
-      overflowY: 'auto'
+    PanelScrollContainer: {
+      height: '100%'
     },
 
     EventLogEntry: {

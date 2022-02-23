@@ -1,10 +1,11 @@
-import useStore from '-/store';
+import useStore, { IStore } from '-/store';
 import { SocketStatus } from '-/store/InitState';
 import { StyledButton } from '-/styles/buttons';
 import { StyledInputs } from '-/styles/inputs';
 import { Button, Checkbox, ColorSwatch, Group, Space, TextInput, Title, Tooltip, useMantineTheme } from '@mantine/core';
 import { useBooleanToggle, useForm } from '@mantine/hooks';
 import React, { ChangeEvent } from 'react';
+import shallow from 'zustand/shallow';
 
 export const ConnectionStatusLabel = ({ connectionStatus }) => {
   const isConnected = SocketStatus.Connected === connectionStatus;
@@ -20,11 +21,20 @@ export const ConnectionStatusLabel = ({ connectionStatus }) => {
   );
 };
 
+const getState = (s: IStore) => ({
+  autoConnect: s.autoConnect,
+  connect: s.connect,
+  disconnect: s.disconnect,
+  pubSubUri: s.pubSubUri,
+  setAutoConnect: s.setAutoConnect,
+  connectionStatus: s.connectionStatus
+});
+
 export const ConnectStatusForm = () => {
   const theme = useMantineTheme();
   const [showWarnConnect, setShowWarnConnect] = useBooleanToggle(false);
 
-  const { autoConnect, connect, disconnect, pubSubUri, setAutoConnect, connectionStatus } = useStore(s => s);
+  const { autoConnect, connect, disconnect, pubSubUri, setAutoConnect, connectionStatus } = useStore(getState, shallow);
 
   const isConnected = connectionStatus === SocketStatus.Connected;
   const _connect = () => {

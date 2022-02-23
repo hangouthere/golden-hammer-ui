@@ -1,11 +1,23 @@
-import useStore from '-/store';
+import useStore, { IStore } from '-/store';
 import { StyledEventViewer } from '-/styles/eventViewer';
 import EventTypesSelector from '-/ui/_shared/EventTypesSelector';
-import { ActionIcon, Box, Collapse, Divider, Group, Popover, Title, Tooltip, useMantineTheme } from '@mantine/core';
+import {
+  ActionIcon,
+  Anchor,
+  Box,
+  Collapse,
+  Divider,
+  Group,
+  Popover,
+  Title,
+  Tooltip,
+  useMantineTheme
+} from '@mantine/core';
 import { useBooleanToggle } from '@mantine/hooks';
 import React, { useCallback } from 'react';
 import { BsFilter } from 'react-icons/bs';
 import { MdLeakAdd, MdLeakRemove } from 'react-icons/md';
+import shallow from 'zustand/shallow';
 
 const ConnectTargetEventSelector = ({ eventCategories, onChangeEventCategories, titleLabel }) => (
   <Group m={3} direction="column" spacing="xs">
@@ -15,19 +27,24 @@ const ConnectTargetEventSelector = ({ eventCategories, onChangeEventCategories, 
   </Group>
 );
 
+const getState = (s: IStore) => ({
+  activePubSub: s.activePubSub,
+  pubsubRegisterChat: s.pubsubRegisterChat,
+  pubsubUnregisterChat: s.pubsubUnregisterChat,
+  events: s.events[s.activePubSub.pubsub.connectTarget]
+});
+
 const EntryHeader = ({ desiredEventTypes, setDesiredEventTypes }) => {
-  const { activePubSub, pubsubRegisterChat, pubsubUnregisterChat, events } = useStore(useCallback(s => s, []));
+  const { activePubSub, pubsubRegisterChat, pubsubUnregisterChat, events } = useStore(getState, shallow);
 
   const [showStatistics, setShowStatistics] = useBooleanToggle(false);
   const [showPubSubTooltip, setShowPubSubTooltip] = useBooleanToggle(false);
   const [showDesiredFilterTooltip, setShowDesiredFilterTooltip] = useBooleanToggle(false);
-  const toggleToolTip_pubsub = () => setShowPubSubTooltip(!showPubSubTooltip);
-  const toggleToolTip_desired = () => setShowDesiredFilterTooltip(!showDesiredFilterTooltip);
+  const toggleToolTip_pubsub = useCallback(() => setShowPubSubTooltip(!showPubSubTooltip), []);
+  const toggleToolTip_desired = useCallback(() => setShowDesiredFilterTooltip(!showDesiredFilterTooltip), []);
 
   const onPubSubChange = _eventCategories => pubsubRegisterChat({ connectTarget, eventCategories: _eventCategories });
-  const onUnregister = () => pubsubUnregisterChat(connectTarget);
-
-  const numEvents = events[activePubSub.pubsub.connectTarget].length;
+  const onUnregister = useCallback(() => pubsubUnregisterChat(connectTarget), []);
 
   const {
     pubsub: { platformName, connectTarget, eventCategories }
@@ -39,7 +56,11 @@ const EntryHeader = ({ desiredEventTypes, setDesiredEventTypes }) => {
   return (
     <Group grow direction="column" className={`${cssClasses.PanelHeader}`}>
       <Group>
-        <Title order={4}>{connectTarget}</Title>
+        <Title order={4}>
+          <Anchor href={`https://twitch.tv/${connectTarget}`} target="_blank">
+            {connectTarget}
+          </Anchor>
+        </Title>
 
         <Group className="options">
           <Popover
@@ -99,7 +120,7 @@ const EntryHeader = ({ desiredEventTypes, setDesiredEventTypes }) => {
           transitionDuration={1000}
           transitionTimingFunction="linear"
         >
-          <span># Events: {numEvents}</span>
+          <span># Events: {events.length}</span>
         </Collapse>
       </div>
     </Group>

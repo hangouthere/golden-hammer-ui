@@ -1,9 +1,10 @@
-import useStore from '-/store';
+import useStore, { IStore } from '-/store';
 import { SocketStatus } from '-/store/InitState';
 import { StyledNavBar } from '-/styles/navbar';
-import { Accordion, AccordionItem, Navbar, NavbarProps, ScrollArea, useCss } from '@mantine/core';
+import { Accordion, AccordionItem, Navbar, NavbarProps, ScrollArea } from '@mantine/core';
 import { TargetClassMap } from 'golden-hammer-shared';
 import React, { useCallback, useMemo } from 'react';
+import shallow from 'zustand/shallow';
 import ConnectedTargetNavItem from './navbar/ConnectedTargetNavItem';
 import { ConnectionStatusLabel, ConnectStatusForm } from './navbar/ConnectStatusAccordionItem';
 import NoConnectedTargetsNavItem from './navbar/NoConnectedTargetsNavItem';
@@ -11,21 +12,31 @@ import PubSubRegisterPanel from './navbar/PubSubRegisterPanel';
 
 interface Props extends Omit<NavbarProps, 'children'> {}
 
+const getStateVals = (s: IStore) => ({
+  activePubSub: s.activePubSub,
+  autoConnect: s.autoConnect,
+  connectedPubSubs: s.connectedPubSubs,
+  connectionStatus: s.connectionStatus,
+  pubsubRegisterChat: s.pubsubRegisterChat,
+  pubsubUnregisterChat: s.pubsubUnregisterChat,
+  setActivePubSub: s.setActivePubSub
+});
+
 function NavBar(props: Props) {
-  const { cx } = useCss();
   const {
+    activePubSub,
     autoConnect,
+    connectedPubSubs,
     connectionStatus,
     pubsubRegisterChat,
     pubsubUnregisterChat,
-    connectedPubSubs,
-    activePubSub,
     setActivePubSub
-  } = useStore(useCallback(s => s, []));
+  } = useStore(getStateVals, shallow);
 
   const chosenInitialAccordionItem = !autoConnect ? 0 : -1;
   const hasTargetMaps = !!connectedPubSubs.size;
   const isConnected = SocketStatus.Connected === connectionStatus;
+  const isActive = conn => activePubSub?.pubsub.connectTarget === conn.pubsub.connectTarget;
 
   const noTargetsView = <NoConnectedTargetsNavItem isConnected={isConnected} />;
 
@@ -38,7 +49,7 @@ function NavBar(props: Props) {
           reSubEventCategories={pubsubRegisterChat}
           unregisterPubSub={pubsubUnregisterChat}
           onClick={() => setActivePubSub(pubSubConn)}
-          className={cx({ active: activePubSub?.pubsub.connectTarget === pubSubConn.pubsub.connectTarget })}
+          className={isActive(pubSubConn) ? 'active' : null}
         />
       )),
     [connectedPubSubs, activePubSub]
