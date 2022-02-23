@@ -1,8 +1,8 @@
 import useStore from '-/store';
 import { SocketStatus } from '-/store/InitState';
-import { TargetClassMap } from '-/store/PubSubMessaging';
 import { StyledNavBar } from '-/styles/navbar';
 import { Accordion, AccordionItem, Navbar, NavbarProps, ScrollArea, useCss } from '@mantine/core';
+import { TargetClassMap } from 'golden-hammer-shared';
 import React, { useCallback, useMemo } from 'react';
 import ConnectedTargetNavItem from './navbar/ConnectedTargetNavItem';
 import { ConnectionStatusLabel, ConnectStatusForm } from './navbar/ConnectStatusAccordionItem';

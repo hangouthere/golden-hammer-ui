@@ -1,8 +1,8 @@
-import { TargetClassMap } from '-/store/PubSubMessaging';
 import { StyledButton } from '-/styles/buttons';
 import { ActionIcon, Button, Group, GroupProps, Popover, Title, useMantineTheme } from '@mantine/core';
 import useButtonStyles from '@mantine/core/esm/components/Button/Button.styles';
 import { useBooleanToggle } from '@mantine/hooks';
+import { TargetClassMap } from 'golden-hammer-shared';
 import React from 'react';
 import { MdLeakAdd } from 'react-icons/md';
 import EventTypesSelector from '../_shared/EventTypesSelector';

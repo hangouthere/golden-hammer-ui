@@ -1,6 +1,6 @@
-import { EventClassifications, NormalizedMessagingEvent, PubSubConnectionResponse } from '-/store/PubSubMessaging';
 import { StyledEventViewer } from '-/styles/eventViewer';
 import { useMantineTheme } from '@mantine/core';
+import { EventClassifications, NormalizedMessagingEvent, PubSubConnectionResponse } from 'golden-hammer-shared';
 import React from 'react';
 import BaseTable, { AutoResizer, Column } from 'react-base-table';
 import AdministrativeEventEntry from '../entries/AdministrativeEventEntry';

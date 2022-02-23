@@ -10,5 +10,9 @@ const useStore = create<IStore>((s, g) => ({
   ...InitState(s, g)
 }));
 
+export type ConnectTargetEventMap = {
+  [connectTarget: string]: NormalizedMessagingEvent[];
+};
+
 export default useStore;
 export type IStore = IState & IActions;

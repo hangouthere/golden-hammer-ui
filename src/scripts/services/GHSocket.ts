@@ -1,4 +1,4 @@
-import { PubSubConnectionResponse, TargetClassMap } from '-/store/PubSubMessaging';
+import { PubSubConnectionResponse, TargetClassMap } from 'golden-hammer-shared';
 import io, { Socket } from 'socket.io-client';
 
 const SVC_PUBSUB_REGISTER_CHAT = 'gh-pubsub.register';
@@ -27,7 +27,10 @@ export const disconnect = () => {
   socket = null;
 };
 
-export const pubsubRegisterChat = async ({ connectTarget, eventCategories }: TargetClassMap): Promise<PubSubConnectionResponse> =>
+export const pubsubRegisterChat = async ({
+  connectTarget,
+  eventCategories
+}: TargetClassMap): Promise<PubSubConnectionResponse> =>
   new Promise((resolve, reject) => {
     socket.emit(
       'call',

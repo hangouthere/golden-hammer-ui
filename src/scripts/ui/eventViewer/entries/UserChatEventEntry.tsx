@@ -1,4 +1,4 @@
-import { UserChatEventData } from '-/store/PubSubMessaging';
+import { UserChatEventData } from 'golden-hammer-shared';
 import React from 'react';
 import { EntryViewProps } from '../panel/EventEntryFactory';
 

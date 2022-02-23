@@ -1,7 +1,6 @@
 {
   "compilerOptions": {
     "paths": {
-      "_Shared/*": ["./src/scripts/shared/*"],
       "-/*": ["./src/scripts/*"]
     },
     "checkJs": true,
@@ -11,8 +10,8 @@
     "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
     "jsx": "react",
-    "resolveJsonModule": true,
-    "types": ["node"]
+    "resolveJsonModule": true
+    // "types": ["node"]
   },
   "exclude": ["node_modules", "dist"]
 }

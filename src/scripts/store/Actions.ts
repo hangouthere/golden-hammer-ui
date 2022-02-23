@@ -1,9 +1,9 @@
+import { TargetClassMap, PubSubConnectionResponse } from 'golden-hammer-shared';
 import { Socket } from 'socket.io-client';
 import { GetState, SetState } from 'zustand';
 import { IStore, localStore } from '.';
 import * as GHSocket from '../services/GHSocket';
 import { SocketStatus } from './InitState';
-import { PubSubConnectionResponse, TargetClassMap } from './PubSubMessaging';
 
 const MAX_COUNT_EVENTS = 100;
 

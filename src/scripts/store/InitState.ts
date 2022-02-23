@@ -1,6 +1,6 @@
+import { PubSubConnectionResponse, ConnectTargetEventMap } from 'golden-hammer-shared';
 import { GetState, SetState } from 'zustand';
 import { IStore, localGet } from '.';
-import { ConnectTargetEventMap, PubSubConnectionResponse, TargetClassMap } from './PubSubMessaging';
 
 export enum SocketStatus {
   Disconnected,
