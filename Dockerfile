@@ -13,8 +13,8 @@ FROM node:lts-alpine AS base
 
       USER root
 
-      # Make necessary Directories
-      RUN mkdir -p $BUILD_PATH $RUN_PATH
+      # Make necessary Directories, and chown them as node for dev build path
+      RUN mkdir -p $BUILD_PATH $RUN_PATH && chown node:node $BUILD_PATH $RUN_PATH
 
 ##########################################################################################################################################
 # Stage: Base Build OS
@@ -41,6 +41,25 @@ FROM base AS build-base
 # - Installs npm dependencies in development mode
 
 FROM build-base AS development
+
+      # Import into Stage
+      ARG BUILD_PATH
+
+      ENV NODE_ENV=development
+
+      WORKDIR ${BUILD_PATH}
+
+      USER node
+
+      COPY --chown=node:node . ./
+
+      RUN npm i
+
+      CMD ["npm", "run", "docker-compose"]
+
+# ! FIXME: This was the original, but we're modifying while we figure out the build process
+
+FROM build-base AS developmentORIG
 
       # Import into Stage
       ARG BUILD_PATH
