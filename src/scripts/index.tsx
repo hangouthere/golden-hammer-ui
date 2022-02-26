@@ -2,8 +2,8 @@ import { MantineProvider } from '@mantine/core';
 import React from 'react';
 import { render } from 'react-dom';
 import App from './app';
-import { ButtonProps } from './styles/buttons';
-import { StyledEventViewerProps } from './styles/eventViewer';
+import { type ButtonProps } from './styles/buttons';
+import { type StyledEventViewerProps } from './styles/eventViewer';
 
 render(
   <MantineProvider

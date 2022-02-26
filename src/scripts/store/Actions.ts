@@ -1,7 +1,7 @@
-import { PubSubConnectionResponse, TargetClassMap } from 'golden-hammer-shared';
+import type { PubSubConnectionResponse, TargetClassMap } from 'golden-hammer-shared';
 import { Socket } from 'socket.io-client';
-import { GetState, SetState } from 'zustand';
-import { IStore, localStore } from '.';
+import type { GetState, SetState } from 'zustand';
+import { localStore, type IStore } from '.';
 import * as GHSocket from '../services/GHSocket';
 import { SocketStatus } from './InitState';
 
@@ -38,7 +38,7 @@ export interface IActions {
   disconnect: () => void;
   pubsubRegisterChat: ({ connectTarget, eventCategories }: TargetClassMap) => void;
   pubsubUnregisterChat: (connectTarget: string) => void;
-  setActivePubSub(activePubSub: PubSubConnectionResponse);
+  setActivePubSub: (activePubSub: PubSubConnectionResponse) => void;
 }
 
 export default (set: SetState<IStore>, get: GetState<IStore>): IActions => ({

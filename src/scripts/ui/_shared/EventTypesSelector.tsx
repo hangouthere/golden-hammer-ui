@@ -1,7 +1,6 @@
+import { GHPubSub_EventTypes } from '-/scripts/store';
 import { Chip, Chips } from '@mantine/core';
 import React, { useEffect, useState } from 'react';
-
-export const GHPubSub_EventTypes = ['UserChat', 'Monetization', 'Administration', 'System', 'PlatformSpecific'];
 
 type Props = {
   selectedEvents: string[];
@@ -11,7 +10,7 @@ type Props = {
 export default function EventTypesSelector({ onChange, selectedEvents }: Props) {
   const [_selectedEvents, setSelectedEvents] = useState(selectedEvents);
 
-  const manageChanges = values => {
+  const manageChanges = (values: string[]) => {
     setSelectedEvents(values);
 
     onChange(values);

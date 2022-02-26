@@ -1,6 +1,5 @@
-import useStore, { IStore } from '-/store';
-import { StyledEventViewer } from '-/styles/eventViewer';
-import EventTypesSelector from '-/ui/_shared/EventTypesSelector';
+import useStore, { type IStore } from '-/scripts/store';
+import { StyledEventViewer } from '-/scripts/styles/eventViewer';
 import {
   ActionIcon,
   Anchor,
@@ -18,8 +17,17 @@ import React, { useCallback } from 'react';
 import { BsFilter } from 'react-icons/bs';
 import { MdLeakAdd, MdLeakRemove } from 'react-icons/md';
 import shallow from 'zustand/shallow';
+import EventTypesSelector from '../../_shared/EventTypesSelector';
 
-const ConnectTargetEventSelector = ({ eventCategories, onChangeEventCategories, titleLabel }) => (
+type EventCategories = string[];
+
+type EventSelectorProps = {
+  eventCategories: EventCategories;
+  onChangeEventCategories: (types: EventCategories) => void;
+  titleLabel: string;
+};
+
+const ConnectTargetEventSelector = ({ eventCategories, onChangeEventCategories, titleLabel }: EventSelectorProps) => (
   <Group m={3} direction="column" spacing="xs">
     <Box>{titleLabel}:</Box>
     <Divider />
@@ -31,11 +39,21 @@ const getState = (s: IStore) => ({
   activePubSub: s.activePubSub,
   pubsubRegisterChat: s.pubsubRegisterChat,
   pubsubUnregisterChat: s.pubsubUnregisterChat,
-  events: s.events[s.activePubSub.pubsub.connectTarget]
+  events: s.events[s.activePubSub!.pubsub.connectTarget]
 });
 
-const EntryHeader = ({ desiredEventTypes, setDesiredEventTypes }) => {
+type EntryHeaderProps = {
+  desiredEventTypes: EventCategories;
+  setDesiredEventTypes: (types: EventCategories) => void;
+};
+
+const EntryHeader = ({ desiredEventTypes, setDesiredEventTypes }: EntryHeaderProps) => {
   const { activePubSub, pubsubRegisterChat, pubsubUnregisterChat, events } = useStore(getState, shallow);
+
+  if (!activePubSub) {
+    //! FIXME: See if this works at all, or should be removed
+    return null;
+  }
 
   const [showStatistics, setShowStatistics] = useBooleanToggle(false);
   const [showPubSubTooltip, setShowPubSubTooltip] = useBooleanToggle(false);
@@ -43,12 +61,13 @@ const EntryHeader = ({ desiredEventTypes, setDesiredEventTypes }) => {
   const toggleToolTip_pubsub = useCallback(() => setShowPubSubTooltip(!showPubSubTooltip), []);
   const toggleToolTip_desired = useCallback(() => setShowDesiredFilterTooltip(!showDesiredFilterTooltip), []);
 
-  const onPubSubChange = _eventCategories => pubsubRegisterChat({ connectTarget, eventCategories: _eventCategories });
+  const onPubSubChange = (eventCategories: EventCategories) =>
+    pubsubRegisterChat({ connectTarget, eventCategories: eventCategories });
   const onUnregister = useCallback(() => pubsubUnregisterChat(connectTarget), []);
 
   const {
     pubsub: { platformName, connectTarget, eventCategories }
-  } = activePubSub;
+  } = activePubSub!;
 
   const colors = useMantineTheme().other.Platforms[platformName];
   const { classes: cssClasses } = StyledEventViewer(colors);

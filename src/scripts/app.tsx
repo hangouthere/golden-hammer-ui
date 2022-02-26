@@ -1,11 +1,10 @@
 import { AppShell } from '@mantine/core';
-import React, { ReactElement, useEffect } from 'react';
+import React, { useEffect, type ReactElement } from 'react';
 import shallow from 'zustand/shallow';
-import useStore, { IStore } from './store';
+import useStore, { GHPubSub_EventTypes, type IStore } from './store';
 import EventViewerContainer from './ui/eventViewer/EventViewerContainer';
 import Header from './ui/Header';
 import Navbar from './ui/NavBar';
-import { GHPubSub_EventTypes } from './ui/_shared/EventTypesSelector';
 
 //! FIXME HACK CRAP GET RID OF IT!
 let u = new URLSearchParams(globalThis.location.search);

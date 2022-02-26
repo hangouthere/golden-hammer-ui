@@ -1,5 +1,5 @@
-import useStore from '-/store';
-import { StyledEventViewer } from '-/styles/eventViewer';
+import useStore from '-/scripts/store';
+import { StyledEventViewer } from '-/scripts/styles/eventViewer';
 import { useMantineTheme } from '@mantine/core';
 import React, { useState } from 'react';
 import shallow from 'zustand/shallow';
@@ -10,12 +10,14 @@ export const EventEntryPanel = () => {
   const theme = useMantineTheme();
   const activePubSub = useStore(s => s.activePubSub, shallow);
 
-  const chatInfo = activePubSub.pubsub;
-  const [desiredEventTypes, setDesiredEventTypes] = useState(chatInfo.eventCategories);
+  const chatInfo = activePubSub!.pubsub;
+  const [desiredEventTypes, setDesiredEventTypes] = useState(chatInfo?.eventCategories);
 
   const {
     classes: { PanelScrollContainer }
-  } = StyledEventViewer(theme.other.Platforms[activePubSub.pubsub.platformName] || theme.other.Platforms.default);
+  } = StyledEventViewer(
+    theme.other.Platforms[activePubSub?.pubsub.platformName as string] || theme.other.Platforms.default
+  );
 
   return (
     <>

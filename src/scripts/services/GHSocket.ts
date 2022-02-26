@@ -1,10 +1,10 @@
-import { PubSubConnectionResponse, TargetClassMap } from 'golden-hammer-shared';
+import type { PubSubConnectionResponse, TargetClassMap } from 'golden-hammer-shared';
 import io, { Socket } from 'socket.io-client';
 
 const SVC_PUBSUB_REGISTER_CHAT = 'gh-pubsub.register';
 const SVC_PUBSUB_UNREGISTER_CHAT = 'gh-pubsub.unregister';
 
-export let socket: Socket;
+export let socket: Socket | null;
 
 export const connect = (socketUri: string) => {
   if (socket) {
@@ -17,6 +17,10 @@ export const connect = (socketUri: string) => {
 };
 
 export const disconnect = () => {
+  if (!socket) {
+    return;
+  }
+
   if (!socket.connected) {
     socket.close();
     socket = null;
@@ -32,7 +36,7 @@ export const pubsubRegisterChat = async ({
   eventCategories
 }: TargetClassMap): Promise<PubSubConnectionResponse> =>
   new Promise((resolve, reject) => {
-    socket.emit(
+    socket?.emit(
       'call',
       SVC_PUBSUB_REGISTER_CHAT,
       {
@@ -40,7 +44,7 @@ export const pubsubRegisterChat = async ({
         connectTarget: connectTarget.toLowerCase(),
         eventCategories
       },
-      (err, resp) => {
+      (err: Error, resp: PubSubConnectionResponse) => {
         if (err) {
           reject(err);
         } else {
@@ -52,14 +56,14 @@ export const pubsubRegisterChat = async ({
 
 export const pubsubUnregisterChat = async (connectTarget: string): Promise<PubSubConnectionResponse> =>
   new Promise((resolve, reject) => {
-    socket.emit(
+    socket?.emit(
       'call',
       SVC_PUBSUB_UNREGISTER_CHAT,
       {
         platformName: 'twitch',
         connectTarget: connectTarget.toLowerCase()
       },
-      (err, resp) => {
+      (err: Error, resp: PubSubConnectionResponse) => {
         if (err) {
           reject(err);
         } else {

@@ -1,5 +1,5 @@
-import useStore, { IStore } from '-/store';
-import { StyledEventViewer } from '-/styles/eventViewer';
+import useStore, { type IStore } from '-/scripts/store';
+import { StyledEventViewer } from '-/scripts/styles/eventViewer';
 import { Group, Title, useMantineTheme } from '@mantine/core';
 import React, { useMemo } from 'react';
 import { EventEntryPanel } from './panel/EventEntryPanel';

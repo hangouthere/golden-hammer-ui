@@ -1,6 +1,6 @@
-import { UserChatEventData } from 'golden-hammer-shared';
+import type { UserChatEventData } from 'golden-hammer-shared';
 import React from 'react';
-import { EntryViewProps } from '../panel/EventEntryFactory';
+import type { EntryViewProps } from '../panel/EventEntryFactory';
 
 const buildMessageChunk = (chunk: UserChatEventData.MessageBuffer) => {
   switch (chunk.type) {
@@ -13,24 +13,28 @@ const buildMessageChunk = (chunk: UserChatEventData.MessageBuffer) => {
         </a>
       );
     case 'emote':
-      return <img src={chunk.meta.uri} className="emote" />;
+      return <img src={chunk.meta?.uri} className="emote" />;
   }
 };
 
-export default function UserChatEventEntry({ normalizedEvent }: EntryViewProps) {
+export default function UserChatEventEntry({ normalizedEvent }: EntryViewProps): JSX.Element {
   const data: UserChatEventData = normalizedEvent.eventData as UserChatEventData;
 
   const prefix = <span className="userName">{data.userName}:</span>;
 
+  let retElement: JSX.Element;
+
   switch (normalizedEvent.eventClassification.subCategory) {
     case 'Presence':
-      return (
+      retElement = (
         <span>
           {prefix} {data.presence}ed the Chat.
         </span>
       );
+      break;
+
     case 'Message':
-      const children = data.messageBuffers.map(buildMessageChunk).reduce((c, chunkChild, idx, arr) => {
+      const children = data.messageBuffers?.map(buildMessageChunk).reduce((c: JSX.Element[], chunkChild, idx, arr) => {
         c.push(chunkChild);
 
         if (idx <= arr.length) {
@@ -40,10 +44,15 @@ export default function UserChatEventEntry({ normalizedEvent }: EntryViewProps) 
         return c;
       }, []);
 
-      return (
+      retElement = (
         <>
-          {prefix} {children.map((c, key) => React.cloneElement(c, { key }))}
+          {prefix} {children!.map((c, key) => React.cloneElement(c, { key }))}
         </>
       );
+      break;
+    default:
+      retElement = <></>;
   }
+
+  return retElement;
 }

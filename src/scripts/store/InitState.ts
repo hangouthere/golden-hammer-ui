@@ -1,6 +1,6 @@
-import { PubSubConnectionResponse } from 'golden-hammer-shared';
-import { GetState, SetState } from 'zustand';
-import { ConnectTargetEventMap, IStore, localGet } from '.';
+import type { PubSubConnectionResponse } from 'golden-hammer-shared';
+import type { GetState, SetState } from 'zustand';
+import { localGet, type ConnectTargetEventMap, type IStore } from '.';
 
 export enum SocketStatus {
   Disconnected,
@@ -14,7 +14,7 @@ export interface IState {
   autoConnect: any;
   connectTarget: string;
   connectedPubSubs: Map<string, PubSubConnectionResponse>;
-  activePubSub: PubSubConnectionResponse;
+  activePubSub: PubSubConnectionResponse | null;
   events: ConnectTargetEventMap;
 }
 

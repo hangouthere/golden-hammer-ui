@@ -1,18 +1,28 @@
-import { StyledButton } from '-/styles/buttons';
-import { ActionIcon, Button, Group, GroupProps, Popover, Title, useMantineTheme } from '@mantine/core';
+import { StyledButton } from '-/scripts/styles/buttons';
+import { ActionIcon, Button, Group, Popover, Title, useMantineTheme, type GroupProps } from '@mantine/core';
+// @ts-ignore-next-line
 import useButtonStyles from '@mantine/core/esm/components/Button/Button.styles';
 import { useBooleanToggle } from '@mantine/hooks';
-import { TargetClassMap } from 'golden-hammer-shared';
+import type { TargetClassMap } from 'golden-hammer-shared';
 import React from 'react';
 import { MdLeakAdd } from 'react-icons/md';
 import EventTypesSelector from '../_shared/EventTypesSelector';
+
+type EventCategories = string[];
+
+type EventSelectorProps = {
+  eventCategories: EventCategories;
+  onChangeEventCategories: (types: EventCategories) => void;
+  SimpleRollOverClassName: string;
+  unregisterPubSub: () => void;
+};
 
 const ConnectTargetEventSelector = ({
   eventCategories,
   onChangeEventCategories,
   SimpleRollOverClassName,
   unregisterPubSub
-}) => (
+}: EventSelectorProps) => (
   <Group m={3} direction="column" grow>
     <EventTypesSelector selectedEvents={eventCategories} onChange={onChangeEventCategories} />
 
@@ -42,13 +52,25 @@ export default function ConnectedTargetNavItem({
 
   const toggleConfig = () => setShowConfig(!showConfig);
 
-  const onChangeEventCategories = _eventCategories =>
-    reSubEventCategories({ connectTarget, eventCategories: _eventCategories });
+  const onChangeEventCategories = (eventCategories: EventCategories) =>
+    reSubEventCategories({ connectTarget, eventCategories });
 
   const {
     classes: { root, subtle },
     cx
-  } = useButtonStyles({ radius: 'md' }, { classNames: {}, styles: {}, name: 'ButtonInButton' });
+  } = useButtonStyles(
+    {
+      radius: 'md',
+      color: 'red',
+      size: 'sm',
+      fullWidth: false,
+      compact: false,
+      gradientFrom: '',
+      gradientTo: '',
+      gradientDeg: 0
+    },
+    { classNames: {}, styles: {}, name: 'ButtonInButton' }
+  );
 
   const {
     classes: { ButtonInButton, SimpleRollOver }

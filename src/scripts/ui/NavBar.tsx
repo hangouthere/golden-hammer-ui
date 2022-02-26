@@ -1,10 +1,10 @@
-import useStore, { IStore } from '-/store';
-import { SocketStatus } from '-/store/InitState';
-import { StyledNavBar } from '-/styles/navbar';
-import { Accordion, AccordionItem, Navbar, NavbarProps, ScrollArea } from '@mantine/core';
-import { TargetClassMap } from 'golden-hammer-shared';
+import { Accordion, AccordionItem, Navbar, ScrollArea, type NavbarProps } from '@mantine/core';
+import type { PubSubConnectionResponse, TargetClassMap } from 'golden-hammer-shared';
 import React, { useCallback, useMemo } from 'react';
 import shallow from 'zustand/shallow';
+import useStore, { type IStore } from '../store';
+import { SocketStatus } from '../store/InitState';
+import { StyledNavBar } from '../styles/navbar';
 import ConnectedTargetNavItem from './navbar/ConnectedTargetNavItem';
 import { ConnectionStatusLabel, ConnectStatusForm } from './navbar/ConnectStatusAccordionItem';
 import NoConnectedTargetsNavItem from './navbar/NoConnectedTargetsNavItem';
@@ -36,7 +36,7 @@ function NavBar(props: Props) {
   const chosenInitialAccordionItem = !autoConnect ? 0 : -1;
   const hasTargetMaps = !!connectedPubSubs.size;
   const isConnected = SocketStatus.Connected === connectionStatus;
-  const isActive = conn => activePubSub?.pubsub.connectTarget === conn.pubsub.connectTarget;
+  const isActive = (conn: PubSubConnectionResponse) => activePubSub?.pubsub.connectTarget === conn.pubsub.connectTarget;
 
   const noTargetsView = <NoConnectedTargetsNavItem isConnected={isConnected} />;
 
@@ -49,7 +49,7 @@ function NavBar(props: Props) {
           reSubEventCategories={pubsubRegisterChat}
           unregisterPubSub={pubsubUnregisterChat}
           onClick={() => setActivePubSub(pubSubConn)}
-          className={isActive(pubSubConn) ? 'active' : null}
+          className={isActive(pubSubConn) ? 'active' : ''}
         />
       )),
     [connectedPubSubs, activePubSub]

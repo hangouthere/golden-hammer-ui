@@ -1,4 +1,4 @@
-import { Group, Header as MHeader, HeaderProps, Image, Title } from '@mantine/core';
+import { Group, Header as MHeader, Image, Title, type HeaderProps } from '@mantine/core';
 import React from 'react';
 
 const ImageLogo = new URL('../../assets/logo.png', import.meta.url);

@@ -1,13 +1,17 @@
-import useStore, { IStore } from '-/store';
-import { SocketStatus } from '-/store/InitState';
-import { StyledButton } from '-/styles/buttons';
-import { StyledInputs } from '-/styles/inputs';
+import useStore, { type IStore } from '-/scripts/store';
+import { SocketStatus } from '-/scripts/store/InitState';
+import { StyledButton } from '-/scripts/styles/buttons';
+import { StyledInputs } from '-/scripts/styles/inputs';
 import { Button, Checkbox, ColorSwatch, Group, Space, TextInput, Title, Tooltip, useMantineTheme } from '@mantine/core';
 import { useBooleanToggle, useForm } from '@mantine/hooks';
-import React, { ChangeEvent } from 'react';
+import React, { type ChangeEvent } from 'react';
 import shallow from 'zustand/shallow';
 
-export const ConnectionStatusLabel = ({ connectionStatus }) => {
+type ConnectionStatusProps = {
+  connectionStatus: SocketStatus;
+};
+
+export const ConnectionStatusLabel = ({ connectionStatus }: ConnectionStatusProps) => {
   const isConnected = SocketStatus.Connected === connectionStatus;
   const isConnecting = SocketStatus.Connecting === connectionStatus;
   const connectColor = isConnected ? 'cyan' : isConnecting ? 'yellow' : 'red';
@@ -60,7 +64,7 @@ export const ConnectStatusForm = () => {
     }
   });
 
-  const checkWarnConnect = event => {
+  const checkWarnConnect = (event: React.MouseEvent) => {
     if (event.type === 'mouseout') {
       return setShowWarnConnect(false);
     }
