@@ -8,6 +8,7 @@ import {
   Divider,
   Group,
   Popover,
+  Text,
   Title,
   Tooltip,
   useMantineTheme
@@ -16,6 +17,7 @@ import { useBooleanToggle } from '@mantine/hooks';
 import React, { useCallback } from 'react';
 import { BsFilter } from 'react-icons/bs';
 import { MdLeakAdd, MdLeakRemove } from 'react-icons/md';
+import { VscClearAll } from 'react-icons/vsc';
 import shallow from 'zustand/shallow';
 import EventTypesSelector from '../../_shared/EventTypesSelector';
 
@@ -37,9 +39,11 @@ const ConnectTargetEventSelector = ({ eventCategories, onChangeEventCategories, 
 
 const getState = (s: IStore) => ({
   activePubSub: s.activePubSub,
+  clearEvents: s.clearEvents,
   pubsubRegisterChat: s.pubsubRegisterChat,
   pubsubUnregisterChat: s.pubsubUnregisterChat,
-  events: s.events[s.activePubSub!.pubsub.connectTarget]
+  events: s.events[s.activePubSub!.pubsub.connectTarget],
+  stats: s.stats[s.activePubSub!.pubsub.connectTarget]
 });
 
 type EntryHeaderProps = {
@@ -48,7 +52,10 @@ type EntryHeaderProps = {
 };
 
 const EntryHeader = ({ desiredEventTypes, setDesiredEventTypes }: EntryHeaderProps) => {
-  const { activePubSub, pubsubRegisterChat, pubsubUnregisterChat, events } = useStore(getState, shallow);
+  const { activePubSub, pubsubRegisterChat, pubsubUnregisterChat, clearEvents, events, stats } = useStore(
+    getState,
+    shallow
+  );
 
   if (!activePubSub) {
     //! FIXME: See if this works at all, or should be removed
@@ -61,13 +68,16 @@ const EntryHeader = ({ desiredEventTypes, setDesiredEventTypes }: EntryHeaderPro
   const toggleToolTip_pubsub = useCallback(() => setShowPubSubTooltip(!showPubSubTooltip), []);
   const toggleToolTip_desired = useCallback(() => setShowDesiredFilterTooltip(!showDesiredFilterTooltip), []);
 
-  const onPubSubChange = (eventCategories: EventCategories) =>
-    pubsubRegisterChat({ connectTarget, eventCategories: eventCategories });
-  const onUnregister = useCallback(() => pubsubUnregisterChat(connectTarget), []);
-
   const {
     pubsub: { platformName, connectTarget, eventCategories }
   } = activePubSub!;
+
+  const onPubSubChange = useCallback(
+    (eventCategories: EventCategories) => pubsubRegisterChat({ connectTarget, eventCategories }),
+    [connectTarget, eventCategories]
+  );
+  const onClearEvents = useCallback(() => clearEvents(connectTarget), [connectTarget]);
+  const onUnregister = useCallback(() => pubsubUnregisterChat(connectTarget), [connectTarget]);
 
   const colors = useMantineTheme().other.Platforms[platformName];
   const { classes: cssClasses } = StyledEventViewer(colors);
@@ -82,6 +92,12 @@ const EntryHeader = ({ desiredEventTypes, setDesiredEventTypes }: EntryHeaderPro
         </Title>
 
         <Group className="options">
+          <Tooltip withArrow arrowSize={4} position="left" label="Clear events">
+            <ActionIcon variant="outline" color="yellow" onClick={onClearEvents}>
+              <VscClearAll />
+            </ActionIcon>
+          </Tooltip>
+
           <Popover
             opened={showDesiredFilterTooltip}
             onClose={() => setShowDesiredFilterTooltip(false)}
@@ -91,9 +107,11 @@ const EntryHeader = ({ desiredEventTypes, setDesiredEventTypes }: EntryHeaderPro
             placement="end"
             width={250}
             target={
-              <ActionIcon onClick={toggleToolTip_desired} variant="filled">
-                <BsFilter />
-              </ActionIcon>
+              <Tooltip withArrow arrowSize={4} position="left" label="Filter Events">
+                <ActionIcon onClick={toggleToolTip_desired} variant="filled">
+                  <BsFilter />
+                </ActionIcon>
+              </Tooltip>
             }
           >
             <ConnectTargetEventSelector
@@ -112,9 +130,11 @@ const EntryHeader = ({ desiredEventTypes, setDesiredEventTypes }: EntryHeaderPro
             placement="end"
             width={250}
             target={
-              <ActionIcon onClick={toggleToolTip_pubsub} variant="filled">
-                <MdLeakAdd />
-              </ActionIcon>
+              <Tooltip withArrow arrowSize={4} position="left" label="Toggle Events">
+                <ActionIcon onClick={toggleToolTip_pubsub} variant="filled">
+                  <MdLeakAdd />
+                </ActionIcon>
+              </Tooltip>
             }
           >
             <ConnectTargetEventSelector
@@ -133,13 +153,75 @@ const EntryHeader = ({ desiredEventTypes, setDesiredEventTypes }: EntryHeaderPro
       </Group>
 
       <div className="statsThumb" onClick={() => setShowStatistics(s => !s)}>
-        <Collapse
-          className="stats-container"
-          in={showStatistics}
-          transitionDuration={1000}
-          transitionTimingFunction="linear"
-        >
-          <span># Events: {events.length}</span>
+        <Collapse className="stats-container" in={showStatistics}>
+          <span>
+            <Tooltip
+              position="bottom"
+              withArrow={true}
+              arrowSize={6}
+              label={
+                <Group direction="column" spacing="sm">
+                  <Title order={5}>All Events</Title>
+                  <Text size="sm">Viewing: {events.length}</Text>
+                  <Text size="sm">Total Seen: {stats.TotalEvents || 0}</Text>
+                </Group>
+              }
+            >
+              <span className="label"># Events:</span> {events.length}/{stats.TotalEvents || 0}
+            </Tooltip>
+          </span>
+
+          <span>
+            <Tooltip
+              position="bottom"
+              withArrow={true}
+              arrowSize={6}
+              label={
+                <Group direction="column" spacing="sm">
+                  <Title order={5}>Monetization Events</Title>
+                  <Text size="sm">Subscription: {stats['Monetization.Subscription'] || 0}</Text>
+                  <Text size="sm">Tip: {stats['Monetization.Tip'] || 0}</Text>
+                </Group>
+              }
+            >
+              <span className="label">Earnings:</span> ${(stats.Earnings || 0).toFixed(2)}
+            </Tooltip>
+          </span>
+
+          <span>
+            <Tooltip
+              position="bottom"
+              withArrow={true}
+              arrowSize={6}
+              label={
+                <Group direction="column" spacing="sm">
+                  <Title order={5}>UserChat Events</Title>
+                  <Text size="sm">Messages: {stats['UserChat.Message'] || 0}</Text>
+                  <Text size="sm">Join/Parts: {stats['UserChat.Presence'] || 0}</Text>
+                </Group>
+              }
+            >
+              <span className="label">UserChat:</span> {stats.UserChat || 0}
+            </Tooltip>
+          </span>
+
+          <span>
+            <Tooltip
+              position="bottom"
+              withArrow={true}
+              arrowSize={6}
+              label={
+                <Group direction="column" spacing="sm">
+                  <Title order={5}>Administration Events</Title>
+                  <Text size="sm">MessageRemoval: {stats['Administration.MessageRemoval'] || 0}</Text>
+                  <Text size="sm">Timeout: {stats['Administration.Timeout'] || 0}</Text>
+                  <Text size="sm">Ban: {stats['Administration.Ban'] || 0}</Text>
+                </Group>
+              }
+            >
+              <span className="label">Administration:</span> {stats.Administration || 0}
+            </Tooltip>
+          </span>
         </Collapse>
       </div>
     </Group>

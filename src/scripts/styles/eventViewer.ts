@@ -72,7 +72,19 @@ export const StyledEventViewer = createStyles((theme, colors: StyledEventViewerP
 
         '.stats-container': {
           padding: '3px',
-          fontSize: '70%'
+          fontSize: '70%',
+
+          '.label': {
+            fontWeight: 'bold',
+            fontSize: '110%'
+          },
+
+          '& > div': {
+            display: 'flex',
+            justifyContent: 'space-between',
+            paddingLeft: '8px',
+            paddingRight: '8px'
+          }
         }
       }
     },
@@ -82,6 +94,7 @@ export const StyledEventViewer = createStyles((theme, colors: StyledEventViewerP
     },
 
     EventLogEntry: {
+      position: 'relative',
       fontSize: '18px',
       verticalAlign: 'middle',
       padding: '5px',
@@ -130,6 +143,32 @@ export const StyledEventViewer = createStyles((theme, colors: StyledEventViewerP
       '&:hover': {
         filter: 'opacity(1)',
         fontSize: '18px'
+      }
+    },
+
+    Monetization: {
+      textAlign: 'center',
+
+      '.duration': {
+        fontSize: '120%',
+        color: '#00d0ff',
+        textShadow: '0 0 6px #00d0ff'
+      },
+
+      '.estimatedValue': {
+        fontSize: '110%',
+        textShadow: '0 0 8px #00ff2f, 0 0 8px #00ff2f'
+      },
+
+      '&:before': {
+        content: "' '",
+        border: '1px solid rgb(255, 208, 0)',
+        boxShadow: 'inset 0 0 26px rgb(255 208 0 / 40%)',
+        position: 'absolute',
+        top: '0',
+        bottom: '0',
+        left: '0',
+        right: '0'
       }
     }
   };

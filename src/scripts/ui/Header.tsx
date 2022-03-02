@@ -9,7 +9,7 @@ export default function Header(props: Omit<HeaderProps, 'children'>) {
         <Image src={ImageLogo} width={48} />
 
         <Group align="baseline">
-          <Title order={1}>Project: Golden Hammer</Title>
+          <Title order={1}>Golden Hammer Event Viewer</Title>
           <Title order={6}>by nfgCodex!</Title>
         </Group>
       </Group>

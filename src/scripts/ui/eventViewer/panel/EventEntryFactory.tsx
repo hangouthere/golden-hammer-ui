@@ -8,6 +8,8 @@ import AdministrativeEventEntry from '../entries/AdministrativeEventEntry';
 import MonetizationEventEntry from '../entries/MonetizationEventEntry';
 import UserChatEventEntry from '../entries/UserChatEventEntry';
 
+const SKIPPED_EVENTS = ['submysterygift'];
+
 ////////////////////////////////////////////////////////////////////////////////////////////
 // Entry View Mapping for Factory
 
@@ -17,8 +19,10 @@ export type EntryViewProps = {
 
 type Dims = { width: number; height: number };
 
+type EntryViewComponent = (props: EntryViewProps) => JSX.Element | null;
+
 type EventClassEntryViewMapType = {
-  [eventClass in EventClassifications]?: (props: EntryViewProps) => JSX.Element;
+  [eventClass in EventClassifications]?: EntryViewComponent;
 };
 
 const EventClassEntryViewMap: EventClassEntryViewMapType = {
@@ -46,16 +50,20 @@ export const EventEntryFactory = ({ pubSubConnection, desiredEventTypes }: Event
   );
 
   const createDecoratedEventEntry = useCallback(
-    ({ rowData: nEvent }: { rowData: NormalizedMessagingEvent }) => {
-      const EntryContent = EventClassEntryViewMap[nEvent.eventClassification.category] as React.ElementType;
-      const key = nEvent.pubSubMsgId;
-      const fqcn = `${nEvent.eventClassification.category}-${nEvent.eventClassification.subCategory}`;
+    ({ rowData }: { rowData: NormalizedMessagingEvent }) => {
+      const fqcn = `${rowData.eventClassification.category}-${rowData.eventClassification.subCategory}`;
+      const EntryContent = EventClassEntryViewMap[rowData.eventClassification.category] as EntryViewComponent;
+      const key = rowData.pubSubMsgId;
 
-      const eventEntryClassNames = [cssClasses.EventLogEntry, (cssClasses as any)[fqcn]];
+      const eventEntryClassNames = [
+        cssClasses.EventLogEntry,
+        (cssClasses as any)[rowData.eventClassification.category],
+        (cssClasses as any)[fqcn]
+      ];
 
       return (
         <div key={key} className={cx.apply(null, eventEntryClassNames)}>
-          <EntryContent normalizedEvent={nEvent} />
+          <EntryContent normalizedEvent={rowData} />
         </div>
       );
     },
@@ -63,23 +71,33 @@ export const EventEntryFactory = ({ pubSubConnection, desiredEventTypes }: Event
   );
 
   const filteredEvents = useMemo(
-    //!FIXME Make reversing this a "knob"
-    () => activeEvents.filter(aE => desiredEventTypes?.includes(aE.eventClassification.category)).reverse(),
+    () =>
+      activeEvents
+        .filter(aE => {
+          const shouldSkip =
+            SKIPPED_EVENTS.includes(aE.eventClassification.category) || SKIPPED_EVENTS.includes(aE.platform.eventName);
+
+          return !shouldSkip && desiredEventTypes?.includes(aE.eventClassification.category);
+        })
+        .reverse(),
     [activeEvents, desiredEventTypes]
   );
 
-  const ScrollArea = ({ width, height }: Dims) => (
-    <BaseTable
-      headerHeight={0}
-      data={filteredEvents}
-      rowKey="pubSubMsgId"
-      rowRenderer={createDecoratedEventEntry}
-      estimatedRowHeight={50}
-      sortBy={{ key: 'timestamp', order: 'desc' }}
-      {...{ width, height }}
-    >
-      <Column key="col0" width={0} flexGrow={1} />
-    </BaseTable>
+  const ScrollArea = useCallback(
+    ({ width, height }: Dims) => (
+      <BaseTable
+        headerHeight={0}
+        data={filteredEvents}
+        rowKey="pubSubMsgId"
+        rowRenderer={createDecoratedEventEntry}
+        estimatedRowHeight={50}
+        sortBy={{ key: 'timestamp', order: 'desc' }}
+        {...{ width, height }}
+      >
+        <Column key="col0" width={0} flexGrow={1} />
+      </BaseTable>
+    ),
+    [filteredEvents]
   );
 
   return <AutoResizer>{ScrollArea}</AutoResizer>;

@@ -1,4 +1,4 @@
-import type { NormalizedMessagingEvent } from 'golden-hammer-shared';
+import type { EventClassifications, NormalizedMessagingEvent } from 'golden-hammer-shared';
 import create from 'zustand';
 import Actions, { type IActions } from './Actions';
 import InitState, { type IState } from './InitState';
@@ -12,6 +12,17 @@ const useStore = create<IStore>((s, g) => ({
 }));
 
 export const GHPubSub_EventTypes = ['UserChat', 'Monetization', 'Administration', 'System', 'PlatformSpecific'];
+
+type CustomStats = {
+  TotalEvents: number;
+  Earnings: number;
+};
+
+export type StatMap = Partial<Record<EventClassifications, number>> & Partial<CustomStats>;
+
+export type ConnectTargetStatMap = {
+  [connectTarget: string]: StatMap;
+};
 
 export type ConnectTargetEventMap = {
   [connectTarget: string]: NormalizedMessagingEvent[];

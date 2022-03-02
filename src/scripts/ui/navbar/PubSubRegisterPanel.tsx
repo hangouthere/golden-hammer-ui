@@ -33,16 +33,19 @@ function PubSubRegisterPanel({ disabled, pubSubRegister }: Props) {
     }
   });
 
-  const onChangeEvents = useCallback(registerEvents => setSelectedEvents(registerEvents), []);
+  const onChangeEvents = useCallback(registerEvents => setSelectedEvents(registerEvents), [setSelectedEvents]);
 
   const onFormChange = useCallback(() => setIsValid(pubSubReg.validate()), [pubSubReg.values]);
-  const onFormSubmitted = useCallback(({ connectTarget }) => {
-    pubSubRegister({ connectTarget, eventCategories: selectedEvents });
-    setSelectedEvents([...GHPubSub_EventTypes]);
-    setIsValid(false);
-    pubSubReg.reset();
-    pubSubReg.resetErrors();
-  }, []);
+  const onFormSubmitted = useCallback(
+    ({ connectTarget }) => {
+      pubSubRegister({ connectTarget, eventCategories: selectedEvents });
+      setSelectedEvents([...GHPubSub_EventTypes]);
+      setIsValid(false);
+      pubSubReg.reset();
+      pubSubReg.resetErrors();
+    },
+    [pubSubRegister, selectedEvents]
+  );
 
   return (
     <>

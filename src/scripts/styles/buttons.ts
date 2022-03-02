@@ -1,4 +1,4 @@
-import { type MantineColor, type ButtonVariant, createStyles, getSharedColorScheme } from '@mantine/core';
+import { createStyles, getSharedColorScheme, type ButtonVariant, type MantineColor } from '@mantine/core';
 
 export interface ButtonProps {
   colorFG?: MantineColor;

@@ -1,6 +1,6 @@
-import { Accordion, AccordionItem, Navbar, ScrollArea, type NavbarProps } from '@mantine/core';
-import type { PubSubConnectionResponse, TargetClassMap } from 'golden-hammer-shared';
-import React, { useCallback, useMemo } from 'react';
+import { Accordion, AccordionItem, Navbar, type NavbarProps } from '@mantine/core';
+import type { PubSubConnectionResponse } from 'golden-hammer-shared';
+import React, { useMemo } from 'react';
 import shallow from 'zustand/shallow';
 import useStore, { type IStore } from '../store';
 import { SocketStatus } from '../store/InitState';
@@ -59,13 +59,6 @@ function NavBar(props: Props) {
     classes: { NavBarContainer, ScrollAreaContainer }
   } = StyledNavBar();
 
-  const onAddPubSubRegister = useCallback(
-    (targetClassMap: TargetClassMap) => {
-      pubsubRegisterChat(targetClassMap);
-    },
-    [pubsubRegisterChat]
-  );
-
   return (
     <Navbar {...props} className={NavBarContainer}>
       <Navbar.Section>
@@ -77,11 +70,11 @@ function NavBar(props: Props) {
       </Navbar.Section>
 
       <Navbar.Section grow className={ScrollAreaContainer}>
-        <ScrollArea>{hasTargetMaps ? pubSubNavItems : noTargetsView}</ScrollArea>
+        {hasTargetMaps ? pubSubNavItems : noTargetsView}
       </Navbar.Section>
 
       <Navbar.Section>
-        <PubSubRegisterPanel disabled={!isConnected} pubSubRegister={onAddPubSubRegister} />
+        <PubSubRegisterPanel disabled={!isConnected} pubSubRegister={pubsubRegisterChat} />
       </Navbar.Section>
     </Navbar>
   );

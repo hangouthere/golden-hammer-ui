@@ -9,6 +9,7 @@ import Navbar from './ui/NavBar';
 //! FIXME HACK CRAP GET RID OF IT!
 let u = new URLSearchParams(globalThis.location.search);
 const isDevMode = null !== u.get('dev');
+const connectTargets = u.getAll('connectTargets') || [];
 
 const getState = (s: IStore) => ({
   connect: s.connect,
@@ -24,14 +25,10 @@ export default function App(): ReactElement {
   useEffect(() => {
     if (autoConnect) {
       connect(pubSubUri);
-      // !FIXME GET RID OF THIS!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-      // !FIXME GET RID OF THIS!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-      // !FIXME GET RID OF THIS!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-      // !FIXME GET RID OF THIS!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-      const tgtClassMap = { connectTarget: 'nfgcodex', eventCategories: [...GHPubSub_EventTypes] };
-
-      pubsubRegisterChat(tgtClassMap);
+      connectTargets.forEach(connectTarget =>
+        pubsubRegisterChat({ connectTarget, eventCategories: [...GHPubSub_EventTypes] })
+      );
     }
   }, []);
 

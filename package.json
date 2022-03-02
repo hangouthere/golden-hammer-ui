@@ -4,7 +4,6 @@
   "description": "",
   "author": "nfgCodex <nfg.codex@outlook.com>",
   "license": "MIT",
-  "source": "./src/index.html",
   "scripts": {
     "clean": "rimraf ./dist",
     "docker-compose": "npm i --force && echo \"Running in docker-compose... You should run interactively by attaching:\n\t\tdocker exec -it `hostname` npm run dev\" && tail -f /dev/null",

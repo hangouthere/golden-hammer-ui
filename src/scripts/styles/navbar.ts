@@ -12,6 +12,7 @@ export const StyledNavBar = createStyles(theme => ({
   },
 
   ScrollAreaContainer: {
-    marginTop: '8px'
+    marginTop: '8px',
+    height: '100%'
   }
 }));

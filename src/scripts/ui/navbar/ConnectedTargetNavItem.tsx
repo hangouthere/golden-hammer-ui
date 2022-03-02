@@ -56,13 +56,13 @@ export default function ConnectedTargetNavItem({
     reSubEventCategories({ connectTarget, eventCategories });
 
   const {
-    classes: { root, subtle },
+    classes: { root, default: defaultStyle },
     cx
   } = useButtonStyles(
     {
       radius: 'md',
       color: 'red',
-      size: 'sm',
+      size: 'md',
       fullWidth: false,
       compact: false,
       gradientFrom: '',
@@ -84,7 +84,7 @@ export default function ConnectedTargetNavItem({
     <Group
       position="apart"
       spacing="lg"
-      className={cx(restProps.className, root, subtle, ButtonInButton)}
+      className={cx(restProps.className, root, defaultStyle, ButtonInButton)}
       onClick={restProps.onClick}
     >
       <Title order={5}>{connectTarget}</Title>
@@ -98,7 +98,7 @@ export default function ConnectedTargetNavItem({
         placement="start"
         onClose={() => setShowConfig(false)}
         target={
-          <ActionIcon onClick={toggleConfig}>
+          <ActionIcon onClick={toggleConfig} variant="filled">
             <MdLeakAdd />
           </ActionIcon>
         }

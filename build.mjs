@@ -11,10 +11,10 @@ const PORT = Number(process.env.PORT || 9000);
 const DIST_DIRNAME = process.env.OUTDIR || 'dist';
 const SRC_DIRNAME = process.env.SRCDIR || 'src';
 const SRC_FILENAME = process.env.ENTRYPOINT || 'index.html';
-const DIST = path.join(__dirname, DIST_DIRNAME);
 const VERBOSE = !!process.env.VERBOSE || false;
 const PLATFORM = process.env.PLATFORM || 'browser';
 const TARGET = process.env.TARGET || 'esnext';
+const DIST = path.join(__dirname, DIST_DIRNAME);
 const newEntrypointFilename = path.join(DIST_DIRNAME, SRC_FILENAME);
 
 /** @type {esbuild.ServeOptions}} */
