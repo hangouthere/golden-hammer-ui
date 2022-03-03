@@ -12,6 +12,7 @@ export const EventEntryPanel = () => {
 
   const pubSubInfo = activePubSub!.pubsub;
   const [desiredEventTypes, setDesiredEventTypes] = useState(pubSubInfo?.eventCategories);
+  const [searchTerm, setSearchTerm] = useState('');
 
   const {
     classes: { PanelScrollContainer }
@@ -23,10 +24,10 @@ export const EventEntryPanel = () => {
 
   return (
     <>
-      <EntryHeader {...{ desiredEventTypes, setDesiredEventTypes }} />
+      <EntryHeader {...{ searchTerm, setSearchTerm, desiredEventTypes, setDesiredEventTypes }} />
 
       <div className={PanelScrollContainer}>
-        <EventEntryFactory pubSubConnection={activePubSub} desiredEventTypes={desiredEventTypes} />
+        <EventEntryFactory pubSubConnection={activePubSub} desiredEventTypes={desiredEventTypes} searchTerm={searchTerm} />
       </div>
     </>
   );

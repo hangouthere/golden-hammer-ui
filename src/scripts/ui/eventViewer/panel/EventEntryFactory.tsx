@@ -37,9 +37,10 @@ const EventClassEntryViewMap: EventClassEntryViewMapType = {
 type EventEntryFactoryProps = {
   pubSubConnection: PubSubConnectionResponse | null;
   desiredEventTypes?: string[];
+  searchTerm: string;
 };
 
-export const EventEntryFactory = ({ pubSubConnection, desiredEventTypes }: EventEntryFactoryProps) => {
+export const EventEntryFactory = ({ pubSubConnection, desiredEventTypes, searchTerm }: EventEntryFactoryProps) => {
   const connectTarget = pubSubConnection?.pubsub.connectTarget as string;
   const activeEvents = useStore(s => s.events[connectTarget]);
 
@@ -75,7 +76,9 @@ export const EventEntryFactory = ({ pubSubConnection, desiredEventTypes }: Event
       activeEvents
         .filter(aE => {
           const shouldSkip =
-            SKIPPED_EVENTS.includes(aE.eventClassification.category) || SKIPPED_EVENTS.includes(aE.platform.eventName);
+            SKIPPED_EVENTS.includes(aE.eventClassification.category) ||
+            SKIPPED_EVENTS.includes(aE.platform.eventName) ||
+            !JSON.stringify(aE.eventData).includes(searchTerm);
           return !shouldSkip && desiredEventTypes?.includes(aE.eventClassification.category);
         })
         .reverse(),

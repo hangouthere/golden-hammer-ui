@@ -102,6 +102,7 @@ export const StyledEventViewer = createStyles((theme, colors: StyledEventViewerP
       paddingRight: '20px',
       maxHeight: '500px',
       transition: 'all 1s',
+      overflow: 'hidden',
 
       border: '1px solid #29075c',
       borderLeft: '10px solid #29075c',
