@@ -1,12 +1,12 @@
 import type {
+  AdministrationEventData,
   EventClassifications,
   MonetizationEventData,
-  NormalizedMessagingEvent,
   PubSubConnectionResponse
 } from 'golden-hammer-shared';
-import type { IStore, StatMap } from '.';
+import type { IStore, StatMap, UINormalizedMessagingEvent } from '.';
 
-const MAX_COUNT_EVENTS = 500;
+const MAX_COUNT_EVENTS = 1000;
 
 export const registerPubSub = (state: IStore, pubSubConnection: PubSubConnectionResponse) => {
   //Enforce lowercase name for store
@@ -44,8 +44,9 @@ export const unregisterPubSub = (state: IStore, pubSubConnection: PubSubConnecti
   };
 };
 
-export function processSocketEvent(state: IStore, normalizedEvent: NormalizedMessagingEvent) {
-  const newEventMap = ringBufferEvents(state.events, normalizedEvent);
+export function processSocketEvent(state: IStore, normalizedEvent: UINormalizedMessagingEvent) {
+  let newEventMap = ringBufferEvents(state.events, normalizedEvent);
+  newEventMap = filterAdminEvents(newEventMap, normalizedEvent);
   const newStatsMap = addStats(state.stats, normalizedEvent);
 
   return {
@@ -60,7 +61,7 @@ export function processSocketEvent(state: IStore, normalizedEvent: NormalizedMes
   };
 }
 
-function addStats(state: IStore['stats'], normalizedEvent: NormalizedMessagingEvent) {
+function addStats(state: IStore['stats'], normalizedEvent: UINormalizedMessagingEvent) {
   const { category, subCategory } = normalizedEvent.eventClassification;
   const fqcn = `${category}.${subCategory}` as EventClassifications;
 
@@ -86,7 +87,7 @@ function addStats(state: IStore['stats'], normalizedEvent: NormalizedMessagingEv
   };
 }
 
-function ringBufferEvents(state: IStore['events'], normalizedEvent: NormalizedMessagingEvent) {
+function ringBufferEvents(state: IStore['events'], normalizedEvent: UINormalizedMessagingEvent) {
   const newEventList = [...state[normalizedEvent.connectTarget], normalizedEvent];
 
   if (newEventList.length > MAX_COUNT_EVENTS) {
@@ -96,5 +97,34 @@ function ringBufferEvents(state: IStore['events'], normalizedEvent: NormalizedMe
   return {
     ...state,
     [normalizedEvent.connectTarget]: newEventList
+  };
+}
+
+function filterAdminEvents(eventMap: IStore['events'], normalizedEvent: UINormalizedMessagingEvent) {
+  if ('Administration' !== normalizedEvent.eventClassification.category) {
+    return eventMap;
+  }
+
+  const filteredEvents = eventMap[normalizedEvent.connectTarget].map(prevEvent => {
+    const data = normalizedEvent.eventData as AdministrationEventData;
+
+    if ('Message' !== prevEvent.eventClassification.subCategory) {
+      return prevEvent;
+    }
+
+    // Determines if the target type is a user, if we're not trying to remove a specific message
+    const targetTypeUser = 'MessageRemoval' !== normalizedEvent.eventClassification.subCategory;
+    // Note the different array access (1 v 0), as well as sub-member ID
+    const testTargetId = targetTypeUser
+      ? prevEvent.platform.eventData[0]['user-id']
+      : prevEvent.platform.eventData[0]['id'];
+
+    prevEvent.isRemoved = testTargetId === data.targetId;
+    return prevEvent;
+  });
+
+  return {
+    ...eventMap,
+    [normalizedEvent.connectTarget]: filteredEvents
   };
 }

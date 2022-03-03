@@ -45,9 +45,9 @@ export default function UserChatEventEntry({ normalizedEvent }: EntryViewProps):
       }, []);
 
       retElement = (
-        <>
+        <span className={normalizedEvent.isRemoved ? 'removed-content' : ''}>
           {prefix} {children!.map((c, key) => React.cloneElement(c, { key }))}
-        </>
+        </span>
       );
       break;
     default:

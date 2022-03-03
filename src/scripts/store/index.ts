@@ -24,8 +24,12 @@ export type ConnectTargetStatMap = {
   [connectTarget: string]: StatMap;
 };
 
+export type UINormalizedMessagingEvent = NormalizedMessagingEvent & {
+  isRemoved: boolean;
+};
+
 export type ConnectTargetEventMap = {
-  [connectTarget: string]: NormalizedMessagingEvent[];
+  [connectTarget: string]: UINormalizedMessagingEvent[];
 };
 
 export default useStore;

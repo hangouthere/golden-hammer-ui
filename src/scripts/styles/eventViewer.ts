@@ -123,6 +123,17 @@ export const StyledEventViewer = createStyles((theme, colors: StyledEventViewerP
 
       '.userName': {
         color: '#ca7ff9'
+      },
+
+      '.removed-content': {
+        transition: 'all 250ms',
+        filter: 'blur(5px)',
+        fontSize: '10px',
+
+        '&:hover': {
+          filter: 'blur(0)',
+          fontSize: '110%'
+        }
       }
     },
 
@@ -130,7 +141,12 @@ export const StyledEventViewer = createStyles((theme, colors: StyledEventViewerP
       transition: 'all 250ms',
 
       '&:hover': {
-        fontSize: '125%'
+        fontSize: '125%',
+
+        '.removed-content': {
+          filter: 'blur(0)',
+          fontSize: '110%'
+        }
       }
     },
 
@@ -143,6 +159,26 @@ export const StyledEventViewer = createStyles((theme, colors: StyledEventViewerP
       '&:hover': {
         filter: 'opacity(1)',
         fontSize: '18px'
+      }
+    },
+
+    Administration: {
+      fontSize: '10px',
+
+      '.duration': {
+        fontSize: '110%',
+        textShadow: '0 0 8px rgb(155, 40, 40), 0 0 8px rgb(155, 40, 40)'
+      },
+
+      '&:before': {
+        content: "' '",
+        border: '1px solid rgb(155, 40, 40)',
+        boxShadow: 'inset 0 0 26px rgb(155, 40, 40 / 40%)',
+        position: 'absolute',
+        top: '0',
+        bottom: '0',
+        left: '0',
+        right: '0'
       }
     },
 

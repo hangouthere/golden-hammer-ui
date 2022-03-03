@@ -2,18 +2,18 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "Launch Chrome",
+      "name": "Launch Demo 02 (React)",
       "request": "launch",
       "type": "pwa-chrome",
-      "url": "http://localhost:9000",
-      "webRoot": "${workspaceFolder}"
+      "url": "http://localhost:9000/index.html?connectTargets=nfgcodex",
+      "webRoot": "${workspaceFolder}/golden-hammer-ui"
     },
     {
-      "name": "Attach to Chrome",
+      "name": "Attach to Demo 02 (React)",
       "port": 9222,
       "request": "attach",
       "type": "pwa-chrome",
-      "webRoot": "${workspaceFolder}"
+      "webRoot": "${workspaceFolder}/golden-hammer-ui"
     }
   ]
 }

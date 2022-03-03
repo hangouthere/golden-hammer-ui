@@ -1,7 +1,7 @@
-import useStore from '-/scripts/store';
+import useStore, { type UINormalizedMessagingEvent } from '-/scripts/store';
 import { StyledEventViewer } from '-/scripts/styles/eventViewer';
 import { useMantineTheme } from '@mantine/core';
-import type { EventClassifications, NormalizedMessagingEvent, PubSubConnectionResponse } from 'golden-hammer-shared';
+import type { EventClassifications, PubSubConnectionResponse } from 'golden-hammer-shared';
 import React, { useCallback, useMemo } from 'react';
 import BaseTable, { AutoResizer, Column } from 'react-base-table';
 import AdministrativeEventEntry from '../entries/AdministrativeEventEntry';
@@ -14,7 +14,7 @@ const SKIPPED_EVENTS = ['submysterygift'];
 // Entry View Mapping for Factory
 
 export type EntryViewProps = {
-  normalizedEvent: NormalizedMessagingEvent;
+  normalizedEvent: UINormalizedMessagingEvent;
 };
 
 type Dims = { width: number; height: number };
@@ -50,7 +50,7 @@ export const EventEntryFactory = ({ pubSubConnection, desiredEventTypes }: Event
   );
 
   const createDecoratedEventEntry = useCallback(
-    ({ rowData }: { rowData: NormalizedMessagingEvent }) => {
+    ({ rowData }: { rowData: UINormalizedMessagingEvent }) => {
       const fqcn = `${rowData.eventClassification.category}-${rowData.eventClassification.subCategory}`;
       const EntryContent = EventClassEntryViewMap[rowData.eventClassification.category] as EntryViewComponent;
       const key = rowData.pubSubMsgId;
@@ -76,7 +76,6 @@ export const EventEntryFactory = ({ pubSubConnection, desiredEventTypes }: Event
         .filter(aE => {
           const shouldSkip =
             SKIPPED_EVENTS.includes(aE.eventClassification.category) || SKIPPED_EVENTS.includes(aE.platform.eventName);
-
           return !shouldSkip && desiredEventTypes?.includes(aE.eventClassification.category);
         })
         .reverse(),
