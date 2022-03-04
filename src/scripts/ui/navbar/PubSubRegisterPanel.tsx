@@ -1,6 +1,6 @@
 import { GHPubSub_EventTypes, type IStore } from '-/scripts/store';
-import { StyledAccordion } from '-/scripts/styles/accordion';
 import { StyledInputs } from '-/scripts/styles/inputs';
+import { StyledMisc } from '-/scripts/styles/misc';
 import { Accordion, Button, Divider, Space, TextInput, Title } from '@mantine/core';
 import { useBooleanToggle, useForm } from '@mantine/hooks';
 import React, { useCallback, useState } from 'react';
@@ -22,7 +22,7 @@ function PubSubRegisterPanel({ disabled, pubSubRegister }: Props) {
 
   const {
     classes: { Compact }
-  } = StyledAccordion();
+  } = StyledMisc();
 
   const pubSubReg = useForm({
     initialValues: {
