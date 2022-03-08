@@ -4,7 +4,7 @@ import shallow from 'zustand/shallow';
 import useStore, { GHPubSub_EventTypes, type IStore } from './store';
 import EventViewerContainer from './ui/eventViewer/EventViewerContainer';
 import Header from './ui/Header';
-import Navbar from './ui/NavBar';
+import Navbar from './ui/navbar';
 
 //! FIXME HACK CRAP GET RID OF IT!
 let u = new URLSearchParams(globalThis.location.search);

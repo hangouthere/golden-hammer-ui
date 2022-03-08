@@ -1,14 +1,15 @@
-import { Accordion, AccordionItem, Navbar, type NavbarProps } from '@mantine/core';
+import { ColorSwatch, Group, Navbar, Tooltip, type NavbarProps } from '@mantine/core';
 import type { PubSubConnectionResponse } from 'golden-hammer-shared';
 import React, { useMemo } from 'react';
 import shallow from 'zustand/shallow';
-import useStore, { type IStore } from '../store';
-import { SocketStatus } from '../store/InitState';
-import { StyledNavBar } from '../styles/navbar';
-import ConnectedTargetNavItem from './navbar/ConnectedTargetNavItem';
-import { ConnectionStatusLabel, ConnectStatusForm } from './navbar/ConnectStatusAccordionItem';
-import NoConnectedTargetsNavItem from './navbar/NoConnectedTargetsNavItem';
-import PubSubRegisterPanel from './navbar/PubSubRegisterPanel';
+import useStore, { type IStore } from '../../store';
+import { SocketStatus } from '../../store/InitState';
+import { StyledNavBar } from '../../styles/navbar';
+import ConnectedTargetNavItem from './ConnectedTargetNavItem';
+import InfoModal from './InfoModal';
+import NoConnectedTargetsNavItem from './NoConnectedTargetsNavItem';
+import PubSubConfig from './PubSubConfig';
+import PubSubRegisterPanel from './PubSubRegisterPanel';
 
 interface Props extends Omit<NavbarProps, 'children'> {}
 
@@ -33,9 +34,11 @@ function NavBar(props: Props) {
     setActivePubSub
   } = useStore(getStateVals, shallow);
 
-  const chosenInitialAccordionItem = !autoConnect ? 0 : -1;
   const hasTargetMaps = !!connectedPubSubs.size;
   const isConnected = SocketStatus.Connected === connectionStatus;
+  const isConnecting = SocketStatus.Connecting === connectionStatus;
+  const connectColor = isConnected ? 'cyan' : isConnecting ? 'yellow' : 'red';
+
   const isActive = (conn: PubSubConnectionResponse) => activePubSub?.pubsub.connectTarget === conn.pubsub.connectTarget;
 
   const noTargetsView = <NoConnectedTargetsNavItem isConnected={isConnected} />;
@@ -62,11 +65,17 @@ function NavBar(props: Props) {
   return (
     <Navbar {...props} className={NavBarContainer}>
       <Navbar.Section>
-        <Accordion initialItem={chosenInitialAccordionItem}>
-          <AccordionItem label={<ConnectionStatusLabel connectionStatus={connectionStatus} />}>
-            <ConnectStatusForm />
-          </AccordionItem>
-        </Accordion>
+        <Group grow>
+          <Group>
+            <Tooltip label={isConnected ? 'Connected' : 'Not Connected'} position="right" withArrow>
+              <ColorSwatch radius="xl" size={16} color={connectColor}></ColorSwatch>
+            </Tooltip>
+          </Group>
+          <Group position="right">
+            <PubSubConfig />
+            <InfoModal />
+          </Group>
+        </Group>
       </Navbar.Section>
 
       <Navbar.Section grow className={ScrollAreaContainer}>
