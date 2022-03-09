@@ -24,9 +24,9 @@ export default function App(): ReactElement {
     if (autoConnect) {
       connect(pubSubUri);
 
-      connectTargets.forEach(connectTarget =>
-        pubsubRegisterChat({ connectTarget, eventCategories: [...GHPubSub_EventTypes] })
-      );
+      connectTargets.forEach(connectTarget => {
+        pubsubRegisterChat({ connectTarget, eventCategories: [...GHPubSub_EventTypes] });
+      });
     }
   }, []);
 

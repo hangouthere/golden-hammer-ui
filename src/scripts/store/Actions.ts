@@ -1,31 +1,11 @@
 import type { PubSubConnectionResponse, TargetClassMap } from 'golden-hammer-shared';
-import { Socket } from 'socket.io-client';
 import type { GetState, SetState } from 'zustand';
 import { localStore, type IStore } from '.';
 import * as GHSocket from '../services/GHSocket';
 import { SocketStatus } from './InitState';
-import { processSocketEvent, registerPubSub, unregisterPubSub } from './SocketActions';
+import { bindSocketStatus, registerPubSub, unregisterPubSub } from './SocketActions';
 
 export const eventer = document.createElement('div');
-
-const bindSocketStatus = (set: SetState<IStore>, get: GetState<IStore>, socket: Socket) => {
-  socket.on('connect', () => {
-    set({ connectionStatus: SocketStatus.Connected });
-    eventer.dispatchEvent(new CustomEvent('connect'));
-  });
-
-  socket.on('connect_error', err => {
-    set({ connectionStatus: SocketStatus.Disconnected });
-    eventer.dispatchEvent(new CustomEvent('error', { detail: err.message }));
-  });
-
-  socket.on('disconnect', reason => {
-    set({ connectionStatus: SocketStatus.Disconnected, events: {}, connectedPubSubs: new Map() });
-    eventer.dispatchEvent(new CustomEvent('disconnect', { detail: reason }));
-  });
-
-  socket.on('gh-chat.evented', normalizedEvent => set(state => processSocketEvent(state, normalizedEvent)));
-};
 
 export interface IActions {
   setAutoConnect: (autoConnect: boolean) => void;

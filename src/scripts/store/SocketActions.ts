@@ -4,9 +4,45 @@ import type {
   MonetizationEventData,
   PubSubConnectionResponse
 } from 'golden-hammer-shared';
+import { Socket } from 'socket.io-client';
+import type { GetState, SetState } from 'zustand';
 import type { IStore, StatMap, UINormalizedMessagingEvent } from '.';
+import { eventer } from './Actions';
+import { SocketStatus } from './InitState';
 
+const MAX_CONNECT_FAILS = 5;
 const MAX_COUNT_EVENTS = 1000;
+
+let CurrentFailures = 0;
+
+export const bindSocketStatus = (set: SetState<IStore>, get: GetState<IStore>, socket: Socket) => {
+  socket.on('connect', () => {
+    CurrentFailures = 0;
+    set({ connectionStatus: SocketStatus.Connected });
+    eventer.dispatchEvent(new CustomEvent('connect'));
+  });
+
+  socket.on('connect_error', err => {
+    set({ connectionStatus: SocketStatus.Disconnected });
+    eventer.dispatchEvent(new CustomEvent('error', { detail: err.message }));
+  });
+
+  socket.on('disconnect', reason => {
+    set({ connectionStatus: SocketStatus.Disconnected, events: {}, connectedPubSubs: new Map() });
+    eventer.dispatchEvent(new CustomEvent('disconnect', { detail: reason }));
+
+    if (++CurrentFailures >= MAX_CONNECT_FAILS) {
+      CurrentFailures = 0;
+      eventer.dispatchEvent(new CustomEvent('error', { detail: 'Too many attempts, giving up!' }));
+      socket.disconnect();
+    }
+  });
+
+  socket.on('gh-chat.evented', normalizedEvent => set(state => processSocketEvent(state, normalizedEvent)));
+  socket.on('gh-pubsub.rejected', ({ reason }) => {
+    eventer.dispatchEvent(new CustomEvent('error', { detail: reason }));
+  });
+};
 
 export const registerPubSub = (state: IStore, pubSubConnection: PubSubConnectionResponse) => {
   //Enforce lowercase name for store

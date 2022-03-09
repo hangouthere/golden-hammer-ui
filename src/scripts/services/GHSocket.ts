@@ -11,7 +11,10 @@ export const connect = (socketUri: string) => {
     disconnect();
   }
 
-  socket = io(socketUri, { transports: ['websocket'] });
+  socket = io(socketUri, {
+    transports: ['websocket'],
+    reconnectionDelay: 5000
+  });
 
   return socket;
 };
