@@ -15,8 +15,8 @@ export default function InfoModal() {
   return (
     <>
       <Tooltip withArrow label="About" position="bottom">
-        <ActionIcon variant="filled">
-          <IoInformation onClick={() => setShowModal(true)} />
+        <ActionIcon variant="filled" onClick={() => setShowModal(true)}>
+          <IoInformation />
         </ActionIcon>
       </Tooltip>
 
@@ -43,27 +43,27 @@ export default function InfoModal() {
 
           <Group position="right">
             <Tooltip withArrow label="UI Source">
-              <ActionIcon variant="filled" radius="xl">
-                <Anchor target="_blank" href="https://bitbucket.org/nerdfoundrygaming/golden-hammer-ui/src/">
+              <Anchor target="_blank" href="https://bitbucket.org/nerdfoundrygaming/golden-hammer-ui/src/">
+                <ActionIcon variant="outline" radius="xl">
                   <IoLogoBitbucket />
-                </Anchor>
-              </ActionIcon>
+                </ActionIcon>
+              </Anchor>
             </Tooltip>
 
             <Tooltip withArrow label="Microservices Source">
-              <ActionIcon variant="filled" radius="xl">
-                <Anchor target="_blank" href="https://bitbucket.org/nerdfoundrygaming/golden-hammer-services/src/">
+              <Anchor target="_blank" href="https://bitbucket.org/nerdfoundrygaming/golden-hammer-services/src/">
+                <ActionIcon variant="outline" radius="xl">
                   <IoLogoBitbucket />
-                </Anchor>
-              </ActionIcon>
+                </ActionIcon>
+              </Anchor>
             </Tooltip>
 
             <Tooltip withArrow label="Join our Discord!">
-              <ActionIcon variant="filled" radius="xl">
-                <Anchor target="_blank" href="https://url.nfgarmy.com/discord">
+              <Anchor target="_blank" href="https://url.nfgarmy.com/discord">
+                <ActionIcon variant="outline" radius="xl">
                   <BsDiscord />
-                </Anchor>
-              </ActionIcon>
+                </ActionIcon>
+              </Anchor>
             </Tooltip>
           </Group>
         </Group>

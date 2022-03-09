@@ -6,12 +6,23 @@ import * as GHSocket from '../services/GHSocket';
 import { SocketStatus } from './InitState';
 import { processSocketEvent, registerPubSub, unregisterPubSub } from './SocketActions';
 
+export const eventer = document.createElement('div');
+
 const bindSocketStatus = (set: SetState<IStore>, get: GetState<IStore>, socket: Socket) => {
-  socket.on('connect', () => set({ connectionStatus: SocketStatus.Connected }));
-  socket.on('connect_error', () => set({ connectionStatus: SocketStatus.Disconnected }));
-  socket.on('disconnect', () =>
-    set({ connectionStatus: SocketStatus.Disconnected, events: {}, connectedPubSubs: new Map() })
-  );
+  socket.on('connect', () => {
+    set({ connectionStatus: SocketStatus.Connected });
+    eventer.dispatchEvent(new CustomEvent('connect'));
+  });
+
+  socket.on('connect_error', err => {
+    set({ connectionStatus: SocketStatus.Disconnected });
+    eventer.dispatchEvent(new CustomEvent('error', { detail: err.message }));
+  });
+
+  socket.on('disconnect', reason => {
+    set({ connectionStatus: SocketStatus.Disconnected, events: {}, connectedPubSubs: new Map() });
+    eventer.dispatchEvent(new CustomEvent('disconnect', { detail: reason }));
+  });
 
   socket.on('gh-chat.evented', normalizedEvent => set(state => processSocketEvent(state, normalizedEvent)));
 };
@@ -61,13 +72,16 @@ export default (set: SetState<IStore>, get: GetState<IStore>): IActions => ({
       const pubSubConnection = await GHSocket.pubsubRegisterChat({ connectTarget, eventCategories });
 
       if (!pubSubConnection.registered) {
-        throw new Error(`Registration Failed for ${connectTarget} on ${eventCategories}`);
+        throw new Error(`Registration Failed for ${connectTarget}`);
       }
 
       // Add Connected Target to the list!
       set(state => registerPubSub(state, pubSubConnection));
-    } catch (err) {
+
+      eventer.dispatchEvent(new CustomEvent('registered', { detail: pubSubConnection }));
+    } catch (err: any) {
       console.log(err);
+      eventer.dispatchEvent(new CustomEvent('error', { detail: err.message }));
     }
   },
 
@@ -81,6 +95,8 @@ export default (set: SetState<IStore>, get: GetState<IStore>): IActions => ({
 
       // Add Connected Target to the list!
       set(state => unregisterPubSub(state, pubSubConnection));
+
+      eventer.dispatchEvent(new CustomEvent('unregistered', { detail: pubSubConnection }));
     } catch (err) {
       console.log(err);
     }

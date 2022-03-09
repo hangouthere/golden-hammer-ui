@@ -6,9 +6,7 @@ import EventViewerContainer from './ui/eventViewer/EventViewerContainer';
 import Header from './ui/Header';
 import Navbar from './ui/navbar';
 
-//! FIXME HACK CRAP GET RID OF IT!
 let u = new URLSearchParams(globalThis.location.search);
-const isDevMode = null !== u.get('dev');
 const connectTargets = u.getAll('connectTargets') || [];
 
 const getState = (s: IStore) => ({

@@ -1,9 +1,10 @@
-import useStore, { type UINormalizedMessagingEvent } from '-/scripts/store';
+import useStore, { type IStore, type UINormalizedMessagingEvent } from '-/scripts/store';
 import { StyledEventViewer } from '-/scripts/styles/eventViewer';
-import { useMantineTheme } from '@mantine/core';
-import type { EventClassifications, PubSubConnectionResponse } from 'golden-hammer-shared';
-import React, { useCallback, useMemo } from 'react';
+import { Button, Transition, useMantineTheme } from '@mantine/core';
+import type { EventClassificationsType, PubSubConnectionResponse } from 'golden-hammer-shared';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import BaseTable, { AutoResizer, Column } from 'react-base-table';
+import shallow from 'zustand/shallow';
 import AdministrativeEventEntry from '../entries/AdministrativeEventEntry';
 import MonetizationEventEntry from '../entries/MonetizationEventEntry';
 import UserChatEventEntry from '../entries/UserChatEventEntry';
@@ -22,7 +23,7 @@ type Dims = { width: number; height: number };
 type EntryViewComponent = (props: EntryViewProps) => JSX.Element | null;
 
 type EventClassEntryViewMapType = {
-  [eventClass in EventClassifications]?: EntryViewComponent;
+  [eventClass in EventClassificationsType]?: EntryViewComponent;
 };
 
 const EventClassEntryViewMap: EventClassEntryViewMapType = {
@@ -31,8 +32,48 @@ const EventClassEntryViewMap: EventClassEntryViewMapType = {
   Monetization: MonetizationEventEntry
 };
 
+type FrozenOverlayProps = {
+  show: boolean;
+  eventCount: number;
+  frozenEventCount: number;
+  resumeEvents: () => void;
+};
+
+const FrozenOverlay = ({ show, resumeEvents, eventCount, frozenEventCount }: FrozenOverlayProps) => {
+  const theme = useMantineTheme();
+  const missing = eventCount - frozenEventCount;
+  const {
+    classes: { FrozenEventsOverlay }
+  } = StyledEventViewer(theme.other.Platforms.default);
+
+  return (
+    <Transition transition="slide-down" mounted={show && missing > 0}>
+      {transitionStyles => {
+        transitionStyles.transform += ' translateX(-50%)';
+        return (
+          <Button
+            variant="outline"
+            size="lg"
+            compact
+            style={transitionStyles}
+            className={FrozenEventsOverlay}
+            onClick={resumeEvents}
+          >
+            More Events: {missing}
+          </Button>
+        );
+      }}
+    </Transition>
+  );
+};
+
 ////////////////////////////////////////////////////////////////////////////////////////////
 // EventEntryFactory
+
+const getState = (s: IStore) => ({
+  activeEvents: s.events[s.activePubSub!.pubsub.connectTarget],
+  activeStats: s.stats[s.activePubSub!.pubsub.connectTarget]
+});
 
 type EventEntryFactoryProps = {
   pubSubConnection: PubSubConnectionResponse | null;
@@ -41,10 +82,27 @@ type EventEntryFactoryProps = {
 };
 
 export const EventEntryFactory = ({ pubSubConnection, desiredEventTypes, searchTerm }: EventEntryFactoryProps) => {
-  const connectTarget = pubSubConnection?.pubsub.connectTarget as string;
-  const activeEvents = useStore(s => s.events[connectTarget]);
-
   const theme = useMantineTheme();
+  const connectTarget = pubSubConnection?.pubsub.connectTarget as string;
+  const { activeEvents, activeStats } = useStore(getState, shallow);
+
+  const [frozenEventCount, setFrozenEventCount] = useState(0);
+  const [isFrozen, setIsFrozen] = useState(false);
+  const tableRef = useRef<BaseTable<UINormalizedMessagingEvent>>();
+  const setTableRef = useCallback(r => (tableRef.current = r), []);
+  const resumeEvents = useCallback(
+    () => tableRef.current?.scrollToPosition({ scrollTop: 0, scrollLeft: 0 }),
+    [connectTarget]
+  );
+
+  const onScroll = useCallback(
+    ({ scrollTop }) => {
+      const shouldFreeze = scrollTop > 1;
+      setIsFrozen(shouldFreeze);
+      setFrozenEventCount(Number(activeStats.TotalEvents) || 0);
+    },
+    [activeStats]
+  );
 
   const { cx, classes: cssClasses } = StyledEventViewer(
     theme.other.Platforms[pubSubConnection?.pubsub.platformName as string] || theme.other.Platforms.default
@@ -85,22 +143,48 @@ export const EventEntryFactory = ({ pubSubConnection, desiredEventTypes, searchT
     [activeEvents, desiredEventTypes]
   );
 
+  const [possiblyFrozenEvents, setPossiblyFrozenEvents] = useState(filteredEvents);
+
+  useEffect(() => {
+    if (isFrozen) return;
+    setPossiblyFrozenEvents(filteredEvents);
+  }, [filteredEvents]);
+
+  useEffect(() => {
+    // Update events to current filtered from activeEvents
+    setPossiblyFrozenEvents(filteredEvents);
+    // Scroll to top
+    resumeEvents();
+  }, [connectTarget]);
+
   const ScrollArea = useCallback(
     ({ width, height }: Dims) => (
       <BaseTable
+        ref={setTableRef}
         headerHeight={0}
-        data={filteredEvents}
+        data={possiblyFrozenEvents}
         rowKey="pubSubMsgId"
         rowRenderer={createDecoratedEventEntry}
         estimatedRowHeight={50}
         sortBy={{ key: 'timestamp', order: 'desc' }}
+        onScroll={onScroll}
         {...{ width, height }}
       >
         <Column key="col0" width={0} flexGrow={1} />
       </BaseTable>
     ),
-    [filteredEvents]
+    [possiblyFrozenEvents]
   );
 
-  return <AutoResizer>{ScrollArea}</AutoResizer>;
+  return (
+    <>
+      <FrozenOverlay
+        show={isFrozen}
+        resumeEvents={resumeEvents}
+        eventCount={Number(activeStats.TotalEvents)}
+        frozenEventCount={frozenEventCount}
+      />
+      <AutoResizer>{ScrollArea}</AutoResizer>
+    </>
+  );
 };

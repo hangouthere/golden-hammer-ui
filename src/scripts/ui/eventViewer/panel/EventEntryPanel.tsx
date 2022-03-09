@@ -27,7 +27,11 @@ export const EventEntryPanel = () => {
       <EntryHeader {...{ searchTerm, setSearchTerm, desiredEventTypes, setDesiredEventTypes }} />
 
       <div className={PanelScrollContainer}>
-        <EventEntryFactory pubSubConnection={activePubSub} desiredEventTypes={desiredEventTypes} searchTerm={searchTerm} />
+        <EventEntryFactory
+          pubSubConnection={activePubSub}
+          desiredEventTypes={desiredEventTypes}
+          searchTerm={searchTerm}
+        />
       </div>
     </>
   );

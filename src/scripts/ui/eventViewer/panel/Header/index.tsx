@@ -14,8 +14,8 @@ const getState = (s: IStore) => ({
   clearEvents: s.clearEvents,
   pubsubRegisterChat: s.pubsubRegisterChat,
   pubsubUnregisterChat: s.pubsubUnregisterChat,
-  events: s.events[s.activePubSub!.pubsub.connectTarget],
-  stats: s.stats[s.activePubSub!.pubsub.connectTarget]
+  activeEvents: s.events[s.activePubSub!.pubsub.connectTarget],
+  activeStats: s.stats[s.activePubSub!.pubsub.connectTarget]
 });
 
 type EntryHeaderProps = {
@@ -26,7 +26,7 @@ type EntryHeaderProps = {
 };
 
 const EntryHeader = ({ desiredEventTypes, setDesiredEventTypes, searchTerm, setSearchTerm }: EntryHeaderProps) => {
-  const { activePubSub, pubsubRegisterChat, pubsubUnregisterChat, clearEvents, events, stats } = useStore(
+  const { activePubSub, pubsubRegisterChat, pubsubUnregisterChat, clearEvents, activeEvents, activeStats } = useStore(
     getState,
     shallow
   );
@@ -80,7 +80,7 @@ const EntryHeader = ({ desiredEventTypes, setDesiredEventTypes, searchTerm, setS
         />
       </Group>
 
-      <Stats {...{ events, stats }} />
+      <Stats events={activeEvents} stats={activeStats} />
     </Group>
   );
 };

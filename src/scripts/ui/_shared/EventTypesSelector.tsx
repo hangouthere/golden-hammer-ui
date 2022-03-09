@@ -21,7 +21,7 @@ export default function EventTypesSelector({ onChange, selectedEvents }: Props) 
   }, [selectedEvents]);
 
   return (
-    <Chips multiple value={_selectedEvents} onChange={manageChanges}>
+    <Chips multiple value={_selectedEvents} onChange={manageChanges} direction="column">
       {GHPubSub_EventTypes.map(et => (
         <Chip key={et} value={et}>
           {et}

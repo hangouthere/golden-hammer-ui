@@ -35,7 +35,7 @@ export const StyledEventViewer = createStyles((theme, colors: StyledEventViewerP
       background: theme.fn.darken(theme.colors[theme.primaryColor][9], 0.2),
 
       a: {
-        color: '#FF0',
+        color: '#e4ff00',
         fontWeight: 'normal'
       },
 
@@ -73,6 +73,12 @@ export const StyledEventViewer = createStyles((theme, colors: StyledEventViewerP
         '.stats-container': {
           padding: '3px',
           fontSize: '70%',
+          // Same props as sibling div (for the case of NOT using transition)
+          display: 'flex',
+          justifyContent: 'space-between',
+          paddingLeft: '8px',
+          paddingRight: '8px',
+          flex: 1,
 
           '.label': {
             fontWeight: 'bold',
@@ -80,17 +86,32 @@ export const StyledEventViewer = createStyles((theme, colors: StyledEventViewerP
           },
 
           '& > div': {
+            // Same props as .stats-container (for the case of using transition)
             display: 'flex',
             justifyContent: 'space-between',
-            paddingLeft: '8px',
-            paddingRight: '8px'
+            flex: 1
           }
         }
       }
     },
 
     PanelScrollContainer: {
-      height: '100%'
+      height: '100%',
+
+      '.BaseTable__body': {
+        scrollBehavior: 'smooth'
+      }
+    },
+
+    FrozenEventsOverlay: {
+      position: 'absolute',
+      top: '20px',
+      left: '50%',
+      zIndex: 1,
+      padding: '5px 8px',
+      minWidth: '170px',
+
+      boxShadow: `0 0 11px ${theme.colors[theme.primaryColor][4]}88`
     },
 
     EventLogEntry: {

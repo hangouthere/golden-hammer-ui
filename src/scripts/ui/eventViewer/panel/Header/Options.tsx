@@ -90,7 +90,6 @@ export default function Options({
         arrowSize={4}
         position="bottom"
         placement="end"
-        width={250}
         target={
           <Tooltip withArrow arrowSize={4} position="left" label="Filter Events">
             <ActionIcon onClick={toggleToolTip_desired} variant="filled">
@@ -113,7 +112,6 @@ export default function Options({
         arrowSize={4}
         position="bottom"
         placement="end"
-        width={250}
         target={
           <Tooltip withArrow arrowSize={4} position="left" label="Toggle Events">
             <ActionIcon onClick={toggleToolTip_pubsub} variant="filled">

@@ -12,7 +12,15 @@ export const StyledNavBar = createStyles(theme => ({
   },
 
   ScrollAreaContainer: {
+    overflow: 'auto',
     marginTop: '8px',
     height: '100%'
+  },
+
+  PubSubRegisterPanel: {
+    '.mantine-Accordion-content': {
+      maxHeight: '200px',
+      overflow: 'auto'
+    }
   }
 }));

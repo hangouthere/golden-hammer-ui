@@ -1,6 +1,6 @@
 import type {
   AdministrationEventData,
-  EventClassifications,
+  EventClassificationsType,
   MonetizationEventData,
   PubSubConnectionResponse
 } from 'golden-hammer-shared';
@@ -63,7 +63,7 @@ export function processSocketEvent(state: IStore, normalizedEvent: UINormalizedM
 
 function addStats(state: IStore['stats'], normalizedEvent: UINormalizedMessagingEvent) {
   const { category, subCategory } = normalizedEvent.eventClassification;
-  const fqcn = `${category}.${subCategory}` as EventClassifications;
+  const fqcn = `${category}.${subCategory}` as EventClassificationsType;
 
   const connectTarget = normalizedEvent.connectTarget.toLowerCase();
   const prevStats = state[connectTarget];
@@ -76,7 +76,7 @@ function addStats(state: IStore['stats'], normalizedEvent: UINormalizedMessaging
   };
 
   // Track monetization totals for UI display purposes
-  if ('Monetization' === category && 'submysterygift' === normalizedEvent.platform.eventName) {
+  if ('Monetization' === category && 'submysterygift' !== normalizedEvent.platform.eventName) {
     statMap['Earnings'] =
       Number(statMap['Earnings'] || 0) + (normalizedEvent.eventData as MonetizationEventData).estimatedValue!;
   }

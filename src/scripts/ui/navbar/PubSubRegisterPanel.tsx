@@ -1,6 +1,7 @@
 import { GHPubSub_EventTypes, type IStore } from '-/scripts/store';
 import { StyledInputs } from '-/scripts/styles/inputs';
 import { StyledMisc } from '-/scripts/styles/misc';
+import { StyledNavBar } from '-/scripts/styles/navbar';
 import { Accordion, Button, Divider, Space, TextInput, Title } from '@mantine/core';
 import { useBooleanToggle, useForm } from '@mantine/hooks';
 import React, { useCallback, useState } from 'react';
@@ -23,6 +24,11 @@ function PubSubRegisterPanel({ disabled, pubSubRegister }: Props) {
   const {
     classes: { Compact }
   } = StyledMisc();
+
+  const {
+    cx,
+    classes: { PubSubRegisterPanel }
+  } = StyledNavBar();
 
   const pubSubReg = useForm({
     initialValues: {
@@ -68,7 +74,7 @@ function PubSubRegisterPanel({ disabled, pubSubRegister }: Props) {
         </Button>
       </form>
 
-      <Accordion className={Compact}>
+      <Accordion className={cx(Compact, PubSubRegisterPanel)}>
         <Accordion.Item label={<Title order={6}>Select PubSub Events</Title>}>
           <EventTypesSelector onChange={onChangeEvents} selectedEvents={selectedEvents} />
         </Accordion.Item>

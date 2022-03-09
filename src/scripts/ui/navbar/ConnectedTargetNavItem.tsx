@@ -38,6 +38,7 @@ type Props = Omit<GroupProps, 'children'> & {
   targetClassMap: TargetClassMap;
   reSubEventCategories: (targetClassMap: TargetClassMap) => void;
   unregisterPubSub: (connectTarget: string) => void;
+  //FIXME: Show updates when events change?
   //hasUpdates: boolean;
 };
 
@@ -93,7 +94,6 @@ export default function ConnectedTargetNavItem({
         withArrow
         arrowSize={4}
         opened={showConfig}
-        width={200}
         position="right"
         placement="start"
         onClose={() => setShowConfig(false)}
