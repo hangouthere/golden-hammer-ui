@@ -7,6 +7,7 @@ services:
     volumes:
       - .:/build
       # - /build/node_modules
+      - ../golden-hammer-shared:/golden-hammer-shared
     environment:
       - NODE_OPTIONS=--enable-source-maps --trace-warnings
     ports:

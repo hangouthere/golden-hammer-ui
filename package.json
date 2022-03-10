@@ -12,7 +12,8 @@
     "dev": "NODE_ENV=development concurrently -r 'npm:dev-concurrently*'",
     "dev-concurrently:mkdir": "npm run clean && mkdir -p dist",
     "dev-concurrently:watch": "node ./build.mjs",
-    "dev-concurrently:lint": "nodemon -e ts,js,tsx,jsx --exec \"npm run check\"",
+    "dev-concurrently:lint": "nodemon -e js,jsx,ts,tsx,json --exec \"npm run check\"",
+    "dev-concurrently:watchShared": "echo \"Monitoring /golden-hammer-shared for replication...\" && nodemon --watch /golden-hammer-shared -e js,jsx,ts,tsx,json --exec \"cp -fR /golden-hammer-shared ./node_modules/ 2>&1 > /dev/null\" 2>&1 > /dev/null",
     "check": "tsc --noEmit && echo \"No Type Errors!\""
   },
   "dependencies": {
@@ -36,7 +37,7 @@
     "concurrently": "^7.0.0",
     "esbuild": "^0.14.23",
     "esbuild-plugin-sass": "^1.0.1",
-    "golden-hammer-shared": "bitbucket:nerdfoundrygaming/golden-hammer-shared",
+    "golden-hammer-shared": "github:nerdfoundry/golden-hammer-shared",
     "nodemon": "^2.0.15",
     "rimraf": "^3.0.2",
     "typescript": "^4.5.5"
