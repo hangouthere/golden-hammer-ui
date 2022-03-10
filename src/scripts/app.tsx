@@ -31,11 +31,7 @@ export default function App(): ReactElement {
   }, []);
 
   return (
-    <AppShell
-      padding="md"
-      navbar={<Navbar width={{ base: 400 }} padding="md" />}
-      header={<Header height={75} padding="sm" />}
-    >
+    <AppShell padding="md" navbar={<Navbar width={{ base: 400 }} p="md" />} header={<Header height={75} p="sm" />}>
       <EventViewerContainer />
     </AppShell>
   );
