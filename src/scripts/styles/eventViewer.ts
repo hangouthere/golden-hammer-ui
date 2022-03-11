@@ -144,7 +144,7 @@ export const StyledEventViewer = createStyles((theme, colors: StyledEventViewerP
       },
 
       '.userName': {
-        color: '#ca7ff9'
+        color: 'rgb(203, 128, 249)'
       },
 
       '.removed-content': {
@@ -222,6 +222,30 @@ export const StyledEventViewer = createStyles((theme, colors: StyledEventViewerP
         content: "' '",
         border: '1px solid rgb(255, 208, 0)',
         boxShadow: 'inset 0 0 26px rgb(255 208 0 / 40%)',
+        position: 'absolute',
+        top: '0',
+        bottom: '0',
+        left: '0',
+        right: '0'
+      }
+    },
+
+    'PlatformSpecific-undefined': {
+      textAlign: 'center',
+      textShadow: `0 0 1px #000,
+                   0 0 1px #000,
+                   0 0 1px #000,
+                   0 0 1px #000,
+                   0 0 1px #000,
+                   0 0 1px #000`,
+
+      '&:before': {
+        content: "' '",
+        border: '1px solid rgb(203, 128, 249)',
+        boxShadow: `inset 0 0 26px rgb(203 128 249 / 40%),
+                    inset 0 0 26px rgb(203 128 249 / 40%),
+                    inset 0 0 26px rgb(203 128 249 / 40%),
+                    inset 0 0 26px rgb(203 128 249 / 40%)`,
         position: 'absolute',
         top: '0',
         bottom: '0',

@@ -5,9 +5,11 @@ import type { EventClassificationsType, PubSubConnectionResponse } from 'golden-
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import BaseTable, { AutoResizer, Column } from 'react-base-table';
 import shallow from 'zustand/shallow';
-import AdministrativeEventEntry from '../entries/AdministrativeEventEntry';
-import MonetizationEventEntry from '../entries/MonetizationEventEntry';
-import UserChatEventEntry from '../entries/UserChatEventEntry';
+import AdministrativeEventEntry from './entries/AdministrativeEventEntry';
+import MonetizationEventEntry from './entries/MonetizationEventEntry';
+import PlatformSpecificEventEntry from './entries/PlatformSpecificEventEntry';
+import UnknownEventEntry from './entries/UnknownEventEntry';
+import UserChatEventEntry from './entries/UserChatEventEntry';
 
 const SKIPPED_EVENTS = ['submysterygift'];
 
@@ -24,12 +26,16 @@ type EntryViewComponent = (props: EntryViewProps) => JSX.Element | null;
 
 type EventClassEntryViewMapType = {
   [eventClass in EventClassificationsType]?: EntryViewComponent;
+} & {
+  Unknown: EntryViewComponent;
 };
 
 const EventClassEntryViewMap: EventClassEntryViewMapType = {
+  Unknown: UnknownEventEntry,
   UserChat: UserChatEventEntry,
   Administration: AdministrativeEventEntry,
-  Monetization: MonetizationEventEntry
+  Monetization: MonetizationEventEntry,
+  PlatformSpecific: PlatformSpecificEventEntry
 };
 
 type FrozenOverlayProps = {
@@ -111,13 +117,16 @@ export const EventEntryFactory = ({ pubSubConnection, desiredEventTypes, searchT
   const createDecoratedEventEntry = useCallback(
     ({ rowData }: { rowData: UINormalizedMessagingEvent }) => {
       const fqcn = `${rowData.eventClassification.category}-${rowData.eventClassification.subCategory}`;
-      const EntryContent = EventClassEntryViewMap[rowData.eventClassification.category] as EntryViewComponent;
+      const chosenViewComponent: EntryViewComponent =
+        EventClassEntryViewMap[rowData.eventClassification.category] || EventClassEntryViewMap['Unknown'];
+      const EntryContent = chosenViewComponent;
       const key = rowData.pubSubMsgId;
 
       const eventEntryClassNames = [
         cssClasses.EventLogEntry,
         (cssClasses as any)[rowData.eventClassification.category],
-        (cssClasses as any)[fqcn]
+        (cssClasses as any)[fqcn],
+        fqcn
       ];
 
       return (
@@ -136,7 +145,7 @@ export const EventEntryFactory = ({ pubSubConnection, desiredEventTypes, searchT
           const shouldSkip =
             SKIPPED_EVENTS.includes(aE.eventClassification.category) ||
             SKIPPED_EVENTS.includes(aE.platform.eventName) ||
-            !JSON.stringify(aE.eventData).includes(searchTerm);
+            !JSON.stringify(aE.eventData || '').includes(searchTerm);
           return !shouldSkip && desiredEventTypes?.includes(aE.eventClassification.category);
         })
         .reverse(),

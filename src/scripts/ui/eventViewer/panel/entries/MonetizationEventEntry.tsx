@@ -1,6 +1,6 @@
 import type { MonetizationEventData, NormalizedMessagingEvent } from 'golden-hammer-shared';
 import React from 'react';
-import type { EntryViewProps } from '../panel/EventEntryFactory';
+import type { EntryViewProps } from '../EventEntryFactory';
 
 export default function MonetizationEventEntry({ normalizedEvent }: EntryViewProps): JSX.Element | null {
   const {
