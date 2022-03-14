@@ -23,6 +23,7 @@ export default function PlatformSpecificEventEntry({ normalizedEvent }: EntryVie
       break;
 
     case 'hosted':
+      msg = 'Hosted by ' + eventData[0];
       break;
     case 'raided':
       break;

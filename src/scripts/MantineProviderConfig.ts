@@ -65,6 +65,14 @@ export const StylesConfig: ProviderStyles = {
     }
   }),
 
+  Navbar: theme => ({
+    root: {
+      position: 'relative',
+      top: 0,
+      zIndex: 0
+    }
+  }),
+
   Popover: _theme => ({
     body: {
       '.mantine-Divider-horizontal': {
@@ -85,6 +93,12 @@ export const StylesConfig: ProviderStyles = {
     },
     arrow: {
       backgroundColor: theme.fn.themeColor('dark', 4)
+    }
+  }),
+
+  Modal: theme => ({
+    header: {
+      userSelect: 'none'
     }
   })
 };

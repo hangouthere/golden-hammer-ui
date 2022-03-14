@@ -3,7 +3,7 @@ import React, { useEffect, type ReactElement } from 'react';
 import shallow from 'zustand/shallow';
 import useStore, { GHPubSub_EventTypes, type IStore } from './store';
 import EventViewerContainer from './ui/eventViewer/EventViewerContainer';
-import Header from './ui/Header';
+import Header from './ui/header';
 import Navbar from './ui/navbar';
 
 let u = new URLSearchParams(globalThis.location.search);

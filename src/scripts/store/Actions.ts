@@ -15,6 +15,7 @@ export interface IActions {
   pubsubRegisterChat: ({ connectTarget, eventCategories }: TargetClassMap) => void;
   pubsubUnregisterChat: (connectTarget: string) => void;
   setActivePubSub: (activePubSub: PubSubConnectionResponse) => void;
+  simulateSourceEvent: (eventData: any) => void;
 }
 
 export default (set: SetState<IStore>, get: GetState<IStore>): IActions => ({
@@ -99,5 +100,17 @@ export default (set: SetState<IStore>, get: GetState<IStore>): IActions => ({
     activePubSub.pubsub.connectTarget = activePubSub.pubsub.connectTarget.toLowerCase();
 
     set(s => ({ ...s, activePubSub }));
+  },
+
+  simulateSourceEvent(eventData: any) {
+    const activePubSub = get().activePubSub;
+
+    if (!activePubSub) {
+      eventer.dispatchEvent(new CustomEvent('error', { detail: 'No Active PubSub!' }));
+
+      return;
+    }
+
+    return GHSocket.simulateEvent(activePubSub.pubsub.connectTarget, eventData);
   }
 });

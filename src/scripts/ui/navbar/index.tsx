@@ -5,6 +5,7 @@ import shallow from 'zustand/shallow';
 import useStore, { type IStore } from '../../store';
 import { SocketStatus } from '../../store/InitState';
 import { StyledNavBar } from '../../styles/navbar';
+import SimulatorModal from '../EventSimulator/SimulatorModal';
 import ConnectedTargetNavItem from './ConnectedTargetNavItem';
 import InfoModal from './InfoModal';
 import NoConnectedTargetsNavItem from './NoConnectedTargetsNavItem';
@@ -71,8 +72,10 @@ function NavBar(props: Props) {
               <ColorSwatch radius="xl" size={16} color={connectColor}></ColorSwatch>
             </Tooltip>
           </Group>
+
           <Group position="right">
             <PubSubConfig />
+            <SimulatorModal />
             <InfoModal />
           </Group>
         </Group>

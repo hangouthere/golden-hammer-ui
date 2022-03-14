@@ -3,6 +3,7 @@ import io, { Socket } from 'socket.io-client';
 
 const SVC_PUBSUB_REGISTER_CHAT = 'gh-pubsub.register';
 const SVC_PUBSUB_UNREGISTER_CHAT = 'gh-pubsub.unregister';
+const SVC_PUBSUB_SIMULATE = 'gh-pubsub.simulate';
 
 export let socket: Socket | null;
 
@@ -67,6 +68,26 @@ export const pubsubUnregisterChat = async (connectTarget: string): Promise<PubSu
         connectTarget: connectTarget.toLowerCase()
       },
       (err: Error, resp: PubSubConnectionResponse) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve(resp);
+        }
+      }
+    );
+  });
+
+export const simulateEvent = async (connectTarget: string, eventData: any) =>
+  new Promise((resolve, reject) => {
+    socket?.emit(
+      'call',
+      SVC_PUBSUB_SIMULATE,
+      {
+        platformName: 'twitch',
+        connectTarget: connectTarget.toLowerCase(),
+        ...eventData
+      },
+      (err: Error, resp: any) => {
         if (err) {
           reject(err);
         } else {
