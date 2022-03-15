@@ -15,7 +15,7 @@ export default function InfoModal() {
   return (
     <>
       <Tooltip withArrow label="About" position="bottom">
-        <ActionIcon variant="filled" onClick={() => setShowModal(true)}>
+        <ActionIcon variant={showModal ? 'filled' : 'light'} color="blue" onClick={() => setShowModal(true)}>
           <IoInformation />
         </ActionIcon>
       </Tooltip>

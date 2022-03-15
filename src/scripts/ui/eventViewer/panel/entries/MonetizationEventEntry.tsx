@@ -4,6 +4,7 @@ import type { EntryViewProps } from '../EventEntryFactory';
 
 export default function MonetizationEventEntry({ normalizedEvent }: EntryViewProps): JSX.Element | null {
   const {
+    platform: { name: platformName },
     eventData: { sourceUserName, targetUserName, estimatedValue, duration },
     eventClassification: { subCategory }
   } = normalizedEvent as NormalizedMessagingEvent & { eventData: MonetizationEventData };
@@ -21,9 +22,34 @@ export default function MonetizationEventEntry({ normalizedEvent }: EntryViewPro
 
   const monthTxt = Number(duration) > 1 ? 'months' : 'month';
 
+  let subAction = 'Subscribed';
+
+  if ('twitch' === platformName) {
+    if ('resub' === normalizedEvent.platform.eventName) {
+      subAction = 'Resubscribed';
+    }
+
+    if ('submysterygift' === normalizedEvent.platform.eventName) {
+      return (
+        <>
+          {prefix} has Gifted <span className="duration">{normalizedEvent.platform.eventData[1]}</span> Subs{' '}
+          <span className="estimatedValue">(${estValTxt})</span>
+        </>
+      );
+    }
+
+    if ('subgift' === normalizedEvent.platform.eventName) {
+      return (
+        <>
+          {prefix} was Gifted a sub by {sourceUserName}
+        </>
+      );
+    }
+  }
+
   return (
     <>
-      {prefix} has Subscribed for{' '}
+      {prefix} has {subAction} for{' '}
       <span className="duration">
         {duration || 1} {monthTxt}
       </span>

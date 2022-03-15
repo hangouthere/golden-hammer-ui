@@ -252,6 +252,21 @@ export const StyledEventViewer = createStyles((theme, colors: StyledEventViewerP
         left: '0',
         right: '0'
       }
+    },
+
+    'twitch-action': {
+      padding: '8px',
+      paddingLeft: '12px',
+
+      '&:before': {
+        content: "' '",
+        border: '2px solid rgb(203, 128, 249)',
+        position: 'absolute',
+        top: '0',
+        bottom: '0',
+        left: '0',
+        right: '0'
+      }
     }
   };
 });

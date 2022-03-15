@@ -210,8 +210,8 @@ export default function SimulatorModal() {
 
   return (
     <>
-      <Tooltip withArrow label="Event Simulator" position="bottom">
-        <ActionIcon variant="filled" onClick={handlers.open}>
+      <Tooltip withArrow label="Native Event Simulator" position="bottom">
+        <ActionIcon variant={opened ? 'filled' : 'light'} color="yellow" onClick={handlers.open}>
           <MdOutlineBolt />
         </ActionIcon>
       </Tooltip>
@@ -245,7 +245,7 @@ export default function SimulatorModal() {
                   style={appliedStyles}
                 >
                   <div className={ModalClasses.header}>
-                    <Text className={ModalClasses.title}>Event Simulator</Text>
+                    <Text className={ModalClasses.title}>Native Event Simulator</Text>
 
                     <CloseButton
                       iconSize={16}

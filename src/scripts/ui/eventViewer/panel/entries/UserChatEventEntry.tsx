@@ -1,3 +1,4 @@
+import { useCss } from '@mantine/core';
 import type { UserChatEventData } from 'golden-hammer-shared';
 import React from 'react';
 import type { EntryViewProps } from '../EventEntryFactory';
@@ -18,11 +19,12 @@ const buildMessageChunk = (chunk: UserChatEventData.MessageBuffer) => {
 };
 
 export default function UserChatEventEntry({ normalizedEvent }: EntryViewProps): JSX.Element {
-  const data: UserChatEventData = normalizedEvent.eventData as UserChatEventData;
-
-  const prefix = <span className="userName">{data.userName}:</span>;
+  const { cx } = useCss();
 
   let retElement: JSX.Element;
+
+  const data: UserChatEventData = normalizedEvent.eventData as UserChatEventData;
+  const prefix = <span className="userName">{data.userName}:</span>;
 
   switch (normalizedEvent.eventClassification.subCategory) {
     case 'Presence':
@@ -45,7 +47,7 @@ export default function UserChatEventEntry({ normalizedEvent }: EntryViewProps):
       }, []);
 
       retElement = (
-        <span className={normalizedEvent.isRemoved ? 'removed-content' : ''}>
+        <span className={cx({ 'removed-content': normalizedEvent.isRemoved })}>
           {prefix} {children!.map((c, key) => React.cloneElement(c, { key }))}
         </span>
       );

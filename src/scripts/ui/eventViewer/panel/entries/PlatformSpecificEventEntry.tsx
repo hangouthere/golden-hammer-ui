@@ -8,18 +8,33 @@ export default function PlatformSpecificEventEntry({ normalizedEvent }: EntryVie
     platform: { eventName, eventData }
   } = normalizedEvent as UINormalizedMessagingEvent & { eventData: AdministrationEventData };
 
-  const enabled = eventData[0] ? 'Enabled' : 'Disabled';
+  const [isEnabled, duration] = eventData;
+  const enabledTxt = isEnabled ? 'Enabled' : 'Disabled';
   let msg;
 
   switch (eventName) {
     case 'clearchat':
       msg = 'Chat Cleared!';
       break;
+    case 'slowmode':
+      msg = `Slow Mode ${enabledTxt}`;
+
+      if (isEnabled) {
+        msg = `${msg} - Chat only allowed every ${duration} seconds`;
+      }
+      break;
+    case 'followersonly':
+      msg = `Followers Only Mode ${enabledTxt}`;
+
+      if (isEnabled) {
+        msg = `${msg} - Must have followed for ${duration} minutes`;
+      }
+      break;
     case 'emoteonly':
-      msg = 'Emote Only Mode: ' + enabled;
+      msg = `Emote Only Mode: ${enabledTxt}`;
       break;
     case 'subscribers':
-      msg = 'Subscribes Only Mode: ' + enabled;
+      msg = `Subscribes Only Mode: ${enabledTxt}`;
       break;
 
     case 'hosted':
@@ -31,5 +46,5 @@ export default function PlatformSpecificEventEntry({ normalizedEvent }: EntryVie
       msg = <>{JSON.stringify(eventData)}</>;
   }
 
-  return <div className={eventName + (enabled ? 'enabled' : '')}>{msg}</div>;
+  return <div className={eventName + (enabledTxt ? 'enabled' : '')}>{msg}</div>;
 }

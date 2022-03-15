@@ -1,4 +1,4 @@
-import { ColorSwatch, Group, Navbar, Tooltip, type NavbarProps } from '@mantine/core';
+import { Group, Navbar, type NavbarProps } from '@mantine/core';
 import type { PubSubConnectionResponse } from 'golden-hammer-shared';
 import React, { useMemo } from 'react';
 import shallow from 'zustand/shallow';
@@ -38,7 +38,6 @@ function NavBar(props: Props) {
   const hasTargetMaps = !!connectedPubSubs.size;
   const isConnected = SocketStatus.Connected === connectionStatus;
   const isConnecting = SocketStatus.Connecting === connectionStatus;
-  const connectColor = isConnected ? 'cyan' : isConnecting ? 'yellow' : 'red';
 
   const isActive = (conn: PubSubConnectionResponse) => activePubSub?.pubsub.connectTarget === conn.pubsub.connectTarget;
 
@@ -66,18 +65,10 @@ function NavBar(props: Props) {
   return (
     <Navbar {...props} className={NavBarContainer}>
       <Navbar.Section>
-        <Group grow>
-          <Group>
-            <Tooltip label={isConnected ? 'Connected' : 'Not Connected'} position="right" withArrow>
-              <ColorSwatch radius="xl" size={16} color={connectColor}></ColorSwatch>
-            </Tooltip>
-          </Group>
-
-          <Group position="right">
-            <PubSubConfig />
-            <SimulatorModal />
-            <InfoModal />
-          </Group>
+        <Group position="right">
+          <PubSubConfig />
+          <SimulatorModal />
+          <InfoModal />
         </Group>
       </Navbar.Section>
 

@@ -82,6 +82,22 @@ export default function HeaderStats({ stats, events }: Props) {
             <span className="label">Administration:</span> {stats.Administration || 0}
           </Tooltip>
         </span>
+
+        <span>
+          <Tooltip
+            position="bottom"
+            withArrow={true}
+            arrowSize={6}
+            label={
+              <Group direction="column" spacing="sm">
+                <Title order={5}>PlatformSpecific Events</Title>
+                <Text size="sm">Total: {stats['PlatformSpecific.undefined'] || 0}</Text>
+              </Group>
+            }
+          >
+            <span className="label">PlatformSpecific:</span> {stats['PlatformSpecific.undefined'] || 0}
+          </Tooltip>
+        </span>
       </Collapse>
     </div>
   );

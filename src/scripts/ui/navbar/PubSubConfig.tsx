@@ -23,7 +23,10 @@ export default function PubSubConfig() {
   const [inputVal, setInputVal] = useInputState(pubSubUri);
   const [showWarnConnect, setShowWarnConnect] = useBooleanToggle(false);
 
+  const isConnecting = SocketStatus.Connecting === connectionStatus;
   const isConnected = connectionStatus === SocketStatus.Connected;
+
+  const connectColor = isConnected ? 'cyan' : isConnecting ? 'yellow' : 'red';
 
   const toggleAutoConnect = (event: ChangeEvent<HTMLInputElement>) => {
     setAutoConnect(event.target.checked);
@@ -59,7 +62,7 @@ export default function PubSubConfig() {
         width={250}
         target={
           <Tooltip withArrow label="Configure PubSub" position="bottom">
-            <ActionIcon variant="filled" onClick={() => setShowModal(true)}>
+            <ActionIcon variant="filled" color={connectColor} onClick={() => setShowModal(true)}>
               <HiCog />
             </ActionIcon>
           </Tooltip>

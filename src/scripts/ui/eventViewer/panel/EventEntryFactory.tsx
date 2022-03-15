@@ -11,7 +11,8 @@ import PlatformSpecificEventEntry from './entries/PlatformSpecificEventEntry';
 import UnknownEventEntry from './entries/UnknownEventEntry';
 import UserChatEventEntry from './entries/UserChatEventEntry';
 
-const SKIPPED_EVENTS = ['submysterygift'];
+const SKIPPED_EVENTS: string[] = [];
+// const SKIPPED_EVENTS = ['submysterygift'];
 
 ////////////////////////////////////////////////////////////////////////////////////////////
 // Entry View Mapping for Factory
@@ -117,6 +118,8 @@ export const EventEntryFactory = ({ pubSubConnection, desiredEventTypes, searchT
   const createDecoratedEventEntry = useCallback(
     ({ rowData }: { rowData: UINormalizedMessagingEvent }) => {
       const fqcn = `${rowData.eventClassification.category}-${rowData.eventClassification.subCategory}`;
+      const platformCn = `${rowData.platform.name}-${rowData.platform.eventName}`;
+
       const chosenViewComponent: EntryViewComponent =
         EventClassEntryViewMap[rowData.eventClassification.category] || EventClassEntryViewMap['Unknown'];
       const EntryContent = chosenViewComponent;
@@ -126,11 +129,13 @@ export const EventEntryFactory = ({ pubSubConnection, desiredEventTypes, searchT
         cssClasses.EventLogEntry,
         (cssClasses as any)[rowData.eventClassification.category],
         (cssClasses as any)[fqcn],
-        fqcn
+        (cssClasses as any)[platformCn],
+        fqcn,
+        platformCn
       ];
 
       return (
-        <div key={key} className={cx.apply(null, eventEntryClassNames)}>
+        <div key={key} className={cx(eventEntryClassNames)}>
           <EntryContent normalizedEvent={rowData} />
         </div>
       );

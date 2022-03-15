@@ -24,29 +24,46 @@ const defaultMessageEvent = {
 };
 
 const SimulatedEvents: Record<string, SimulatedEventHandler> = {
-  'Clear Chat': (username: string) => ({ platformEventName: 'clearchat', platformEventData: [] }),
-  'Emote Only Off': (username: string) => ({ platformEventName: 'emoteonly', platformEventData: [false] }),
-  'Emote Only On': (username: string) => ({ platformEventName: 'emoteonly', platformEventData: [true] }),
-  'Subscribes Only Off': (username: string) => ({ platformEventName: 'subscribers', platformEventData: [false] }),
-  'Subscribes Only On': (username: string) => ({ platformEventName: 'subscribers', platformEventData: [true] }),
-  Hosted: (username: string) => ({ platformEventName: 'hosted', platformEventData: [username, 0, false] }),
-  Join: (username: string) => ({ platformEventName: 'join', platformEventData: [username, false] }),
-  Part: (username: string) => ({ platformEventName: 'part', platformEventData: [username, false] }),
+  'PlatformSpecific: Clear Chat': (username: string) => ({ platformEventName: 'clearchat', platformEventData: [] }),
+  'PlatformSpecific: Emote Only Off': (username: string) => ({
+    platformEventName: 'emoteonly',
+    platformEventData: [false]
+  }),
+  'PlatformSpecific: Emote Only On': (username: string) => ({
+    platformEventName: 'emoteonly',
+    platformEventData: [true]
+  }),
+  'PlatformSpecific: Subscribes Only Off': (username: string) => ({
+    platformEventName: 'subscribers',
+    platformEventData: [false]
+  }),
+  'PlatformSpecific: Subscribes Only On': (username: string) => ({
+    platformEventName: 'subscribers',
+    platformEventData: [true]
+  }),
+  'PlatformSpecific: Hosted': (username: string) => ({
+    platformEventName: 'hosted',
+    platformEventData: [username, 0, false]
+  }),
+  'Presence: Join': (username: string) => ({ platformEventName: 'join', platformEventData: [username, false] }),
+  'Presence: Part': (username: string) => ({ platformEventName: 'part', platformEventData: [username, false] }),
 
-  'Chat Message 1': (username: string) => ({
+  'Message: Chat Message 1': (username: string) => ({
     platformEventName: 'chat',
     platformEventData: [
       {
         ...defaultMessageEvent,
         'display-name': username,
-        username: username
+        username: username,
+        'emotes-raw': '306340318:86-95',
+        emotes: { 306340318: ['86-95'] }
       },
       'This is a Simulated Chat Message, brought to you by @nfgcodex at http://nfgarmy.com | nfgcodArmy 🤓',
       false
     ]
   }),
 
-  'Chat Message 2': (username: string) => ({
+  'Message: Chat Message 2': (username: string) => ({
     platformEventName: 'chat',
     platformEventData: [
       {
@@ -59,7 +76,7 @@ const SimulatedEvents: Record<string, SimulatedEventHandler> = {
     ]
   }),
 
-  'Chat (Action)': (username: string) => ({
+  'Message: Chat (Action)': (username: string) => ({
     platformEventName: 'action',
 
     platformEventData: [
@@ -87,7 +104,7 @@ const SimulatedEvents: Record<string, SimulatedEventHandler> = {
       false
     ]
   }),
-  'User Ban': (username: string) => ({
+  'Admininistration: User Ban': (username: string) => ({
     platformEventName: 'ban',
 
     platformEventData: [
@@ -96,7 +113,7 @@ const SimulatedEvents: Record<string, SimulatedEventHandler> = {
       { 'room-id': '42490770', 'target-user-id': '760674363', 'tmi-sent-ts': '1647281032622' }
     ]
   }),
-  'Cheer (Tip)': (username: string) => ({
+  'Monetization: Cheer (Tip)': (username: string) => ({
     platformEventName: 'cheer',
 
     platformEventData: [
@@ -126,7 +143,7 @@ const SimulatedEvents: Record<string, SimulatedEventHandler> = {
       'Pride100'
     ]
   }),
-  'Message Deleted': (username: string) => ({
+  'Admininistration: Message Deleted': (username: string) => ({
     platformEventName: 'messagedeleted',
 
     platformEventData: [
@@ -141,7 +158,7 @@ const SimulatedEvents: Record<string, SimulatedEventHandler> = {
       }
     ]
   }),
-  'Twitch Resub': (username: string) => ({
+  'Monetization: Resub': (username: string) => ({
     platformEventName: 'resub',
 
     platformEventData: [
@@ -183,24 +200,34 @@ const SimulatedEvents: Record<string, SimulatedEventHandler> = {
       { prime: false, plan: '1000', planName: 'Woke Beys (hasanpiker): $4.99 Sub' }
     ]
   }),
-  'Twitch Slow Mode Off': (username: string) => ({
+  'PlatformSpecific: Slow Mode Off': (username: string) => ({
     platformEventName: 'slowmode',
 
     platformEventData: [false, 0]
   }),
-  'Twitch Slow Mode On': (username: string) => ({
+  'PlatformSpecific: Slow Mode On': (username: string) => ({
     platformEventName: 'slowmode',
 
     platformEventData: [true, 20]
   }),
-  'Sub Gift (Recieve)': (username: string) => ({
+  'PlatformSpecific: Followers Only Off': (username: string) => ({
+    platformEventName: 'followersonly',
+
+    platformEventData: [false, 0]
+  }),
+  'PlatformSpecific: Followers Only On': (username: string) => ({
+    platformEventName: 'followersonly',
+
+    platformEventData: [true, 30]
+  }),
+  'Monetization: Sub Gift (Recieve)': (username: string) => ({
     platformEventName: 'subgift',
 
     platformEventData: [
       'SimulatedGiftUser',
       0,
       username,
-      { prime: false, plan: '1000', planName: 'Channel Subscription (maxisgoatlord)' },
+      { prime: false, plan: '1000', planName: 'Channel Subscription (SimulatedStreamer)' },
       {
         'badge-info': { subscriber: '2' },
         badges: { subscriber: '0', 'hype-train': '1' },
@@ -234,7 +261,7 @@ const SimulatedEvents: Record<string, SimulatedEventHandler> = {
       }
     ]
   }),
-  'Sub Gift (Give)': (username: string) => ({
+  'Monetization: Sub Gift (Give)': (username: string) => ({
     platformEventName: 'submysterygift',
 
     platformEventData: [
@@ -259,7 +286,8 @@ const SimulatedEvents: Record<string, SimulatedEventHandler> = {
         'room-id': '42490770',
         subscriber: true,
         'system-msg':
-          username + " is gifting 5 Tier 1 Subs to Maximum's community! They've gifted a total of 5 in the channel!",
+          username +
+          " is gifting 5 Tier 1 Subs to SimulatedStreamer's community! They've gifted a total of 5 in the channel!",
         'tmi-sent-ts': '1647278198017',
         'user-id': '100010177',
         'user-type': null,
@@ -270,12 +298,12 @@ const SimulatedEvents: Record<string, SimulatedEventHandler> = {
       }
     ]
   }),
-  Subscription: (username: string) => ({
+  'Monetization: Subscription': (username: string) => ({
     platformEventName: 'subscription',
 
     platformEventData: [
       username,
-      { prime: false, plan: '1000', planName: 'Channel Subscription (maxisgoatlord)' },
+      { prime: false, plan: '1000', planName: 'Channel Subscription (SimulatedStreamer)' },
       null,
       {
         'badge-info': { subscriber: '1' },
@@ -309,7 +337,7 @@ const SimulatedEvents: Record<string, SimulatedEventHandler> = {
       }
     ]
   }),
-  'User Timeout': (username: string) => ({
+  'Administration: User Timeout': (username: string) => ({
     platformEventName: 'timeout',
 
     platformEventData: [

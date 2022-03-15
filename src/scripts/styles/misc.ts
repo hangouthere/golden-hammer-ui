@@ -20,9 +20,9 @@ export const StyledMisc = createStyles(theme => ({
 
   SimulatorModal: {
     pointerEvents: 'all',
-    border: '1px solid yellow',
+    border: '1px solid rgba(255, 255, 0, 0.4)',
     left: '50%',
     transform: 'translateX(-50%)',
-    boxShadow: 'rgb(255 255 0 / 40%) 0px 0px 10px,rgb(255 255 0 / 40%) 0px 0px 10px,rgb(255 255 0 / 40%) 0px 0px 10px'
+    boxShadow: 'rgb(255 255 0 / 40%) 0px 0px 10px'
   }
 }));
