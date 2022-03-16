@@ -1,8 +1,8 @@
 import ImageLogo from '-/assets/logo.png';
 import { ActionIcon, Anchor, Group, Image, Modal, Space, Title, Tooltip } from '@mantine/core';
 import React, { useState } from 'react';
-import { BsDiscord } from 'react-icons/bs';
-import { IoInformation, IoLogoBitbucket } from 'react-icons/io5';
+import { BsDiscord, BsGithub } from 'react-icons/bs';
+import { IoInformation } from 'react-icons/io5';
 import { StyledMisc } from '../../styles/misc';
 
 export default function InfoModal() {
@@ -43,17 +43,17 @@ export default function InfoModal() {
 
           <Group position="right">
             <Tooltip withArrow label="UI Source">
-              <Anchor target="_blank" href="https://bitbucket.org/nerdfoundrygaming/golden-hammer-ui/src/">
+              <Anchor target="_blank" href="https://github.com/nerdfoundry/golden-hammer-ui/">
                 <ActionIcon variant="outline" radius="xl">
-                  <IoLogoBitbucket />
+                  <BsGithub />
                 </ActionIcon>
               </Anchor>
             </Tooltip>
 
             <Tooltip withArrow label="Microservices Source">
-              <Anchor target="_blank" href="https://bitbucket.org/nerdfoundrygaming/golden-hammer-services/src/">
+              <Anchor target="_blank" href="https://github.com/nerdfoundry/golden-hammer-services/">
                 <ActionIcon variant="outline" radius="xl">
-                  <IoLogoBitbucket />
+                  <BsGithub />
                 </ActionIcon>
               </Anchor>
             </Tooltip>

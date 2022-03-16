@@ -1,6 +1,6 @@
-import type { PubSubConnectionResponse, TargetClassMap } from 'golden-hammer-shared';
+import type { PubSubConnectionResponse, ConnectTargetCategoriesAssociation } from 'golden-hammer-shared';
 import type { GetState, SetState } from 'zustand';
-import { localStore, type IStore } from '.';
+import { localStore, type ConnectedTarget, type IStore } from '.';
 import * as GHSocket from '../services/GHSocket';
 import { SocketStatus } from './InitState';
 import { bindSocketStatus, registerPubSub, unregisterPubSub } from './SocketActions';
@@ -12,7 +12,7 @@ export interface IActions {
   connect: (pubSubUri: string) => void;
   disconnect: () => void;
   clearEvents: (connectTarget: string) => void;
-  pubsubRegisterChat: ({ connectTarget, eventCategories }: TargetClassMap) => void;
+  pubsubRegisterChat: ({ connectTarget, eventCategories }: ConnectTargetCategoriesAssociation) => void;
   pubsubUnregisterChat: (connectTarget: string) => void;
   setActivePubSub: (activePubSub: PubSubConnectionResponse) => void;
   simulateSourceEvent: (eventData: any) => void;
@@ -96,14 +96,16 @@ export default (set: SetState<IStore>, get: GetState<IStore>): IActions => ({
     }));
   },
 
-  setActivePubSub(activePubSub: PubSubConnectionResponse) {
-    activePubSub.pubsub.connectTarget = activePubSub.pubsub.connectTarget.toLowerCase();
+  setActivePubSub(activeConnectedTarget: ConnectedTarget) {
+    activeConnectedTarget.pubsub.connectTarget = activeConnectedTarget.pubsub.connectTarget.toLowerCase();
+    activeConnectedTarget.hasUpdates = false;
 
-    set(s => ({ ...s, activePubSub }));
+
+    set(s => ({ ...s, activeConnectedTarget }));
   },
 
   simulateSourceEvent(eventData: any) {
-    const activePubSub = get().activePubSub;
+    const activePubSub = get().activeConnectedTarget;
 
     if (!activePubSub) {
       eventer.dispatchEvent(new CustomEvent('error', { detail: 'No Active PubSub!' }));

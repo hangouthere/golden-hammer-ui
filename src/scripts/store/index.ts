@@ -1,7 +1,8 @@
 import {
   EventClassifications,
   type EventClassificationsType,
-  type NormalizedMessagingEvent
+  type NormalizedMessagingEvent,
+  type PubSubConnectionResponse
 } from 'golden-hammer-shared';
 import create from 'zustand';
 import Actions, { type IActions } from './Actions';
@@ -30,6 +31,10 @@ export type ConnectTargetStatMap = {
 
 export type UINormalizedMessagingEvent = NormalizedMessagingEvent & {
   isRemoved: boolean;
+};
+
+export type ConnectedTarget = PubSubConnectionResponse & {
+  hasUpdates?: boolean;
 };
 
 export type ConnectTargetEventMap = {

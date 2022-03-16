@@ -25,7 +25,7 @@ const NoPubSubsDetected = ({ hasConnectTargets }: NoPubSubsDetectedProps) => {
   );
 };
 
-const getState = (s: IStore) => ({ connectedPubSubs: s.connectedPubSubs, activePubSub: s.activePubSub });
+const getState = (s: IStore) => ({ connectedPubSubs: s.connectedTargets, activePubSub: s.activeConnectedTarget });
 
 export default function EventViewerContainer() {
   const { connectedPubSubs, activePubSub } = useStore(

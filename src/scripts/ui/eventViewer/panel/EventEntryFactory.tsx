@@ -78,8 +78,8 @@ const FrozenOverlay = ({ show, resumeEvents, eventCount, frozenEventCount }: Fro
 // EventEntryFactory
 
 const getState = (s: IStore) => ({
-  activeEvents: s.events[s.activePubSub!.pubsub.connectTarget],
-  activeStats: s.stats[s.activePubSub!.pubsub.connectTarget]
+  activeEvents: s.events[s.activeConnectedTarget!.pubsub.connectTarget],
+  activeStats: s.stats[s.activeConnectedTarget!.pubsub.connectTarget]
 });
 
 type EventEntryFactoryProps = {
@@ -154,7 +154,7 @@ export const EventEntryFactory = ({ pubSubConnection, desiredEventTypes, searchT
           return !shouldSkip && desiredEventTypes?.includes(aE.eventClassification.category);
         })
         .reverse(),
-    [activeEvents, desiredEventTypes]
+    [activeEvents, desiredEventTypes, searchTerm, isFrozen]
   );
 
   const [possiblyFrozenEvents, setPossiblyFrozenEvents] = useState(filteredEvents);

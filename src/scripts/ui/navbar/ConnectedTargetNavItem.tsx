@@ -1,9 +1,18 @@
 import { StyledButton } from '-/scripts/styles/buttons';
-import { ActionIcon, Button, Group, Popover, Title, useMantineTheme, type GroupProps } from '@mantine/core';
+import {
+  ActionIcon,
+  Button,
+  ColorSwatch,
+  Group,
+  Popover,
+  Title,
+  useMantineTheme,
+  type GroupProps
+} from '@mantine/core';
 // @ts-ignore-next-line
 import useButtonStyles from '@mantine/core/esm/components/Button/Button.styles';
 import { useBooleanToggle } from '@mantine/hooks';
-import type { TargetClassMap } from 'golden-hammer-shared';
+import type { ConnectTargetCategoriesAssociation } from 'golden-hammer-shared';
 import React from 'react';
 import { MdLeakAdd } from 'react-icons/md';
 import EventTypesSelector from '../_shared/EventTypesSelector';
@@ -35,17 +44,17 @@ const ConnectTargetEventSelector = ({
 );
 
 type Props = Omit<GroupProps, 'children'> & {
-  targetClassMap: TargetClassMap;
-  reSubEventCategories: (targetClassMap: TargetClassMap) => void;
+  connectTargetCategoriesAssociation: ConnectTargetCategoriesAssociation;
+  reSubEventCategories: (conTrgtCtgsAssoc: ConnectTargetCategoriesAssociation) => void;
   unregisterPubSub: (connectTarget: string) => void;
-  //FIXME: Show updates when events change?
-  //hasUpdates: boolean;
+  hasUpdates: boolean;
 };
 
 export default function ConnectedTargetNavItem({
-  targetClassMap: { connectTarget, eventCategories },
+  connectTargetCategoriesAssociation: { connectTarget, eventCategories },
   reSubEventCategories,
   unregisterPubSub,
+  hasUpdates,
   ...restProps
 }: Props) {
   const theme = useMantineTheme();
@@ -83,33 +92,37 @@ export default function ConnectedTargetNavItem({
 
   return (
     <Group
-      position="apart"
+      grow
       spacing="lg"
       className={cx(restProps.className, root, defaultStyle, ButtonInButton)}
       onClick={restProps.onClick}
     >
       <Title order={5}>{connectTarget}</Title>
 
-      <Popover
-        withArrow
-        arrowSize={4}
-        opened={showConfig}
-        position="right"
-        placement="start"
-        onClose={() => setShowConfig(false)}
-        target={
-          <ActionIcon onClick={toggleConfig} variant="filled">
-            <MdLeakAdd />
-          </ActionIcon>
-        }
-      >
-        <ConnectTargetEventSelector
-          onChangeEventCategories={onChangeEventCategories}
-          SimpleRollOverClassName={SimpleRollOver}
-          eventCategories={eventCategories}
-          unregisterPubSub={onUnregisterPubSub}
-        />
-      </Popover>
+      <Group position="right">
+        <ColorSwatch size={8} color={hasUpdates ? 'red' : 'grey'} />
+
+        <Popover
+          withArrow
+          arrowSize={4}
+          opened={showConfig}
+          position="right"
+          placement="start"
+          onClose={() => setShowConfig(false)}
+          target={
+            <ActionIcon onClick={toggleConfig} variant="filled">
+              <MdLeakAdd />
+            </ActionIcon>
+          }
+        >
+          <ConnectTargetEventSelector
+            onChangeEventCategories={onChangeEventCategories}
+            SimpleRollOverClassName={SimpleRollOver}
+            eventCategories={eventCategories}
+            unregisterPubSub={onUnregisterPubSub}
+          />
+        </Popover>
+      </Group>
     </Group>
   );
 }

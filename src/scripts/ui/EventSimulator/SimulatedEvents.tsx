@@ -1,5 +1,8 @@
 export type SimulatedEventHandler = (username: string) => object;
 
+const PROFILE_IMAGE =
+  'https://static-cdn.jtvnw.net/jtv_user_pictures/7f7aa773-b299-45c8-95d9-49879b1b6e1d-profile_image-70x70.png';
+
 const randBetween = (low: number, high: number): number => Math.round(Math.random() * (high - low) + low);
 
 const defaultMessageEvent = {
@@ -45,6 +48,29 @@ const SimulatedEvents: Record<string, SimulatedEventHandler> = {
     platformEventName: 'hosted',
     platformEventData: [username, 0, false]
   }),
+
+  'PlatformSpecific: Raided': (username: string) => {
+    const userCount = randBetween(100, 1000);
+    return {
+      platformEventName: 'raided',
+      platformEventData: [
+        username,
+        userCount,
+        {
+          ...defaultMessageEvent,
+          'display-name': username,
+          login: username,
+          'msg-id': 'raid',
+          'msg-param-displayName': username,
+          'msg-param-login': username,
+          'msg-param-profileImageURL': PROFILE_IMAGE,
+          'msg-param-viewerCount': userCount,
+          'system-msg': `${userCount} raiders from ${username} have joined!`
+        }
+      ]
+    };
+  },
+
   'Presence: Join': (username: string) => ({ platformEventName: 'join', platformEventData: [username, false] }),
   'Presence: Part': (username: string) => ({ platformEventName: 'part', platformEventData: [username, false] }),
 

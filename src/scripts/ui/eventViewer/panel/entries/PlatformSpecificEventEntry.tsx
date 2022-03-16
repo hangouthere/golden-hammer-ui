@@ -41,6 +41,15 @@ export default function PlatformSpecificEventEntry({ normalizedEvent }: EntryVie
       msg = 'Hosted by ' + eventData[0];
       break;
     case 'raided':
+      const [raider, numRaiding, userState] = eventData;
+      const prefix = <span className="userName">{raider}:</span>;
+      const profileImg = userState['msg-param-profileImageURL'];
+
+      msg = (
+        <>
+          <img src={profileImg} className="profileImg" /> {prefix} has Raided with {numRaiding} viewers!
+        </>
+      );
       break;
     default:
       msg = <>{JSON.stringify(eventData)}</>;

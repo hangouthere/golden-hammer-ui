@@ -47,6 +47,12 @@ export default function PubSubConfig() {
     [setShowWarnConnect, isConnected]
   );
 
+  const checkSubmit = useCallback((event: React.KeyboardEvent) => {
+    if ('Enter' === event.key) {
+      _connect();
+    }
+  }, []);
+
   const _connect = useCallback(() => connect(inputVal), [inputVal]);
   useEffect(() => setInputVal(pubSubUri), [pubSubUri]);
 
@@ -78,6 +84,7 @@ export default function PubSubConfig() {
             disabled={isConnected}
             onMouseOver={checkWarnConnect}
             onMouseOut={checkWarnConnect}
+            onKeyUp={checkSubmit}
           />
         </Tooltip>
 

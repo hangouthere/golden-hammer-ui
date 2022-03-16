@@ -1,6 +1,5 @@
-import type { PubSubConnectionResponse } from 'golden-hammer-shared';
 import type { GetState, SetState } from 'zustand';
-import { localGet, type ConnectTargetEventMap, type ConnectTargetStatMap, type IStore } from '.';
+import { localGet, type ConnectedTarget, type ConnectTargetEventMap, type ConnectTargetStatMap, type IStore } from '.';
 
 export enum SocketStatus {
   Disconnected,
@@ -13,8 +12,8 @@ export interface IState {
   connectionStatus: SocketStatus;
   autoConnect: any;
   connectTarget: string;
-  connectedPubSubs: Map<string, PubSubConnectionResponse>;
-  activePubSub: PubSubConnectionResponse | null;
+  connectedTargets: Map<string, ConnectedTarget>;
+  activeConnectedTarget: ConnectedTarget | null;
   events: ConnectTargetEventMap;
   stats: ConnectTargetStatMap;
 }
@@ -24,10 +23,10 @@ export default (_set: SetState<IStore>, _get: GetState<IStore>): IState => {
 
   const InitState: IState = {
     autoConnect: shouldAutoConnect,
-    connectedPubSubs: new Map(),
+    connectedTargets: new Map(),
     connectionStatus: SocketStatus.Disconnected,
     connectTarget: '',
-    activePubSub: null,
+    activeConnectedTarget: null,
     pubSubUri: localGet('gh.pubSubUri') || process.env.URI_GH_PUBSUB || '//',
     events: {},
     stats: {}

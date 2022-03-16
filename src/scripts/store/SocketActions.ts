@@ -6,7 +6,7 @@ import type {
 } from 'golden-hammer-shared';
 import { Socket } from 'socket.io-client';
 import type { GetState, SetState } from 'zustand';
-import type { IStore, StatMap, UINormalizedMessagingEvent } from '.';
+import type { ConnectedTarget, IStore, StatMap, UINormalizedMessagingEvent } from '.';
 import { eventer } from './Actions';
 import { SocketStatus } from './InitState';
 
@@ -16,6 +16,8 @@ const MAX_COUNT_EVENTS = 1000;
 let CurrentFailures = 0;
 
 export const bindSocketStatus = (set: SetState<IStore>, get: GetState<IStore>, socket: Socket) => {
+  socket.on('gh-chat.evented', normalizedEvent => set(state => processSocketEvent(state, normalizedEvent)));
+
   socket.on('connect', () => {
     CurrentFailures = 0;
     set({ connectionStatus: SocketStatus.Connected });
@@ -28,7 +30,7 @@ export const bindSocketStatus = (set: SetState<IStore>, get: GetState<IStore>, s
   });
 
   socket.on('disconnect', reason => {
-    set({ connectionStatus: SocketStatus.Disconnected, events: {}, connectedPubSubs: new Map() });
+    set({ connectionStatus: SocketStatus.Disconnected, events: {}, connectedTargets: new Map() });
     eventer.dispatchEvent(new CustomEvent('disconnect', { detail: reason }));
 
     if (++CurrentFailures >= MAX_CONNECT_FAILS) {
@@ -38,13 +40,12 @@ export const bindSocketStatus = (set: SetState<IStore>, get: GetState<IStore>, s
     }
   });
 
-  socket.on('gh-chat.evented', normalizedEvent => set(state => processSocketEvent(state, normalizedEvent)));
   socket.on('gh-pubsub.rejected', ({ reason }) => {
     eventer.dispatchEvent(new CustomEvent('error', { detail: reason }));
   });
 };
 
-export const registerPubSub = (state: IStore, pubSubConnection: PubSubConnectionResponse) => {
+export const registerPubSub = (state: IStore, pubSubConnection: ConnectedTarget) => {
   //Enforce lowercase name for store
   pubSubConnection.pubsub.connectTarget = pubSubConnection.pubsub.connectTarget.toLowerCase();
 
@@ -53,8 +54,8 @@ export const registerPubSub = (state: IStore, pubSubConnection: PubSubConnection
   } = pubSubConnection;
 
   return {
-    activePubSub: pubSubConnection,
-    connectedPubSubs: new Map(state.connectedPubSubs).set(connectTarget, pubSubConnection),
+    activeConnectedTarget: pubSubConnection,
+    connectedTargets: new Map(state.connectedTargets).set(connectTarget, pubSubConnection),
     stats: {
       ...state.stats,
       [connectTarget]: state.stats[connectTarget] || {}
@@ -70,30 +71,35 @@ export const unregisterPubSub = (state: IStore, pubSubConnection: PubSubConnecti
   //Enforce lowercase name for store
   pubSubConnection.pubsub.connectTarget = pubSubConnection.pubsub.connectTarget.toLowerCase();
 
-  const newMap = new Map(state.connectedPubSubs);
+  const newMap = new Map(state.connectedTargets);
   newMap.delete(pubSubConnection.pubsub.connectTarget);
 
   return {
     ...state,
-    connectedPubSubs: newMap,
-    activePubSub: null
+    connectedTargets: newMap,
+    activeConnectedTarget: null
   };
 };
 
 export function processSocketEvent(state: IStore, normalizedEvent: UINormalizedMessagingEvent) {
   let newEventMap = ringBufferEvents(state.events, normalizedEvent);
   newEventMap = filterAdminEvents(newEventMap, normalizedEvent);
+
+  const newConnectedTargets = markUpdateIfInactive(
+    state.activeConnectedTarget,
+    state.connectedTargets,
+    normalizedEvent
+  );
+
   const newStatsMap = addStats(state.stats, normalizedEvent);
 
   return {
     ...state,
 
-    stats: {
-      ...newStatsMap
-    },
-    events: {
-      ...newEventMap
-    }
+    connectedTargets: newConnectedTargets,
+
+    stats: newStatsMap,
+    events: newEventMap
   };
 }
 
@@ -163,4 +169,25 @@ function filterAdminEvents(eventMap: IStore['events'], normalizedEvent: UINormal
     ...eventMap,
     [normalizedEvent.connectTarget]: filteredEvents
   };
+}
+
+function markUpdateIfInactive(
+  activePubSub: ConnectedTarget | null,
+  connectedTargets: IStore['connectedTargets'],
+  normalizedEvent: UINormalizedMessagingEvent
+) {
+  const oldConnect = connectedTargets.get(normalizedEvent.connectTarget);
+
+  // Active, no need to mark updated!
+  if (!activePubSub || !oldConnect || activePubSub.pubsub.connectTarget === normalizedEvent.connectTarget) {
+    return connectedTargets;
+  }
+
+  if (oldConnect.hasUpdates === true) {
+    return connectedTargets;
+  }
+
+  oldConnect.hasUpdates = true;
+
+  return new Map(connectedTargets).set(normalizedEvent.connectTarget, oldConnect);
 }

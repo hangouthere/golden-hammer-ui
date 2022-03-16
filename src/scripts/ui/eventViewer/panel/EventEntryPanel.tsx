@@ -8,7 +8,7 @@ import EntryHeader from './Header';
 
 export const EventEntryPanel = () => {
   const theme = useMantineTheme();
-  const activePubSub = useStore(s => s.activePubSub, shallow);
+  const activePubSub = useStore(s => s.activeConnectedTarget, shallow);
 
   const pubSubInfo = activePubSub!.pubsub;
   const [desiredEventTypes, setDesiredEventTypes] = useState(pubSubInfo?.eventCategories);

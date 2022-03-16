@@ -143,6 +143,10 @@ export const StyledEventViewer = createStyles((theme, colors: StyledEventViewerP
         width: '24px'
       },
 
+      'img.profileImg': {
+        width: '48px'
+      },
+
       '.userName': {
         color: 'rgb(203, 128, 249)'
       },

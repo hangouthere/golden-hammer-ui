@@ -10,12 +10,12 @@ import Stats from './Stats';
 export type EventCategories = string[];
 
 const getState = (s: IStore) => ({
-  activePubSub: s.activePubSub,
+  activePubSub: s.activeConnectedTarget,
   clearEvents: s.clearEvents,
   pubsubRegisterChat: s.pubsubRegisterChat,
   pubsubUnregisterChat: s.pubsubUnregisterChat,
-  activeEvents: s.events[s.activePubSub!.pubsub.connectTarget],
-  activeStats: s.stats[s.activePubSub!.pubsub.connectTarget]
+  activeEvents: s.events[s.activeConnectedTarget!.pubsub.connectTarget],
+  activeStats: s.stats[s.activeConnectedTarget!.pubsub.connectTarget]
 });
 
 type EntryHeaderProps = {

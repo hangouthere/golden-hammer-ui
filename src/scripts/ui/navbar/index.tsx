@@ -15,9 +15,9 @@ import PubSubRegisterPanel from './PubSubRegisterPanel';
 interface Props extends Omit<NavbarProps, 'children'> {}
 
 const getStateVals = (s: IStore) => ({
-  activePubSub: s.activePubSub,
+  activePubSub: s.activeConnectedTarget,
   autoConnect: s.autoConnect,
-  connectedPubSubs: s.connectedPubSubs,
+  connectedPubSubs: s.connectedTargets,
   connectionStatus: s.connectionStatus,
   pubsubRegisterChat: s.pubsubRegisterChat,
   pubsubUnregisterChat: s.pubsubUnregisterChat,
@@ -27,7 +27,6 @@ const getStateVals = (s: IStore) => ({
 function NavBar(props: Props) {
   const {
     activePubSub,
-    autoConnect,
     connectedPubSubs,
     connectionStatus,
     pubsubRegisterChat,
@@ -37,7 +36,6 @@ function NavBar(props: Props) {
 
   const hasTargetMaps = !!connectedPubSubs.size;
   const isConnected = SocketStatus.Connected === connectionStatus;
-  const isConnecting = SocketStatus.Connecting === connectionStatus;
 
   const isActive = (conn: PubSubConnectionResponse) => activePubSub?.pubsub.connectTarget === conn.pubsub.connectTarget;
 
@@ -48,7 +46,8 @@ function NavBar(props: Props) {
       [...connectedPubSubs.values()].map(pubSubConn => (
         <ConnectedTargetNavItem
           key={pubSubConn.pubsub.connectTarget}
-          targetClassMap={pubSubConn.pubsub}
+          connectTargetCategoriesAssociation={pubSubConn.pubsub}
+          hasUpdates={!!pubSubConn.hasUpdates}
           reSubEventCategories={pubsubRegisterChat}
           unregisterPubSub={pubsubUnregisterChat}
           onClick={() => setActivePubSub(pubSubConn)}
