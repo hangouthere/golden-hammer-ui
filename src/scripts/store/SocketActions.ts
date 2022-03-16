@@ -16,7 +16,7 @@ const MAX_COUNT_EVENTS = 1000;
 let CurrentFailures = 0;
 
 export const bindSocketStatus = (set: SetState<IStore>, get: GetState<IStore>, socket: Socket) => {
-  socket.on('gh-chat.evented', normalizedEvent => set(state => processSocketEvent(state, normalizedEvent)));
+  socket.on('gh-messaging.evented', normalizedEvent => set(state => processSocketEvent(state, normalizedEvent)));
 
   socket.on('connect', () => {
     CurrentFailures = 0;
