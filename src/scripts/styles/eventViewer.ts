@@ -234,7 +234,7 @@ export const StyledEventViewer = createStyles((theme, colors: StyledEventViewerP
       }
     },
 
-    'PlatformSpecific-undefined': {
+    PlatformSpecific: {
       textAlign: 'center',
       textShadow: `0 0 1px #000,
                    0 0 1px #000,

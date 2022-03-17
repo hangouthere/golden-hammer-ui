@@ -44,7 +44,7 @@ function PubSubRegisterPanel({ disabled, pubSubRegister }: Props) {
   const onFormChange = useCallback(() => setIsValid(pubSubReg.validate()), [pubSubReg.values]);
   const onFormSubmitted = useCallback(
     ({ connectTarget }) => {
-      pubSubRegister({ connectTarget, eventCategories: selectedEvents });
+      pubSubRegister({ connectTarget, eventClassifications: selectedEvents });
       setSelectedEvents([...GHPubSub_EventTypes]);
       setIsValid(false);
       pubSubReg.reset();

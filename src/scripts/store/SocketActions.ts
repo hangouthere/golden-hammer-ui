@@ -1,9 +1,4 @@
-import type {
-  AdministrationEventData,
-  EventClassificationsType,
-  MonetizationEventData,
-  PubSubConnectionResponse
-} from 'golden-hammer-shared';
+import type { AdministrationEventData, MonetizationEventData, PubSubConnectionResponse } from 'golden-hammer-shared';
 import { Socket } from 'socket.io-client';
 import type { GetState, SetState } from 'zustand';
 import type { ConnectedTarget, IStore, StatMap, UINormalizedMessagingEvent } from '.';
@@ -104,8 +99,7 @@ export function processSocketEvent(state: IStore, normalizedEvent: UINormalizedM
 }
 
 function addStats(state: IStore['stats'], normalizedEvent: UINormalizedMessagingEvent) {
-  const { category, subCategory } = normalizedEvent.eventClassification;
-  const fqcn = `${category}.${subCategory}` as EventClassificationsType;
+  const [category] = normalizedEvent.eventClassification.split('.');
 
   const connectTarget = normalizedEvent.connectTarget.toLowerCase();
   const prevStats = state[connectTarget];
@@ -114,7 +108,7 @@ function addStats(state: IStore['stats'], normalizedEvent: UINormalizedMessaging
     ...prevStats,
     TotalEvents: Number(prevStats['TotalEvents'] || 0) + 1,
     [category]: Number(prevStats[category] || 0) + 1,
-    [fqcn]: Number(prevStats[fqcn] || 0) + 1
+    [normalizedEvent.eventClassification]: Number(prevStats[normalizedEvent.eventClassification] || 0) + 1
   };
 
   // Track monetization totals for UI display purposes
@@ -143,19 +137,19 @@ function ringBufferEvents(state: IStore['events'], normalizedEvent: UINormalized
 }
 
 function filterAdminEvents(eventMap: IStore['events'], normalizedEvent: UINormalizedMessagingEvent) {
-  if ('Administration' !== normalizedEvent.eventClassification.category) {
+  if (!normalizedEvent.eventClassification.startsWith('Administration')) {
     return eventMap;
   }
 
   const filteredEvents = eventMap[normalizedEvent.connectTarget].map(prevEvent => {
     const data = normalizedEvent.eventData as AdministrationEventData;
 
-    if ('Message' !== prevEvent.eventClassification.subCategory) {
+    if ('UserChat.Message' !== prevEvent.eventClassification) {
       return prevEvent;
     }
 
     // Determines if the target type is a user, if we're not trying to remove a specific message
-    const targetTypeUser = 'MessageRemoval' !== normalizedEvent.eventClassification.subCategory;
+    const targetTypeUser = 'Administration.MessageRemoval' !== normalizedEvent.eventClassification;
     // Note the different array access (1 v 0), as well as sub-member ID
     const testTargetId = targetTypeUser
       ? prevEvent.platform.eventData[0]['user-id']

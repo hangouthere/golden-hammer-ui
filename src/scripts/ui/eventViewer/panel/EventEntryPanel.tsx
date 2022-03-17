@@ -11,7 +11,7 @@ export const EventEntryPanel = () => {
   const activePubSub = useStore(s => s.activeConnectedTarget, shallow);
 
   const pubSubInfo = activePubSub!.pubsub;
-  const [desiredEventTypes, setDesiredEventTypes] = useState(pubSubInfo?.eventCategories);
+  const [desiredEventTypes, setDesiredEventTypes] = useState(pubSubInfo?.eventClassifications);
   const [searchTerm, setSearchTerm] = useState('');
 
   const {
@@ -20,7 +20,7 @@ export const EventEntryPanel = () => {
     theme.other.Platforms[activePubSub?.pubsub.platformName as string] || theme.other.Platforms.default
   );
 
-  useEffect(() => setDesiredEventTypes(pubSubInfo?.eventCategories), [...GHPubSub_EventTypes]);
+  useEffect(() => setDesiredEventTypes(pubSubInfo?.eventClassifications), [...GHPubSub_EventTypes]);
 
   return (
     <>

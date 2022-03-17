@@ -1,5 +1,5 @@
 import { Group, Navbar, type NavbarProps } from '@mantine/core';
-import type { PubSubConnectionResponse } from 'golden-hammer-shared';
+import type { ConnectTargetClassificationsAssociation, PubSubConnectionResponse } from 'golden-hammer-shared';
 import React, { useMemo } from 'react';
 import shallow from 'zustand/shallow';
 import useStore, { type IStore } from '../../store';
@@ -46,12 +46,12 @@ function NavBar(props: Props) {
       [...connectedPubSubs.values()].map(pubSubConn => (
         <ConnectedTargetNavItem
           key={pubSubConn.pubsub.connectTarget}
-          connectTargetCategoriesAssociation={pubSubConn.pubsub}
           hasUpdates={!!pubSubConn.hasUpdates}
-          reSubEventCategories={pubsubRegisterChat}
+          reSubEventClassifications={pubsubRegisterChat}
           unregisterPubSub={pubsubUnregisterChat}
           onClick={() => setActivePubSub(pubSubConn)}
           className={isActive(pubSubConn) ? 'active' : ''}
+          connectTargetClassificationsAssociation={pubSubConn.pubsub as ConnectTargetClassificationsAssociation}
         />
       )),
     [connectedPubSubs, activePubSub]

@@ -1,6 +1,6 @@
 import {
-  EventClassifications,
-  type EventClassificationsType,
+  PossibleEventClassifications,
+  type EventClassification,
   type NormalizedMessagingEvent,
   type PubSubConnectionResponse
 } from 'golden-hammer-shared';
@@ -16,14 +16,16 @@ const useStore = create<IStore>((s, g) => ({
   ...InitState(s, g)
 }));
 
-export const GHPubSub_EventTypes = EventClassifications;
+export const GHPubSub_EventTypes = PossibleEventClassifications;
 
 type CustomStats = {
   TotalEvents: number;
   Earnings: number;
 };
 
-export type StatMap = Partial<Record<EventClassificationsType, number>> & Partial<CustomStats>;
+export type StatMap = Partial<Record<EventClassification, number>> &
+  Partial<CustomStats> &
+  Record<string, number>;
 
 export type ConnectTargetStatMap = {
   [connectTarget: string]: StatMap;

@@ -2,12 +2,11 @@ import useStore, { type IStore } from '-/scripts/store';
 import { StyledEventViewer } from '-/scripts/styles/eventViewer';
 import { Anchor, Group, Title, useMantineTheme } from '@mantine/core';
 import { useBooleanToggle } from '@mantine/hooks';
+import { type EventClassifications } from 'golden-hammer-shared';
 import React, { useCallback } from 'react';
 import shallow from 'zustand/shallow';
 import Options from './Options';
 import Stats from './Stats';
-
-export type EventCategories = string[];
 
 const getState = (s: IStore) => ({
   activePubSub: s.activeConnectedTarget,
@@ -19,8 +18,8 @@ const getState = (s: IStore) => ({
 });
 
 type EntryHeaderProps = {
-  desiredEventTypes: EventCategories;
-  setDesiredEventTypes: (types: EventCategories) => void;
+  desiredEventTypes?: EventClassifications;
+  setDesiredEventTypes: (types: EventClassifications) => void;
   searchTerm: string;
   setSearchTerm: (t: string) => void;
 };
@@ -36,12 +35,12 @@ const EntryHeader = ({ desiredEventTypes, setDesiredEventTypes, searchTerm, setS
   const toggleToolTip_desired = useCallback(() => setShowDesiredFilterTooltip(!showDesiredFilterTooltip), []);
 
   const {
-    pubsub: { platformName, connectTarget, eventCategories }
+    pubsub: { platformName, connectTarget, eventClassifications }
   } = activePubSub!;
 
   const onPubSubChange = useCallback(
-    (eventCategories: EventCategories) => pubsubRegisterChat({ connectTarget, eventCategories }),
-    [connectTarget, eventCategories]
+    (eventClassifications: EventClassifications) => pubsubRegisterChat({ connectTarget, eventClassifications }),
+    [connectTarget, eventClassifications]
   );
   const onClearEvents = useCallback(() => clearEvents(connectTarget), [connectTarget]);
   const onUnregister = useCallback(() => pubsubUnregisterChat(connectTarget), [connectTarget]);
@@ -62,8 +61,6 @@ const EntryHeader = ({ desiredEventTypes, setDesiredEventTypes, searchTerm, setS
 
         <Options
           {...{
-            desiredEventTypes,
-            eventCategories,
             onClearEvents,
             onPubSubChange,
             onUnregister,
@@ -75,7 +72,9 @@ const EntryHeader = ({ desiredEventTypes, setDesiredEventTypes, searchTerm, setS
             toggleToolTip_desired,
             toggleToolTip_pubsub,
             searchTerm,
-            setSearchTerm
+            setSearchTerm,
+            desiredEventTypes: desiredEventTypes!,
+            eventClassifications: eventClassifications!
           }}
         />
       </Group>

@@ -1,4 +1,4 @@
-import type { PubSubConnectionResponse, ConnectTargetCategoriesAssociation } from 'golden-hammer-shared';
+import type { PubSubConnectionResponse, ConnectTargetClassificationsAssociation } from 'golden-hammer-shared';
 import io, { Socket } from 'socket.io-client';
 
 const SVC_PUBSUB_REGISTER_CHAT = 'gh-pubsub.register';
@@ -37,8 +37,8 @@ export const disconnect = () => {
 
 export const pubsubRegisterChat = async ({
   connectTarget,
-  eventCategories
-}: ConnectTargetCategoriesAssociation): Promise<PubSubConnectionResponse> =>
+  eventClassifications
+}: ConnectTargetClassificationsAssociation): Promise<PubSubConnectionResponse> =>
   new Promise((resolve, reject) => {
     socket?.emit(
       'call',
@@ -46,7 +46,7 @@ export const pubsubRegisterChat = async ({
       {
         platformName: 'twitch',
         connectTarget: connectTarget.toLowerCase(),
-        eventCategories
+        eventClassifications
       },
       (err: Error, resp: PubSubConnectionResponse) => {
         if (err) {

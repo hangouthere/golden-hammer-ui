@@ -26,8 +26,8 @@ export default function UserChatEventEntry({ normalizedEvent }: EntryViewProps):
   const data: UserChatEventData = normalizedEvent.eventData as UserChatEventData;
   const prefix = <span className="userName">{data.userName}:</span>;
 
-  switch (normalizedEvent.eventClassification.subCategory) {
-    case 'Presence':
+  switch (normalizedEvent.eventClassification) {
+    case 'UserChat.Presence':
       retElement = (
         <span>
           {prefix} {data.presence}ed the Chat.
@@ -35,7 +35,7 @@ export default function UserChatEventEntry({ normalizedEvent }: EntryViewProps):
       );
       break;
 
-    case 'Message':
+    case 'UserChat.Message':
       const children = data.messageBuffers?.map(buildMessageChunk).reduce((c: JSX.Element[], chunkChild, idx, arr) => {
         c.push(chunkChild);
 

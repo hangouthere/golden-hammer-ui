@@ -12,28 +12,26 @@ import {
 // @ts-ignore-next-line
 import useButtonStyles from '@mantine/core/esm/components/Button/Button.styles';
 import { useBooleanToggle } from '@mantine/hooks';
-import type { ConnectTargetCategoriesAssociation } from 'golden-hammer-shared';
+import { type ConnectTargetClassificationsAssociation, type EventClassifications } from 'golden-hammer-shared';
 import React from 'react';
 import { MdLeakAdd } from 'react-icons/md';
 import EventTypesSelector from '../_shared/EventTypesSelector';
 
-type EventCategories = string[];
-
 type EventSelectorProps = {
-  eventCategories: EventCategories;
-  onChangeEventCategories: (types: EventCategories) => void;
+  eventClassifications: EventClassifications;
+  onChangeEventClassifications: (types: EventClassifications) => void;
   SimpleRollOverClassName: string;
   unregisterPubSub: () => void;
 };
 
 const ConnectTargetEventSelector = ({
-  eventCategories,
-  onChangeEventCategories,
+  eventClassifications,
+  onChangeEventClassifications,
   SimpleRollOverClassName,
   unregisterPubSub
 }: EventSelectorProps) => (
   <Group m={3} direction="column" grow>
-    <EventTypesSelector selectedEvents={eventCategories} onChange={onChangeEventCategories} />
+    <EventTypesSelector selectedEvents={eventClassifications} onChange={onChangeEventClassifications} />
 
     <Group position="right">
       <Button radius="xl" size="xs" className={SimpleRollOverClassName} onClick={unregisterPubSub}>
@@ -44,15 +42,15 @@ const ConnectTargetEventSelector = ({
 );
 
 type Props = Omit<GroupProps, 'children'> & {
-  connectTargetCategoriesAssociation: ConnectTargetCategoriesAssociation;
-  reSubEventCategories: (conTrgtCtgsAssoc: ConnectTargetCategoriesAssociation) => void;
+  connectTargetClassificationsAssociation: ConnectTargetClassificationsAssociation;
+  reSubEventClassifications: (conTrgtCtgsAssoc: ConnectTargetClassificationsAssociation) => void;
   unregisterPubSub: (connectTarget: string) => void;
   hasUpdates: boolean;
 };
 
 export default function ConnectedTargetNavItem({
-  connectTargetCategoriesAssociation: { connectTarget, eventCategories },
-  reSubEventCategories,
+  connectTargetClassificationsAssociation: { connectTarget, eventClassifications },
+  reSubEventClassifications,
   unregisterPubSub,
   hasUpdates,
   ...restProps
@@ -62,8 +60,8 @@ export default function ConnectedTargetNavItem({
 
   const toggleConfig = () => setShowConfig(!showConfig);
 
-  const onChangeEventCategories = (eventCategories: EventCategories) =>
-    reSubEventCategories({ connectTarget, eventCategories });
+  const onChangeEventClassifications = (eventClassifications: EventClassifications) =>
+    reSubEventClassifications({ connectTarget, eventClassifications });
 
   const {
     classes: { root, default: defaultStyle },
@@ -116,9 +114,9 @@ export default function ConnectedTargetNavItem({
           }
         >
           <ConnectTargetEventSelector
-            onChangeEventCategories={onChangeEventCategories}
+            onChangeEventClassifications={onChangeEventClassifications}
             SimpleRollOverClassName={SimpleRollOver}
-            eventCategories={eventCategories}
+            eventClassifications={eventClassifications}
             unregisterPubSub={onUnregisterPubSub}
           />
         </Popover>

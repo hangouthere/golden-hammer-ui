@@ -1,7 +1,7 @@
 import useStore, { type IStore, type UINormalizedMessagingEvent } from '-/scripts/store';
 import { StyledEventViewer } from '-/scripts/styles/eventViewer';
 import { Button, Transition, useMantineTheme } from '@mantine/core';
-import type { EventClassificationsType, PubSubConnectionResponse } from 'golden-hammer-shared';
+import { type EventClassifications, type PubSubConnectionResponse } from 'golden-hammer-shared';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import BaseTable, { AutoResizer, Column } from 'react-base-table';
 import shallow from 'zustand/shallow';
@@ -12,7 +12,6 @@ import UnknownEventEntry from './entries/UnknownEventEntry';
 import UserChatEventEntry from './entries/UserChatEventEntry';
 
 const SKIPPED_EVENTS: string[] = [];
-// const SKIPPED_EVENTS = ['submysterygift'];
 
 ////////////////////////////////////////////////////////////////////////////////////////////
 // Entry View Mapping for Factory
@@ -25,13 +24,7 @@ type Dims = { width: number; height: number };
 
 type EntryViewComponent = (props: EntryViewProps) => JSX.Element | null;
 
-type EventClassEntryViewMapType = {
-  [eventClass in EventClassificationsType]?: EntryViewComponent;
-} & {
-  Unknown: EntryViewComponent;
-};
-
-const EventClassEntryViewMap: EventClassEntryViewMapType = {
+const EventClassEntryViewMap = {
   Unknown: UnknownEventEntry,
   UserChat: UserChatEventEntry,
   Administration: AdministrativeEventEntry,
@@ -84,7 +77,7 @@ const getState = (s: IStore) => ({
 
 type EventEntryFactoryProps = {
   pubSubConnection: PubSubConnectionResponse | null;
-  desiredEventTypes?: string[];
+  desiredEventTypes?: EventClassifications;
   searchTerm: string;
 };
 
@@ -117,17 +110,18 @@ export const EventEntryFactory = ({ pubSubConnection, desiredEventTypes, searchT
 
   const createDecoratedEventEntry = useCallback(
     ({ rowData }: { rowData: UINormalizedMessagingEvent }) => {
-      const fqcn = `${rowData.eventClassification.category}-${rowData.eventClassification.subCategory}`;
+      const [category] = rowData.eventClassification.split('.');
+      const fqcn = rowData.eventClassification.replace('.', '-');
       const platformCn = `${rowData.platform.name}-${rowData.platform.eventName}`;
 
       const chosenViewComponent: EntryViewComponent =
-        EventClassEntryViewMap[rowData.eventClassification.category] || EventClassEntryViewMap['Unknown'];
+        EventClassEntryViewMap[category as keyof EntryViewComponent] || EventClassEntryViewMap['Unknown'];
       const EntryContent = chosenViewComponent;
       const key = rowData.pubSubMsgId;
 
       const eventEntryClassNames = [
         cssClasses.EventLogEntry,
-        (cssClasses as any)[rowData.eventClassification.category],
+        (cssClasses as any)[category],
         (cssClasses as any)[fqcn],
         (cssClasses as any)[platformCn],
         fqcn,
@@ -148,10 +142,10 @@ export const EventEntryFactory = ({ pubSubConnection, desiredEventTypes, searchT
       activeEvents
         .filter(aE => {
           const shouldSkip =
-            SKIPPED_EVENTS.includes(aE.eventClassification.category) ||
+            SKIPPED_EVENTS.includes(aE.eventClassification) ||
             SKIPPED_EVENTS.includes(aE.platform.eventName) ||
             !JSON.stringify(aE.eventData || '').includes(searchTerm);
-          return !shouldSkip && desiredEventTypes?.includes(aE.eventClassification.category);
+          return !shouldSkip && desiredEventTypes?.includes(aE.eventClassification);
         })
         .reverse(),
     [activeEvents, desiredEventTypes, searchTerm, isFrozen]

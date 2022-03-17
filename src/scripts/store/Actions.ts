@@ -1,4 +1,4 @@
-import type { PubSubConnectionResponse, ConnectTargetCategoriesAssociation } from 'golden-hammer-shared';
+import type { ConnectTargetClassificationsAssociation, PubSubConnectionResponse } from 'golden-hammer-shared';
 import type { GetState, SetState } from 'zustand';
 import { localStore, type ConnectedTarget, type IStore } from '.';
 import * as GHSocket from '../services/GHSocket';
@@ -12,7 +12,7 @@ export interface IActions {
   connect: (pubSubUri: string) => void;
   disconnect: () => void;
   clearEvents: (connectTarget: string) => void;
-  pubsubRegisterChat: ({ connectTarget, eventCategories }: ConnectTargetCategoriesAssociation) => void;
+  pubsubRegisterChat: ({ connectTarget, eventClassifications }: ConnectTargetClassificationsAssociation) => void;
   pubsubUnregisterChat: (connectTarget: string) => void;
   setActivePubSub: (activePubSub: PubSubConnectionResponse) => void;
   simulateSourceEvent: (eventData: any) => void;
@@ -48,9 +48,9 @@ export default (set: SetState<IStore>, get: GetState<IStore>): IActions => ({
     }
   },
 
-  async pubsubRegisterChat({ connectTarget, eventCategories }) {
+  async pubsubRegisterChat({ connectTarget, eventClassifications }) {
     try {
-      const pubSubConnection = await GHSocket.pubsubRegisterChat({ connectTarget, eventCategories });
+      const pubSubConnection = await GHSocket.pubsubRegisterChat({ connectTarget, eventClassifications });
 
       if (!pubSubConnection.registered) {
         throw new Error(`Registration Failed for ${connectTarget}`);
@@ -99,7 +99,6 @@ export default (set: SetState<IStore>, get: GetState<IStore>): IActions => ({
   setActivePubSub(activeConnectedTarget: ConnectedTarget) {
     activeConnectedTarget.pubsub.connectTarget = activeConnectedTarget.pubsub.connectTarget.toLowerCase();
     activeConnectedTarget.hasUpdates = false;
-
 
     set(s => ({ ...s, activeConnectedTarget }));
   },

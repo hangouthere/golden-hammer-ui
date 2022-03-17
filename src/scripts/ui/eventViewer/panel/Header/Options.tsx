@@ -1,35 +1,35 @@
 import EventTypesSelector from '-/scripts/ui/_shared/EventTypesSelector';
 import { ActionIcon, Box, Divider, Group, Input, Popover, Tooltip } from '@mantine/core';
 import { useInputState } from '@mantine/hooks';
+import { type EventClassifications } from 'golden-hammer-shared';
 import React, { useCallback, useEffect } from 'react';
 import { BsFilter } from 'react-icons/bs';
 import { MdLeakAdd, MdLeakRemove, MdOutlineClear, MdSearch } from 'react-icons/md';
 import { VscClearAll } from 'react-icons/vsc';
-import type { EventCategories } from '.';
 
 type EventSelectorProps = {
-  eventCategories: EventCategories;
-  onChangeEventCategories: (types: EventCategories) => void;
+  eventClassifications: EventClassifications;
+  onChangeEventClassifications: (types: EventClassifications) => void;
   titleLabel: string;
 };
 
-const ConnectTargetEventSelector = ({ eventCategories, onChangeEventCategories, titleLabel }: EventSelectorProps) => (
+const ConnectTargetEventSelector = ({ eventClassifications, onChangeEventClassifications, titleLabel }: EventSelectorProps) => (
   <Group m={3} direction="column" spacing="xs">
     <Box>{titleLabel}:</Box>
     <Divider />
-    <EventTypesSelector selectedEvents={eventCategories} onChange={onChangeEventCategories} />
+    <EventTypesSelector selectedEvents={eventClassifications} onChange={onChangeEventClassifications} />
   </Group>
 );
 
 type Props = {
-  desiredEventTypes: EventCategories;
-  eventCategories: EventCategories;
+  desiredEventTypes: EventClassifications;
+  eventClassifications: EventClassifications;
   showDesiredFilterTooltip: boolean;
   showPubSubTooltip: boolean;
   onClearEvents: () => void;
-  onPubSubChange: (c: EventCategories) => void;
+  onPubSubChange: (c: EventClassifications) => void;
   onUnregister: () => void;
-  setDesiredEventTypes: (c: EventCategories) => void;
+  setDesiredEventTypes: (c: EventClassifications) => void;
   setShowDesiredFilterTooltip: (v: boolean) => void;
   setShowPubSubTooltip: (v: boolean) => void;
   toggleToolTip_desired: () => void;
@@ -41,7 +41,7 @@ type Props = {
 
 export default function Options({
   desiredEventTypes,
-  eventCategories,
+  eventClassifications,
   onClearEvents,
   onPubSubChange,
   onUnregister,
@@ -100,8 +100,8 @@ export default function Options({
       >
         <ConnectTargetEventSelector
           titleLabel="Filter which Events to See"
-          onChangeEventCategories={setDesiredEventTypes}
-          eventCategories={desiredEventTypes}
+          onChangeEventClassifications={setDesiredEventTypes}
+          eventClassifications={desiredEventTypes}
         />
       </Popover>
 
@@ -122,8 +122,8 @@ export default function Options({
       >
         <ConnectTargetEventSelector
           titleLabel="Modify which Events to Subscribe to"
-          onChangeEventCategories={onPubSubChange}
-          eventCategories={eventCategories}
+          onChangeEventClassifications={onPubSubChange}
+          eventClassifications={eventClassifications}
         />
       </Popover>
 

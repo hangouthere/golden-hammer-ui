@@ -1,19 +1,19 @@
 import { GHPubSub_EventTypes } from '-/scripts/store';
 import { Chip, Chips } from '@mantine/core';
+import type { EventClassifications } from 'golden-hammer-shared';
 import React, { useEffect, useState } from 'react';
 
 type Props = {
-  selectedEvents: string[];
-  onChange: (value: string[]) => void;
+  selectedEvents: EventClassifications;
+  onChange: (value: EventClassifications) => void;
 };
 
 export default function EventTypesSelector({ onChange, selectedEvents }: Props) {
-  const [_selectedEvents, setSelectedEvents] = useState(selectedEvents);
+  const [_selectedEvents, setSelectedEvents] = useState(selectedEvents as unknown as string[]);
 
   const manageChanges = (values: string[]) => {
     setSelectedEvents(values);
-
-    onChange(values);
+    onChange(values as EventClassifications);
   };
 
   useEffect(() => {

@@ -5,8 +5,9 @@ import type { EntryViewProps } from '../EventEntryFactory';
 
 export default function AdministrativeEventEntry({ normalizedEvent }: EntryViewProps): JSX.Element | null {
   const {
+    //!FIXME: Do some roles stuff!!!!
     eventData: { userName, roles, removedMessage, targetId, duration },
-    eventClassification: { subCategory }
+    eventClassification
   } = normalizedEvent as UINormalizedMessagingEvent & { eventData: AdministrationEventData };
 
   const prefix = <span className="userName">{userName}</span>;
@@ -15,11 +16,11 @@ export default function AdministrativeEventEntry({ normalizedEvent }: EntryViewP
     durationMsg = 'All Time',
     msg;
 
-  switch (subCategory) {
-    case 'Timeout':
+  switch (eventClassification) {
+    case 'Administration.Timeout':
       action = 'Timed Out';
       durationMsg = `${duration} second${duration! > 1 ? 's' : ''}`;
-    case 'Ban':
+    case 'Administration.Ban':
       msg = (
         <>
           was {action} for <span className="duration">{durationMsg}</span>
@@ -27,7 +28,7 @@ export default function AdministrativeEventEntry({ normalizedEvent }: EntryViewP
       );
       break;
 
-    case 'MessageRemoval':
+    case 'Administration.MessageRemoval':
       msg = (
         <>
           <span>had a message removed.</span>

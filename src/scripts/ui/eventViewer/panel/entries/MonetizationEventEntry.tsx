@@ -6,13 +6,13 @@ export default function MonetizationEventEntry({ normalizedEvent }: EntryViewPro
   const {
     platform: { name: platformName },
     eventData: { sourceUserName, targetUserName, estimatedValue, duration },
-    eventClassification: { subCategory }
+    eventClassification
   } = normalizedEvent as NormalizedMessagingEvent & { eventData: MonetizationEventData };
 
   const prefix = <span className="userName">{targetUserName || sourceUserName}</span>;
   const estValTxt = estimatedValue?.toFixed(2);
 
-  if ('Tip' === subCategory) {
+  if ('Monetization.Tip' === eventClassification) {
     return (
       <>
         {prefix} has Tipped <span className="estimatedValue">${estValTxt}</span>

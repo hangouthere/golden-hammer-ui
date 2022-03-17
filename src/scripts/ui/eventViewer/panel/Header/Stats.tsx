@@ -57,7 +57,7 @@ export default function HeaderStats({ stats, events }: Props) {
               <Group direction="column" spacing="sm">
                 <Title order={5}>UserChat Events</Title>
                 <Text size="sm">Messages: {stats['UserChat.Message'] || 0}</Text>
-                <Text size="sm">Join/Parts: {stats['UserChat.Presence'] || 0}</Text>
+                <Text size="sm">Presence: {stats['UserChat.Presence'] || 0}</Text>
               </Group>
             }
           >
