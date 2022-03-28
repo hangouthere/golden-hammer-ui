@@ -10,7 +10,6 @@ export default function Header(props: Omit<HeaderProps, 'children'>) {
 
         <Group align="baseline">
           <Title order={1}>Golden Hammer Event Viewer</Title>
-          <Title order={6}>by nfgCodex!</Title>
         </Group>
       </Group>
     </MHeader>

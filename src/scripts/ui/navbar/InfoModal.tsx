@@ -27,6 +27,10 @@ export default function InfoModal() {
           </Group>
 
           <>
+            <Group align="flex-start">
+              This test project is provided by <span className="whoami">Codex</span>
+            </Group>
+            <Space />
             <Title order={4}>What this project is:</Title>
             This project is a re-imagining of the vanillajs demonstration provided with the Golden Hammer Microservices!
             <br />

@@ -11,6 +11,12 @@ export const StyledMisc = createStyles(theme => ({
   InfoModal: {
     '.mantine-Text-root.mantine-Anchor-root': {
       lineHeight: '1.55px'
+    },
+
+    '.whoami': {
+      marginLeft: '-10px',
+      color: '#FF8A3B',
+      textShadow: '0 0 4px #FF8A3B'
     }
   },
 
