@@ -1,4 +1,6 @@
-import { createStyles, getSharedColorScheme, type ButtonVariant, type MantineColor } from '@mantine/core';
+import { createStyles, type ButtonVariant, type MantineColor } from '@mantine/core';
+
+import { useMantineDefaultProps } from '@mantine/styles';
 
 export interface ButtonProps {
   colorFG?: MantineColor;
@@ -9,11 +11,8 @@ export interface ButtonProps {
 
 export const StyledButton = createStyles(
   (theme, { colorVariance = 0.3, variant = 'subtle', ...colors }: ButtonProps) => {
-    const colorScheme = getSharedColorScheme({
-      theme,
-      color: colors.colorFG,
-      variant
-    });
+    const { color: defaultColor } = useMantineDefaultProps('Button', {}, { color: colors.colorFG });
+    const colorVariant = theme.fn.variant({ color: colors.colorFG || defaultColor, variant });
 
     return {
       SimpleRollOver: {
@@ -32,7 +31,7 @@ export const StyledButton = createStyles(
         marginBottom: '4px',
 
         '&.active': {
-          backgroundColor: colorScheme.hover
+          backgroundColor: colorVariant.hover
         }
       }
     };
