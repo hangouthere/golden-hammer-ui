@@ -3,9 +3,6 @@ version: '3.7'
 services:
   golden-hammer-ui:
     image: nfg/golden-hammer-ui:latest
-    build:
-      context: .
-      dockerfile: ./Dockerfile
     environment:
       - TERM=xterm-256color
     tty: true
