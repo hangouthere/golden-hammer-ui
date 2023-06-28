@@ -1,6 +1,6 @@
-import useStore, { type IStore } from '-/scripts/store';
-import { SocketStatus } from '-/scripts/store/InitState';
-import { StyledButton } from '-/scripts/styles/buttons';
+import useStore, { type IStore } from '-/scripts/store/index.js';
+import { SocketStatus } from '-/scripts/store/InitState.js';
+import { StyledButton } from '-/scripts/styles/buttons.js';
 import { ActionIcon, Button, Checkbox, Group, Input, Popover, Space, Tooltip, useMantineTheme } from '@mantine/core';
 import { useBooleanToggle, useInputState } from '@mantine/hooks';
 import React, { useCallback, useEffect, useState, type ChangeEvent } from 'react';

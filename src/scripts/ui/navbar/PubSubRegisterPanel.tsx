@@ -1,12 +1,12 @@
-import { GHPubSub_EventTypes, type IStore } from '-/scripts/store';
-import { StyledInputs } from '-/scripts/styles/inputs';
-import { StyledMisc } from '-/scripts/styles/misc';
-import { StyledNavBar } from '-/scripts/styles/navbar';
+import { GHPubSub_EventTypes, type IStore } from '-/scripts/store/index.js';
+import { StyledInputs } from '-/scripts/styles/inputs.js';
+import { StyledMisc } from '-/scripts/styles/misc.js';
+import { StyledNavBar } from '-/scripts/styles/navbar.js';
 import { Accordion, Button, Divider, Space, TextInput, Title } from '@mantine/core';
 import { useBooleanToggle, useForm } from '@mantine/hooks';
-import React, { useCallback, useState } from 'react';
+import { memo, useCallback, useState } from 'react';
 import { MdLeakAdd } from 'react-icons/md';
-import EventTypesSelector from '../_shared/EventTypesSelector';
+import EventTypesSelector from '../_shared/EventTypesSelector.js';
 
 type Props = {
   pubSubRegister: IStore['pubsubRegisterChat'];
@@ -83,4 +83,4 @@ function PubSubRegisterPanel({ disabled, pubSubRegister }: Props) {
   );
 }
 
-export default React.memo(PubSubRegisterPanel);
+export default memo(PubSubRegisterPanel);

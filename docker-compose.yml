@@ -2,7 +2,14 @@ version: '3.7'
 
 services:
   golden-hammer-ui:
-    image: nfg/golden-hammer-ui:latest
-    environment:
-      - TERM=xterm-256color
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    container_name: gh-ui
+    image: hangouthere/golden-hammer-ui:latest
+    restart: unless-stopped
+    stdin_open: true
     tty: true
+    volumes:
+      - .:/app
+      # - /dev/null:/app/.git # For git submodules FIXME: Determine if this is necessary to do

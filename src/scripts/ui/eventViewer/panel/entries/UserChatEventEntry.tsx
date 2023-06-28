@@ -1,9 +1,9 @@
 import { useCss } from '@mantine/core';
-import type { UserChatEventData } from 'golden-hammer-shared';
-import React from 'react';
-import type { EntryViewProps } from '../EventEntryFactory';
+import type { MessageBuffer, UserChatEventData } from 'golden-hammer-shared';
+import { cloneElement } from 'react';
+import type { EntryViewProps } from '../EventEntryFactory.js';
 
-const buildMessageChunk = (chunk: UserChatEventData.MessageBuffer) => {
+const buildMessageChunk = (chunk: MessageBuffer) => {
   switch (chunk.type) {
     case 'word':
       return <span>{chunk.content}</span>;
@@ -36,21 +36,24 @@ export default function UserChatEventEntry({ normalizedEvent }: EntryViewProps):
       break;
 
     case 'UserChat.Message':
-      const children = data.messageBuffers?.map(buildMessageChunk).reduce((c: JSX.Element[], chunkChild, idx, arr) => {
-        c.push(chunkChild);
+      {
+        const children =
+          data.messageBuffers?.map(buildMessageChunk).reduce((c: JSX.Element[], chunkChild, idx, arr) => {
+            c.push(chunkChild);
 
-        if (idx <= arr.length) {
-          c.push(<span> </span>);
-        }
+            if (idx <= arr.length) {
+              c.push(<span> </span>);
+            }
 
-        return c;
-      }, []);
+            return c;
+          }, []) ?? [];
 
-      retElement = (
-        <span className={cx({ 'removed-content': normalizedEvent.isRemoved })}>
-          {prefix} {children!.map((c, key) => React.cloneElement(c, { key }))}
-        </span>
-      );
+        retElement = (
+          <span className={cx({ 'removed-content': normalizedEvent.isRemoved })}>
+            {prefix} {children.map((c, key) => cloneElement(c, { key }))}
+          </span>
+        );
+      }
       break;
     default:
       retElement = <></>;

@@ -19,7 +19,7 @@ export interface Inner {
 
 // !FIXME - Need to utilize colors for actual theming!!!
 
-export const StyledEventViewer = createStyles((theme, colors: StyledEventViewerProps) => {
+export const StyledEventViewer = createStyles((theme, _colors: StyledEventViewerProps) => {
   return {
     Reminder: {
       top: '50%',

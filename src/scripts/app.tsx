@@ -1,13 +1,13 @@
 import { AppShell } from '@mantine/core';
-import React, { useEffect, type ReactElement } from 'react';
+import { useEffect, type ReactElement } from 'react';
 import shallow from 'zustand/shallow';
-import useStore, { GHPubSub_EventTypes, type IStore } from './store';
-import EventViewerContainer from './ui/eventViewer/EventViewerContainer';
-import Header from './ui/header';
-import Navbar from './ui/navbar';
+import useStore, { GHPubSub_EventTypes, type IStore } from './store/index.js';
+import EventViewerContainer from './ui/eventViewer/EventViewerContainer.js';
+import Header from './ui/header/index.js';
+import Navbar from './ui/navbar/index.js';
 
-let u = new URLSearchParams(globalThis.location.search);
-const connectTargets = u.getAll('connectTargets') || [];
+const urlParams = new URLSearchParams(globalThis.location.search);
+const connectTargets = urlParams.getAll('connectTargets') || [];
 
 const getState = (s: IStore) => ({
   connect: s.connect,

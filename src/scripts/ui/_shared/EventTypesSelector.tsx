@@ -1,7 +1,7 @@
-import { GHPubSub_EventTypes } from '-/scripts/store';
 import { Chip, Chips } from '@mantine/core';
+import { useEffect, useState } from 'react';
 import type { EventClassifications } from 'golden-hammer-shared';
-import React, { useEffect, useState } from 'react';
+import { GHPubSub_EventTypes } from '-/scripts/store/index.js';
 
 type Props = {
   selectedEvents: EventClassifications;

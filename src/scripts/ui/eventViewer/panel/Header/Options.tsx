@@ -1,10 +1,10 @@
-import EventTypesSelector from '-/scripts/ui/_shared/EventTypesSelector';
-import { ActionIcon, Box, Divider, Group, Input, Popover, Tooltip } from '@mantine/core';
+import EventTypesSelector from '-/scripts/ui/_shared/EventTypesSelector.js';
+import { Group, Box, Divider, ActionIcon, Input, Tooltip, Popover } from '@mantine/core';
 import { useInputState } from '@mantine/hooks';
-import { type EventClassifications } from 'golden-hammer-shared';
-import React, { useCallback, useEffect } from 'react';
+import type { EventClassifications } from 'golden-hammer-shared';
+import { useCallback, useEffect } from 'react';
 import { BsFilter } from 'react-icons/bs';
-import { MdLeakAdd, MdLeakRemove, MdOutlineClear, MdSearch } from 'react-icons/md';
+import { MdOutlineClear, MdSearch, MdLeakAdd, MdLeakRemove } from 'react-icons/md';
 import { VscClearAll } from 'react-icons/vsc';
 
 type EventSelectorProps = {
@@ -65,7 +65,7 @@ export default function Options({
     setSearchTerm(searchInputVal);
   }, [searchInputVal]);
 
-  const rightIcon = !!searchInputVal ? (
+  const rightIcon = searchInputVal ? (
     <ActionIcon radius="xl" size="xs" color="" variant="filled" onClick={onClearSearch}>
       <MdOutlineClear />
     </ActionIcon>

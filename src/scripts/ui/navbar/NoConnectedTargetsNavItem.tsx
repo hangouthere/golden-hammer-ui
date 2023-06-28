@@ -1,7 +1,6 @@
 import ImageConnect from '-/assets/navConnect.png';
 import ImageSub from '-/assets/navSub.png';
 import { Group, Image, Space } from '@mantine/core';
-import React from 'react';
 
 type Props = { isConnected: boolean };
 

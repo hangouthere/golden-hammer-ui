@@ -1,6 +1,6 @@
 import { createStyles } from '@mantine/core';
 
-export const StyledNavBar = createStyles(theme => ({
+export const StyledNavBar = createStyles(_theme => ({
   NavBarContainer: {
     '.remind-container': {
       flex: 1,

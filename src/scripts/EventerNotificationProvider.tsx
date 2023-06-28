@@ -1,13 +1,13 @@
 import { useNotifications } from '@mantine/notifications';
 import type { PubSubConnectionResponse } from 'golden-hammer-shared';
 import { useCallback, useEffect } from 'react';
-import { eventer } from './store/Actions';
+import { eventer } from './store/Actions.js';
 
 type Props = { children: JSX.Element | null };
 
-const updateURIWithConnectTarget = (connectTarget: string, isRemoval: boolean = false) => {
+const updateURIWithConnectTarget = (connectTarget: string, isRemoval = false) => {
   // Update the URL params
-  let urlParams = new URLSearchParams(globalThis.location.search);
+  const urlParams = new URLSearchParams(globalThis.location.search);
   const currentTargets = urlParams.getAll('connectTargets');
 
   if (!isRemoval && currentTargets.includes(connectTarget)) {

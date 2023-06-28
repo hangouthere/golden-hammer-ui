@@ -2,19 +2,12 @@
   "name": "golden-hammer-ui",
   "version": "0.1.0",
   "description": "",
-  "author": "nfgCodex <nfg.codex@outlook.com>",
+  "author": "CodexHere <codexhere@outlook.com>",
   "license": "MIT",
-  "scripts": {
-    "clean": "rimraf ./dist",
-    "docker-compose": "npm i --force && echo \"Running in docker-compose... You should run interactively by attaching:\n\t\tdocker exec -it `hostname` npm run dev\" && tail -f /dev/null",
-    "build": "npm run clean && npm run check && NODE_ENV=production node ./build.mjs",
-    "start": "node ./app",
-    "dev": "NODE_ENV=development concurrently -r 'npm:dev-concurrently*'",
-    "dev-concurrently:mkdir": "npm run clean && mkdir -p dist",
-    "dev-concurrently:watch": "node ./build.mjs",
-    "dev-concurrently:lint": "nodemon -e js,jsx,ts,tsx,json --exec \"npm run check\"",
-    "dev-concurrently:watchShared": "echo \"Monitoring /golden-hammer-shared for replication...\" && nodemon --watch /golden-hammer-shared -e js,jsx,ts,tsx,json --exec \"cp -fR /golden-hammer-shared ./node_modules/ 2>&1 > /dev/null\" 2>&1 > /dev/null",
-    "check": "tsc --noEmit && echo \"No Type Errors!\""
+  "prettier": "@hangouthere/util/prettier",
+  "bin": {
+    "ghui-dev": "./.scripts/npm/dev.sh",
+    "ghui-dev-linked": "./.scripts/npm/dev-linked.sh"
   },
   "dependencies": {
     "@mantine/core": "^4.0.0",
@@ -29,20 +22,8 @@
     "zustand": "^3.7.1"
   },
   "devDependencies": {
-    "@chialab/esbuild-plugin-env": "^0.15.3",
-    "@chialab/esbuild-plugin-html": "^0.15.6",
-    "@types/node": "^17.0.21",
     "@types/react": "^17.0.40",
     "@types/react-dom": "^17.0.13",
-    "concurrently": "^7.0.0",
-    "esbuild": "^0.14.25",
-    "esbuild-plugin-sass": "^1.0.1",
-    "golden-hammer-shared": "github:nerdfoundry/golden-hammer-shared",
-    "nodemon": "^2.0.15",
-    "rimraf": "^3.0.2",
-    "typescript": "^4.6.2"
-  },
-  "alias": {
-    "-": "./src"
+    "golden-hammer-shared": "^0.0.1-1"
   }
 }

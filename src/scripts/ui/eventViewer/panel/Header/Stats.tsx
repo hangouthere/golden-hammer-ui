@@ -1,7 +1,6 @@
-import type { IStore } from '-/scripts/store';
+import type { IStore } from '-/scripts/store/index.js';
 import { Collapse, Group, Text, Title, Tooltip } from '@mantine/core';
 import { useBooleanToggle } from '@mantine/hooks';
-import React from 'react';
 
 type Props = {
   events: IStore['events'][string];

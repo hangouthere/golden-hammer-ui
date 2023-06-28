@@ -1,6 +1,8 @@
-FROM node:18-alpine3.15
+FROM node:18-alpine3.18
 
 ENV NODE_ENV=production
+
+#FIXME: Replicate the services container for dev vs prod deployment
 
 # Node Compilation stuff
 RUN apk add --no-cache \

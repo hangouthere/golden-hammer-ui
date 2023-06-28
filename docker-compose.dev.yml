@@ -2,18 +2,11 @@ version: '3.7'
 
 services:
   golden-hammer-ui:
-    build:
-      context: .
-      dockerfile: ./Dockerfile
-    command: ['npm', 'run', 'docker-compose']
-    volumes:
-      - .:/app
-      # - /app/node_modules
-      - /dev/null:/dev/null:/app/.git # For git submodules
-      - ../golden-hammer-shared:/golden-hammer-shared
+    command: 'npx ghui-dev-linked'
     environment:
       - NODE_ENV=development
       - NODE_OPTIONS=--enable-source-maps --trace-warnings
+      - VERBOSE=1
     ports:
-      - '10229:9229'
+      - '10229:10229'
       - '9000:9000'

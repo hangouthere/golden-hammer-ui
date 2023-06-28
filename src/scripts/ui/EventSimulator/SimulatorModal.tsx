@@ -1,5 +1,5 @@
-import useStore from '-/scripts/store';
-import { StyledMisc } from '-/scripts/styles/misc';
+import useStore from '-/scripts/store/index.js';
+import { StyledMisc } from '-/scripts/styles/misc.js';
 import {
   ActionIcon,
   Button,
@@ -9,12 +9,13 @@ import {
   Paper,
   Select,
   Text,
-  Textarea,
   TextInput,
+  Textarea,
   Tooltip,
   Transition,
   type ModalProps
 } from '@mantine/core';
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 //@ts-ignore
 import { default as createStyles } from '@mantine/core/esm/components/Modal/Modal.styles';
 import { useBooleanToggle, useDisclosure, useForm } from '@mantine/hooks';
@@ -28,7 +29,7 @@ import React, {
   type MouseEvent as ReactMouseEvent
 } from 'react';
 import { MdOutlineBolt } from 'react-icons/md';
-import SimulatedEvents, { SelectOptions } from './SimulatedEvents';
+import SimulatedEvents, { SelectOptions } from './SimulatedEvents.js';
 
 const defaultProps: Partial<ModalProps> = {
   closeOnClickOutside: true,
@@ -146,7 +147,7 @@ export default function SimulatorModal() {
   );
 
   const onSimulate = useCallback(
-    (values: FormValues) => {
+    (_values: FormValues) => {
       reRandomize();
       simulateSourceEvent(eventData);
     },

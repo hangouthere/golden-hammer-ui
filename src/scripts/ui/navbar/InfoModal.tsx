@@ -1,9 +1,9 @@
 import ImageLogo from '-/assets/logo.png';
+import { StyledMisc } from '-/scripts/styles/misc.js';
 import { ActionIcon, Anchor, Group, Image, Modal, Space, Title, Tooltip } from '@mantine/core';
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { BsDiscord, BsGithub } from 'react-icons/bs';
 import { IoInformation } from 'react-icons/io5';
-import { StyledMisc } from '../../styles/misc';
 
 export default function InfoModal() {
   const [showModal, setShowModal] = useState(false);

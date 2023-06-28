@@ -1,16 +1,16 @@
-import useStore, { GHPubSub_EventTypes } from '-/scripts/store';
-import { StyledEventViewer } from '-/scripts/styles/eventViewer';
+import useStore, { GHPubSub_EventTypes, type ConnectedTarget } from '-/scripts/store/index.js';
+import { StyledEventViewer } from '-/scripts/styles/eventViewer.js';
 import { useMantineTheme } from '@mantine/core';
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import shallow from 'zustand/shallow';
-import { EventEntryFactory } from './EventEntryFactory';
-import EntryHeader from './Header';
+import { EventEntryFactory } from './EventEntryFactory.js';
+import { EntryHeader } from './Header/index.js';
 
 export const EventEntryPanel = () => {
   const theme = useMantineTheme();
   const activePubSub = useStore(s => s.activeConnectedTarget, shallow);
 
-  const pubSubInfo = activePubSub!.pubsub;
+  const pubSubInfo = (activePubSub as ConnectedTarget).pubsub;
   const [desiredEventTypes, setDesiredEventTypes] = useState(pubSubInfo?.eventClassifications);
   const [searchTerm, setSearchTerm] = useState('');
 

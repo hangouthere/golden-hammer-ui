@@ -1,18 +1,18 @@
+import { SocketStatus } from '-/scripts/store/InitState.js';
+import useStore, { type IStore } from '-/scripts/store/index.js';
+import { StyledNavBar } from '-/scripts/styles/navbar.js';
 import { Group, Navbar, type NavbarProps } from '@mantine/core';
 import type { ConnectTargetClassificationsAssociation, PubSubConnectionResponse } from 'golden-hammer-shared';
 import React, { useMemo } from 'react';
 import shallow from 'zustand/shallow';
-import useStore, { type IStore } from '../../store';
-import { SocketStatus } from '../../store/InitState';
-import { StyledNavBar } from '../../styles/navbar';
-import SimulatorModal from '../EventSimulator/SimulatorModal';
-import ConnectedTargetNavItem from './ConnectedTargetNavItem';
-import InfoModal from './InfoModal';
-import NoConnectedTargetsNavItem from './NoConnectedTargetsNavItem';
-import PubSubConfig from './PubSubConfig';
-import PubSubRegisterPanel from './PubSubRegisterPanel';
+import SimulatorModal from '../EventSimulator/SimulatorModal.js';
+import ConnectedTargetNavItem from './ConnectedTargetNavItem.js';
+import InfoModal from './InfoModal.js';
+import NoConnectedTargetsNavItem from './NoConnectedTargetsNavItem.js';
+import PubSubConfig from './PubSubConfig.js';
+import PubSubRegisterPanel from './PubSubRegisterPanel.js';
 
-interface Props extends Omit<NavbarProps, 'children'> {}
+type Props = Omit<NavbarProps, 'children'>;
 
 const getStateVals = (s: IStore) => ({
   activePubSub: s.activeConnectedTarget,

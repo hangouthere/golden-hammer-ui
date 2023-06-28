@@ -1,14 +1,15 @@
-import type { UINormalizedMessagingEvent } from '-/scripts/store';
+import type { UINormalizedMessagingEvent } from '-/scripts/store/index.js';
 import type { AdministrationEventData } from 'golden-hammer-shared';
-import React from 'react';
-import type { EntryViewProps } from '../EventEntryFactory';
+import type { EntryViewProps } from '../EventEntryFactory.js';
 
 export default function PlatformSpecificEventEntry({ normalizedEvent }: EntryViewProps): JSX.Element | null {
   const {
     platform: { eventName, eventData }
   } = normalizedEvent as UINormalizedMessagingEvent & { eventData: AdministrationEventData };
 
-  const [isEnabled, duration] = eventData;
+  const typedEventData = eventData as Array<unknown>;
+
+  const [isEnabled, duration] = typedEventData;
   const enabledTxt = isEnabled ? 'Enabled' : 'Disabled';
   let msg;
 
@@ -38,18 +39,22 @@ export default function PlatformSpecificEventEntry({ normalizedEvent }: EntryVie
       break;
 
     case 'hosted':
-      msg = 'Hosted by ' + eventData[0];
+      msg = 'Hosted by ' + typedEventData[0];
       break;
     case 'raided':
-      const [raider, numRaiding, userState] = eventData;
-      const prefix = <span className="userName">{raider}:</span>;
-      const profileImg = userState['msg-param-profileImageURL'];
+      {
+        const [raider, numRaiding, userState] = typedEventData;
+        const prefix = <span className="userName">{raider}:</span>;
+        // FIXME: Need to have proper types at some point!!!!
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const profileImg = (userState as any)['msg-param-profileImageURL'];
 
-      msg = (
-        <>
-          <img src={profileImg} className="profileImg" /> {prefix} has Raided with {numRaiding} viewers!
-        </>
-      );
+        msg = (
+          <>
+            <img src={profileImg} className="profileImg" /> {prefix} has Raided with {numRaiding} viewers!
+          </>
+        );
+      }
       break;
     default:
       msg = <>{JSON.stringify(eventData)}</>;

@@ -1,10 +1,9 @@
 import { MantineProvider } from '@mantine/core';
 import { NotificationsProvider } from '@mantine/notifications';
-import React from 'react';
 import { render } from 'react-dom';
-import App from './app';
-import EventerNotificationProvider from './EventerNotificationProvider';
-import { StylesConfig, ThemeConfig } from './MantineProviderConfig';
+import EventerNotificationProvider from './EventerNotificationProvider.js';
+import { ThemeConfig, StylesConfig } from './MantineProviderConfig.js';
+import App from './app.js';
 
 render(
   <MantineProvider

@@ -1,9 +1,9 @@
 import type { ConnectTargetClassificationsAssociation, PubSubConnectionResponse } from 'golden-hammer-shared';
 import type { GetState, SetState } from 'zustand';
-import { localStore, type ConnectedTarget, type IStore } from '.';
-import * as GHSocket from '../services/GHSocket';
-import { SocketStatus } from './InitState';
-import { bindSocketStatus, registerPubSub, unregisterPubSub } from './SocketActions';
+import { connect, disconnect, pubsubRegisterChat, pubsubUnregisterChat, simulateEvent } from '../services/GHSocket.js';
+import { SocketStatus } from './InitState.js';
+import { bindSocketStatus, registerPubSub, unregisterPubSub } from './SocketActions.js';
+import { localStore, type ConnectedTarget, type IStore } from './index.js';
 
 export const eventer = document.createElement('div');
 
@@ -15,7 +15,7 @@ export interface IActions {
   pubsubRegisterChat: ({ connectTarget, eventClassifications }: ConnectTargetClassificationsAssociation) => void;
   pubsubUnregisterChat: (connectTarget: string) => void;
   setActivePubSub: (activePubSub: PubSubConnectionResponse) => void;
-  simulateSourceEvent: (eventData: any) => void;
+  simulateSourceEvent: (eventData: object) => void;
 }
 
 export default (set: SetState<IStore>, get: GetState<IStore>): IActions => ({
@@ -31,7 +31,7 @@ export default (set: SetState<IStore>, get: GetState<IStore>): IActions => ({
 
       set({ pubSubUri, connectionStatus: SocketStatus.Connecting });
 
-      const socket = GHSocket.connect(pubSubUri);
+      const socket = connect(pubSubUri);
 
       bindSocketStatus(set, get, socket);
     } catch (err) {
@@ -42,7 +42,7 @@ export default (set: SetState<IStore>, get: GetState<IStore>): IActions => ({
 
   disconnect() {
     try {
-      GHSocket.disconnect();
+      disconnect();
     } catch (err) {
       set({ connectionStatus: SocketStatus.Disconnected, autoConnect: false });
     }
@@ -50,7 +50,7 @@ export default (set: SetState<IStore>, get: GetState<IStore>): IActions => ({
 
   async pubsubRegisterChat({ connectTarget, eventClassifications }) {
     try {
-      const pubSubConnection = await GHSocket.pubsubRegisterChat({ connectTarget, eventClassifications });
+      const pubSubConnection = await pubsubRegisterChat({ connectTarget, eventClassifications });
 
       if (!pubSubConnection.registered) {
         throw new Error(`Registration Failed for ${connectTarget}`);
@@ -60,15 +60,17 @@ export default (set: SetState<IStore>, get: GetState<IStore>): IActions => ({
       set(state => registerPubSub(state, pubSubConnection));
 
       eventer.dispatchEvent(new CustomEvent('registered', { detail: pubSubConnection }));
-    } catch (err: any) {
+    } catch (err) {
       console.log(err);
-      eventer.dispatchEvent(new CustomEvent('error', { detail: err.message }));
+      if (err instanceof Error) {
+        eventer.dispatchEvent(new CustomEvent('error', { detail: err.message }));
+      }
     }
   },
 
   async pubsubUnregisterChat(connectTarget) {
     try {
-      const pubSubConnection = await GHSocket.pubsubUnregisterChat(connectTarget);
+      const pubSubConnection = await pubsubUnregisterChat(connectTarget);
 
       if (!pubSubConnection.unregistered) {
         throw new Error(`Unregistration Failed for ${connectTarget}`);
@@ -103,7 +105,7 @@ export default (set: SetState<IStore>, get: GetState<IStore>): IActions => ({
     set(s => ({ ...s, activeConnectedTarget }));
   },
 
-  simulateSourceEvent(eventData: any) {
+  simulateSourceEvent(eventData: object) {
     const activePubSub = get().activeConnectedTarget;
 
     if (!activePubSub) {
@@ -112,6 +114,6 @@ export default (set: SetState<IStore>, get: GetState<IStore>): IActions => ({
       return;
     }
 
-    return GHSocket.simulateEvent(activePubSub.pubsub.connectTarget, eventData);
+    return simulateEvent(activePubSub.pubsub.connectTarget, eventData);
   }
 });

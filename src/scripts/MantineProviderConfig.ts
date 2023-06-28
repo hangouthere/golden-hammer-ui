@@ -1,8 +1,12 @@
-import type { CSSObject, MantineTheme, MantineThemeOverride } from '@mantine/core';
-import { type ButtonProps } from './styles/buttons';
-import type { StyledEventViewerProps } from './styles/eventViewer';
+import type { CSSObject, MantineTheme, MantineThemeOverride, SharedButtonProps } from '@mantine/core';
+import type { StyledEventViewerProps } from './styles/eventViewer.js';
 
 type ProviderStyles = Record<string, Record<string, CSSObject> | ((theme: MantineTheme) => Record<string, CSSObject>)>;
+
+type CautionButtonProps = SharedButtonProps & {
+  colorBG: '#770622';
+  colorFG: '#FFF';
+};
 
 export const ThemeConfig: MantineThemeOverride = {
   colorScheme: 'dark',
@@ -13,7 +17,7 @@ export const ThemeConfig: MantineThemeOverride = {
     CautionButton: {
       colorBG: '#770622',
       colorFG: '#FFF'
-    } as ButtonProps,
+    } as CautionButtonProps,
 
     Platforms: {
       default: {
@@ -65,7 +69,7 @@ export const StylesConfig: ProviderStyles = {
     }
   }),
 
-  Navbar: theme => ({
+  Navbar: _theme => ({
     root: {
       position: 'relative',
       top: 0,
@@ -96,7 +100,7 @@ export const StylesConfig: ProviderStyles = {
     }
   }),
 
-  Modal: theme => ({
+  Modal: _theme => ({
     header: {
       userSelect: 'none'
     }

@@ -1,9 +1,9 @@
 import type { AdministrationEventData, MonetizationEventData, PubSubConnectionResponse } from 'golden-hammer-shared';
-import { Socket } from 'socket.io-client';
+import type { Socket } from 'socket.io-client';
 import type { GetState, SetState } from 'zustand';
-import type { ConnectedTarget, IStore, StatMap, UINormalizedMessagingEvent } from '.';
-import { eventer } from './Actions';
-import { SocketStatus } from './InitState';
+import { eventer } from './Actions.js';
+import { SocketStatus } from './InitState.js';
+import type { ConnectedTarget, IStore, StatMap, UINormalizedMessagingEvent } from './index.js';
 
 const MAX_CONNECT_FAILS = 5;
 const MAX_COUNT_EVENTS = 1000;
@@ -44,7 +44,7 @@ export const registerPubSub = (state: IStore, pubSubConnection: ConnectedTarget)
   //Enforce lowercase name for store
   pubSubConnection.pubsub.connectTarget = pubSubConnection.pubsub.connectTarget.toLowerCase();
 
-  let {
+  const {
     pubsub: { connectTarget }
   } = pubSubConnection;
 
@@ -114,7 +114,7 @@ function addStats(state: IStore['stats'], normalizedEvent: UINormalizedMessaging
   // Track monetization totals for UI display purposes
   if ('Monetization' === category && 'submysterygift' !== normalizedEvent.platform.eventName) {
     statMap['Earnings'] =
-      Number(statMap['Earnings'] || 0) + (normalizedEvent.eventData as MonetizationEventData).estimatedValue!;
+      Number(statMap['Earnings'] || 0) + ((normalizedEvent.eventData as MonetizationEventData)?.estimatedValue ?? 0);
   }
 
   return {
@@ -152,8 +152,11 @@ function filterAdminEvents(eventMap: IStore['events'], normalizedEvent: UINormal
     const targetTypeUser = 'Administration.MessageRemoval' !== normalizedEvent.eventClassification;
     // Note the different array access (1 v 0), as well as sub-member ID
     const testTargetId = targetTypeUser
-      ? prevEvent.platform.eventData[0]['user-id']
-      : prevEvent.platform.eventData[0]['id'];
+      ? // FIXME: Need to have proper types at some point!!!!
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        (prevEvent.platform.eventData as any)[0]['user-id']
+      : // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        (prevEvent.platform.eventData as any)[0]['id'];
 
     prevEvent.isRemoved = testTargetId === data.targetId;
     return prevEvent;

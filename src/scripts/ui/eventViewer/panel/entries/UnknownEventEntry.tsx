@@ -1,7 +1,6 @@
-import type { UINormalizedMessagingEvent } from '-/scripts/store';
+import type { UINormalizedMessagingEvent } from '-/scripts/store/index.js';
 import { Group, Text, Title } from '@mantine/core';
-import React from 'react';
-import type { EntryViewProps } from '../EventEntryFactory';
+import type { EntryViewProps } from '../EventEntryFactory.js';
 
 export default function UnknownEventEntry({ normalizedEvent }: EntryViewProps): JSX.Element | null {
   const { eventData, eventClassification } = normalizedEvent as UINormalizedMessagingEvent;

@@ -1,4 +1,4 @@
-import { StyledButton } from '-/scripts/styles/buttons';
+import { StyledButton } from '-/scripts/styles/buttons.js';
 import {
   ActionIcon,
   Button,
@@ -9,13 +9,13 @@ import {
   useMantineTheme,
   type GroupProps
 } from '@mantine/core';
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore-next-line
 import useButtonStyles from '@mantine/core/esm/components/Button/Button.styles';
 import { useBooleanToggle } from '@mantine/hooks';
-import { type ConnectTargetClassificationsAssociation, type EventClassifications } from 'golden-hammer-shared';
-import React from 'react';
+import type { ConnectTargetClassificationsAssociation, EventClassifications } from 'golden-hammer-shared';
 import { MdLeakAdd } from 'react-icons/md';
-import EventTypesSelector from '../_shared/EventTypesSelector';
+import EventTypesSelector from '../_shared/EventTypesSelector.js';
 
 type EventSelectorProps = {
   eventClassifications: EventClassifications;

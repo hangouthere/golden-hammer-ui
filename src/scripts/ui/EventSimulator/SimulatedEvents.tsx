@@ -27,20 +27,20 @@ const defaultMessageEvent = {
 };
 
 const SimulatedEvents: Record<string, SimulatedEventHandler> = {
-  'PlatformSpecific: Clear Chat': (username: string) => ({ platformEventName: 'clearchat', platformEventData: [] }),
-  'PlatformSpecific: Emote Only Off': (username: string) => ({
+  'PlatformSpecific: Clear Chat': (_username: string) => ({ platformEventName: 'clearchat', platformEventData: [] }),
+  'PlatformSpecific: Emote Only Off': (_username: string) => ({
     platformEventName: 'emoteonly',
     platformEventData: [false]
   }),
-  'PlatformSpecific: Emote Only On': (username: string) => ({
+  'PlatformSpecific: Emote Only On': (_username: string) => ({
     platformEventName: 'emoteonly',
     platformEventData: [true]
   }),
-  'PlatformSpecific: Subscribes Only Off': (username: string) => ({
+  'PlatformSpecific: Subscribes Only Off': (_username: string) => ({
     platformEventName: 'subscribers',
     platformEventData: [false]
   }),
-  'PlatformSpecific: Subscribes Only On': (username: string) => ({
+  'PlatformSpecific: Subscribes Only On': (_username: string) => ({
     platformEventName: 'subscribers',
     platformEventData: [true]
   }),
@@ -84,7 +84,7 @@ const SimulatedEvents: Record<string, SimulatedEventHandler> = {
         'emotes-raw': '306340318:86-95',
         emotes: { 306340318: ['86-95'] }
       },
-      'This is a Simulated Chat Message, brought to you by @nfgcodex at http://nfgarmy.com | nfgcodArmy 🤓',
+      'This is a Simulated Chat Message, brought to you by @CodexHere at http://nfgarmy.com 🤓',
       false
     ]
   }),
@@ -226,22 +226,22 @@ const SimulatedEvents: Record<string, SimulatedEventHandler> = {
       { prime: false, plan: '1000', planName: 'Woke Beys (hasanpiker): $4.99 Sub' }
     ]
   }),
-  'PlatformSpecific: Slow Mode Off': (username: string) => ({
+  'PlatformSpecific: Slow Mode Off': (_username: string) => ({
     platformEventName: 'slowmode',
 
     platformEventData: [false, 0]
   }),
-  'PlatformSpecific: Slow Mode On': (username: string) => ({
+  'PlatformSpecific: Slow Mode On': (_username: string) => ({
     platformEventName: 'slowmode',
 
     platformEventData: [true, 20]
   }),
-  'PlatformSpecific: Followers Only Off': (username: string) => ({
+  'PlatformSpecific: Followers Only Off': (_username: string) => ({
     platformEventName: 'followersonly',
 
     platformEventData: [false, 0]
   }),
-  'PlatformSpecific: Followers Only On': (username: string) => ({
+  'PlatformSpecific: Followers Only On': (_username: string) => ({
     platformEventName: 'followersonly',
 
     platformEventData: [true, 30]

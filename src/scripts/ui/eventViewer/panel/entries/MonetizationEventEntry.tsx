@@ -1,6 +1,8 @@
+// FIXME: Need to have proper types at some point!!!!
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
 import type { MonetizationEventData, NormalizedMessagingEvent } from 'golden-hammer-shared';
-import React from 'react';
-import type { EntryViewProps } from '../EventEntryFactory';
+import type { EntryViewProps } from '../EventEntryFactory.js';
 
 export default function MonetizationEventEntry({ normalizedEvent }: EntryViewProps): JSX.Element | null {
   const {
@@ -32,7 +34,7 @@ export default function MonetizationEventEntry({ normalizedEvent }: EntryViewPro
     if ('submysterygift' === normalizedEvent.platform.eventName) {
       return (
         <>
-          {prefix} has Gifted <span className="duration">{normalizedEvent.platform.eventData[1]}</span> Subs{' '}
+          {prefix} has Gifted <span className="duration">{(normalizedEvent.platform.eventData as any)[1]}</span> Subs{' '}
           <span className="estimatedValue">(${estValTxt})</span>
         </>
       );

@@ -1,0 +1,27 @@
+version: '3.7'
+
+services:
+  change-vol-ownership:
+    image: node:18-alpine3.18
+    command: chown -R 1000:1000 /_triggers
+    group_add:
+      - '1000'
+    volumes:
+      - hh-triggers:/_triggers
+
+  golden-hammer-ui:
+    # command: 'tail -f /dev/null'
+    command: "npx ghui-dev-linked"
+    volumes:
+      - ../.docker/.npmrc-localRegistry:/app/.npmrc
+      - hh-triggers:/_triggers
+    networks:
+      - hh-util_registry
+
+volumes:
+  hh-triggers:
+    external: true
+
+networks:
+  hh-util_registry:
+    external: true

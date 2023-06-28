@@ -1,4 +1,4 @@
-import type { PubSubConnectionResponse, ConnectTargetClassificationsAssociation } from 'golden-hammer-shared';
+import type { ConnectTargetClassificationsAssociation, PubSubConnectionResponse } from 'golden-hammer-shared';
 import io, { Socket } from 'socket.io-client';
 
 const SVC_PUBSUB_REGISTER_CHAT = 'gh-pubsub.register';
@@ -77,7 +77,7 @@ export const pubsubUnregisterChat = async (connectTarget: string): Promise<PubSu
     );
   });
 
-export const simulateEvent = async (connectTarget: string, eventData: any) =>
+export const simulateEvent = async (connectTarget: string, eventData: object) =>
   new Promise((resolve, reject) => {
     socket?.emit(
       'call',
@@ -87,7 +87,7 @@ export const simulateEvent = async (connectTarget: string, eventData: any) =>
         connectTarget: connectTarget.toLowerCase(),
         ...eventData
       },
-      (err: Error, resp: any) => {
+      (err: Error, resp: unknown) => {
         if (err) {
           reject(err);
         } else {

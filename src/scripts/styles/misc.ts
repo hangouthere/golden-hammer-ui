@@ -1,6 +1,6 @@
 import { createStyles } from '@mantine/core';
 
-export const StyledMisc = createStyles(theme => ({
+export const StyledMisc = createStyles(_theme => ({
   Compact: {
     '.mantine-UnstyledButton-root': {
       padding: '5px',

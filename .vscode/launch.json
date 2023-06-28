@@ -5,7 +5,7 @@
       "name": "Launch Demo 02 (React)",
       "request": "launch",
       "type": "pwa-chrome",
-      "url": "http://localhost:9000/index.html?connectTargets=nfgcodex",
+      "url": "http://localhost:9000/index.html?connectTargets=codexhere",
       "webRoot": "${workspaceFolder}/golden-hammer-ui"
     },
     {

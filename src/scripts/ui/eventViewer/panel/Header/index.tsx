@@ -1,21 +1,26 @@
-import useStore, { type IStore } from '-/scripts/store';
-import { StyledEventViewer } from '-/scripts/styles/eventViewer';
+import useStore, { type ConnectedTarget, type IStore } from '-/scripts/store/index.js';
+import { StyledEventViewer } from '-/scripts/styles/eventViewer.js';
 import { Anchor, Group, Title, useMantineTheme } from '@mantine/core';
 import { useBooleanToggle } from '@mantine/hooks';
-import { type EventClassifications } from 'golden-hammer-shared';
+import type { EventClassifications } from 'golden-hammer-shared';
 import React, { useCallback } from 'react';
 import shallow from 'zustand/shallow';
-import Options from './Options';
-import Stats from './Stats';
+import Options from './Options.js';
+import Stats from './Stats.js';
 
-const getState = (s: IStore) => ({
-  activePubSub: s.activeConnectedTarget,
-  clearEvents: s.clearEvents,
-  pubsubRegisterChat: s.pubsubRegisterChat,
-  pubsubUnregisterChat: s.pubsubUnregisterChat,
-  activeEvents: s.events[s.activeConnectedTarget!.pubsub.connectTarget],
-  activeStats: s.stats[s.activeConnectedTarget!.pubsub.connectTarget]
-});
+const getState = (s: IStore) => {
+  const activeTarget = s.activeConnectedTarget as ConnectedTarget;
+  const pubsub = activeTarget?.pubsub;
+
+  return {
+    activePubSub: activeTarget,
+    clearEvents: s.clearEvents,
+    pubsubRegisterChat: s.pubsubRegisterChat,
+    pubsubUnregisterChat: s.pubsubUnregisterChat,
+    activeEvents: s.events[pubsub.connectTarget],
+    activeStats: s.stats[pubsub.connectTarget]
+  };
+};
 
 type EntryHeaderProps = {
   desiredEventTypes?: EventClassifications;
@@ -24,7 +29,12 @@ type EntryHeaderProps = {
   setSearchTerm: (t: string) => void;
 };
 
-const EntryHeader = ({ desiredEventTypes, setDesiredEventTypes, searchTerm, setSearchTerm }: EntryHeaderProps) => {
+const EntryHeaderComponent = ({
+  desiredEventTypes,
+  setDesiredEventTypes,
+  searchTerm,
+  setSearchTerm
+}: EntryHeaderProps) => {
   const { activePubSub, pubsubRegisterChat, pubsubUnregisterChat, clearEvents, activeEvents, activeStats } = useStore(
     getState,
     shallow
@@ -36,7 +46,7 @@ const EntryHeader = ({ desiredEventTypes, setDesiredEventTypes, searchTerm, setS
 
   const {
     pubsub: { platformName, connectTarget, eventClassifications }
-  } = activePubSub!;
+  } = activePubSub as ConnectedTarget;
 
   const onPubSubChange = useCallback(
     (eventClassifications: EventClassifications) => pubsubRegisterChat({ connectTarget, eventClassifications }),
@@ -73,8 +83,8 @@ const EntryHeader = ({ desiredEventTypes, setDesiredEventTypes, searchTerm, setS
             toggleToolTip_pubsub,
             searchTerm,
             setSearchTerm,
-            desiredEventTypes: desiredEventTypes!,
-            eventClassifications: eventClassifications!
+            desiredEventTypes: desiredEventTypes ?? [],
+            eventClassifications: eventClassifications ?? []
           }}
         />
       </Group>
@@ -84,4 +94,4 @@ const EntryHeader = ({ desiredEventTypes, setDesiredEventTypes, searchTerm, setS
   );
 };
 
-export default React.memo(EntryHeader);
+export const EntryHeader = React.memo(EntryHeaderComponent);

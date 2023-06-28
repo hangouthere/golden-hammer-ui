@@ -1,5 +1,11 @@
 import type { GetState, SetState } from 'zustand';
-import { localGet, type ConnectedTarget, type ConnectTargetEventMap, type ConnectTargetStatMap, type IStore } from '.';
+import {
+  localGet,
+  type ConnectTargetEventMap,
+  type ConnectTargetStatMap,
+  type ConnectedTarget,
+  type IStore
+} from './index.js';
 
 export enum SocketStatus {
   Disconnected,
@@ -10,7 +16,7 @@ export enum SocketStatus {
 export interface IState {
   pubSubUri: string;
   connectionStatus: SocketStatus;
-  autoConnect: any;
+  autoConnect: boolean;
   connectTarget: string;
   connectedTargets: Map<string, ConnectedTarget>;
   activeConnectedTarget: ConnectedTarget | null;
@@ -19,7 +25,7 @@ export interface IState {
 }
 
 export default (_set: SetState<IStore>, _get: GetState<IStore>): IState => {
-  const shouldAutoConnect = localGet('gh.autoConnect') || false;
+  const shouldAutoConnect = localGet<boolean>('gh.autoConnect') || false;
 
   const InitState: IState = {
     autoConnect: shouldAutoConnect,

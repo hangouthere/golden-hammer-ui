@@ -1,15 +1,15 @@
-import useStore, { type IStore, type UINormalizedMessagingEvent } from '-/scripts/store';
-import { StyledEventViewer } from '-/scripts/styles/eventViewer';
+import useStore, { type ConnectedTarget, type IStore, type UINormalizedMessagingEvent } from '-/scripts/store/index.js';
+import { StyledEventViewer } from '-/scripts/styles/eventViewer.js';
 import { Button, Transition, useMantineTheme } from '@mantine/core';
 import { type EventClassifications, type PubSubConnectionResponse } from 'golden-hammer-shared';
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import BaseTable, { AutoResizer, Column } from 'react-base-table';
 import shallow from 'zustand/shallow';
-import AdministrativeEventEntry from './entries/AdministrativeEventEntry';
-import MonetizationEventEntry from './entries/MonetizationEventEntry';
-import PlatformSpecificEventEntry from './entries/PlatformSpecificEventEntry';
-import UnknownEventEntry from './entries/UnknownEventEntry';
-import UserChatEventEntry from './entries/UserChatEventEntry';
+import AdministrativeEventEntry from './entries/AdministrativeEventEntry.js';
+import MonetizationEventEntry from './entries/MonetizationEventEntry.js';
+import PlatformSpecificEventEntry from './entries/PlatformSpecificEventEntry.js';
+import UnknownEventEntry from './entries/UnknownEventEntry.js';
+import UserChatEventEntry from './entries/UserChatEventEntry.js';
 
 const SKIPPED_EVENTS: string[] = [];
 
@@ -70,10 +70,13 @@ const FrozenOverlay = ({ show, resumeEvents, eventCount, frozenEventCount }: Fro
 ////////////////////////////////////////////////////////////////////////////////////////////
 // EventEntryFactory
 
-const getState = (s: IStore) => ({
-  activeEvents: s.events[s.activeConnectedTarget!.pubsub.connectTarget],
-  activeStats: s.stats[s.activeConnectedTarget!.pubsub.connectTarget]
-});
+const getState = (s: IStore) => {
+  const connectedTarget = s.activeConnectedTarget as ConnectedTarget;
+  return ({
+    activeEvents: s.events[connectedTarget.pubsub.connectTarget],
+    activeStats: s.stats[connectedTarget.pubsub.connectTarget]
+  });
+};
 
 type EventEntryFactoryProps = {
   pubSubConnection: PubSubConnectionResponse | null;
@@ -121,9 +124,9 @@ export const EventEntryFactory = ({ pubSubConnection, desiredEventTypes, searchT
 
       const eventEntryClassNames = [
         cssClasses.EventLogEntry,
-        (cssClasses as any)[category],
-        (cssClasses as any)[fqcn],
-        (cssClasses as any)[platformCn],
+        cssClasses[category as keyof typeof cssClasses],
+        cssClasses[fqcn as keyof typeof cssClasses],
+        cssClasses[platformCn as keyof typeof cssClasses],
         fqcn,
         platformCn
       ];

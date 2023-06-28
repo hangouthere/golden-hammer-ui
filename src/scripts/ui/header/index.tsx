@@ -1,6 +1,5 @@
 import ImageLogo from '-/assets/logo.png';
 import { Group, Header as MHeader, Image, Title, type HeaderProps } from '@mantine/core';
-import React from 'react';
 
 export default function Header(props: Omit<HeaderProps, 'children'>) {
   return (

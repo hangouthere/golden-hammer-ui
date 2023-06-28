@@ -1,6 +1,6 @@
 import { createStyles } from '@mantine/core';
 
-export const StyledInputs = createStyles(theme => ({
+export const StyledInputs = createStyles(_theme => ({
   SimpleTextInputWithButton: {
     width: '100%',
     display: 'flex',
