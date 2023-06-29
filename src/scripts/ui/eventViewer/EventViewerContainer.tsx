@@ -1,8 +1,9 @@
+import useStore from '-/scripts/store/index.js';
+import type { IStore } from '-/scripts/store/types.js';
+import { StyledEventViewer } from '-/scripts/styles/eventViewer.js';
 import { Group, Title, useMantineTheme } from '@mantine/core';
 import { useMemo } from 'react';
-import { StyledEventViewer } from '-/scripts/styles/eventViewer.js';
 import { EventEntryPanel } from './panel/EventEntryPanel.js';
-import useStore, { type IStore } from '-/scripts/store/index.js';
 
 type NoPubSubsDetectedProps = {
   hasConnectTargets: boolean;

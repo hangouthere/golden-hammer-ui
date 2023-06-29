@@ -1,22 +1,9 @@
-import type { ConnectTargetClassificationsAssociation, PubSubConnectionResponse } from 'golden-hammer-shared';
 import type { GetState, SetState } from 'zustand';
 import { connect, disconnect, pubsubRegisterChat, pubsubUnregisterChat, simulateEvent } from '../services/GHSocket.js';
-import { SocketStatus } from './InitState.js';
 import { bindSocketStatus, registerPubSub, unregisterPubSub } from './SocketActions.js';
-import { localStore, type ConnectedTarget, type IStore } from './index.js';
-
-export const eventer = document.createElement('div');
-
-export interface IActions {
-  setAutoConnect: (autoConnect: boolean) => void;
-  connect: (pubSubUri: string) => void;
-  disconnect: () => void;
-  clearEvents: (connectTarget: string) => void;
-  pubsubRegisterChat: ({ connectTarget, eventClassifications }: ConnectTargetClassificationsAssociation) => void;
-  pubsubUnregisterChat: (connectTarget: string) => void;
-  setActivePubSub: (activePubSub: PubSubConnectionResponse) => void;
-  simulateSourceEvent: (eventData: object) => void;
-}
+import { localStore } from './localStore.js';
+import { SocketStatus, type ConnectedTarget, type IActions, type IStore } from './types.js';
+import { eventer } from './EventBus.js';
 
 export default (set: SetState<IStore>, get: GetState<IStore>): IActions => ({
   setAutoConnect: (autoConnect: boolean) => {

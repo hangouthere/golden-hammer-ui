@@ -1,4 +1,4 @@
-import type { IStore } from '-/scripts/store/index.js';
+import type { IStore } from '-/scripts/store/types.js';
 import { Collapse, Group, Text, Title, Tooltip } from '@mantine/core';
 import { useBooleanToggle } from '@mantine/hooks';
 

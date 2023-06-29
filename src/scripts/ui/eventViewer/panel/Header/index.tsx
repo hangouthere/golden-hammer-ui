@@ -1,4 +1,5 @@
-import useStore, { type ConnectedTarget, type IStore } from '-/scripts/store/index.js';
+import useStore from '-/scripts/store/index.js';
+import type { ConnectedTarget, IStore } from '-/scripts/store/types.js';
 import { StyledEventViewer } from '-/scripts/styles/eventViewer.js';
 import { Anchor, Group, Title, useMantineTheme } from '@mantine/core';
 import { useBooleanToggle } from '@mantine/hooks';

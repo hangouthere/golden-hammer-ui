@@ -1,4 +1,4 @@
-import type { UINormalizedMessagingEvent } from '-/scripts/store/index.js';
+import type { UINormalizedMessagingEvent } from '-/scripts/store/types.js';
 import type { AdministrationEventData } from 'golden-hammer-shared';
 import type { EntryViewProps } from '../EventEntryFactory.js';
 

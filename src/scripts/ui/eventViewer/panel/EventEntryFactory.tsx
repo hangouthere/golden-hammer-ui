@@ -1,4 +1,5 @@
-import useStore, { type ConnectedTarget, type IStore, type UINormalizedMessagingEvent } from '-/scripts/store/index.js';
+import useStore from '-/scripts/store/index.js';
+import type { ConnectedTarget, IStore, UINormalizedMessagingEvent } from '-/scripts/store/types.js';
 import { StyledEventViewer } from '-/scripts/styles/eventViewer.js';
 import { Button, Transition, useMantineTheme } from '@mantine/core';
 import { type EventClassifications, type PubSubConnectionResponse } from 'golden-hammer-shared';
@@ -72,10 +73,10 @@ const FrozenOverlay = ({ show, resumeEvents, eventCount, frozenEventCount }: Fro
 
 const getState = (s: IStore) => {
   const connectedTarget = s.activeConnectedTarget as ConnectedTarget;
-  return ({
+  return {
     activeEvents: s.events[connectedTarget.pubsub.connectTarget],
     activeStats: s.stats[connectedTarget.pubsub.connectTarget]
-  });
+  };
 };
 
 type EventEntryFactoryProps = {

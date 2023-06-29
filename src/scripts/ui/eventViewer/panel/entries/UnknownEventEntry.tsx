@@ -1,4 +1,4 @@
-import type { UINormalizedMessagingEvent } from '-/scripts/store/index.js';
+import type { UINormalizedMessagingEvent } from '-/scripts/store/types.js';
 import { Group, Text, Title } from '@mantine/core';
 import type { EntryViewProps } from '../EventEntryFactory.js';
 

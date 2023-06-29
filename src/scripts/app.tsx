@@ -1,7 +1,8 @@
 import { AppShell } from '@mantine/core';
 import { useEffect, type ReactElement } from 'react';
 import shallow from 'zustand/shallow';
-import useStore, { GHPubSub_EventTypes, type IStore } from './store/index.js';
+import useStore from './store/index.js';
+import { GHPubSub_EventTypes, type IStore } from './store/types.js';
 import EventViewerContainer from './ui/eventViewer/EventViewerContainer.js';
 import Header from './ui/header/index.js';
 import Navbar from './ui/navbar/index.js';

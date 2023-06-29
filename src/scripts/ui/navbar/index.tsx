@@ -1,5 +1,5 @@
-import { SocketStatus } from '-/scripts/store/InitState.js';
-import useStore, { type IStore } from '-/scripts/store/index.js';
+import useStore from '-/scripts/store/index.js';
+import { SocketStatus, type IStore } from '-/scripts/store/types.js';
 import { StyledNavBar } from '-/scripts/styles/navbar.js';
 import { Group, Navbar, type NavbarProps } from '@mantine/core';
 import type { ConnectTargetClassificationsAssociation, PubSubConnectionResponse } from 'golden-hammer-shared';

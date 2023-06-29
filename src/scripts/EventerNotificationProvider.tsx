@@ -1,7 +1,7 @@
 import { useNotifications } from '@mantine/notifications';
 import type { PubSubConnectionResponse } from 'golden-hammer-shared';
 import { useCallback, useEffect } from 'react';
-import { eventer } from './store/Actions.js';
+import { eventer } from './store/EventBus.js';
 
 type Props = { children: JSX.Element | null };
 

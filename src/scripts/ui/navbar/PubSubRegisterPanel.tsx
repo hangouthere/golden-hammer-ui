@@ -1,4 +1,4 @@
-import { GHPubSub_EventTypes, type IStore } from '-/scripts/store/index.js';
+import { GHPubSub_EventTypes, type IStore } from '-/scripts/store/types.js';
 import { StyledInputs } from '-/scripts/styles/inputs.js';
 import { StyledMisc } from '-/scripts/styles/misc.js';
 import { StyledNavBar } from '-/scripts/styles/navbar.js';

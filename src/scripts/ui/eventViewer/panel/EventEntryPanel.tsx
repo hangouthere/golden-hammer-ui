@@ -1,4 +1,5 @@
-import useStore, { GHPubSub_EventTypes, type ConnectedTarget } from '-/scripts/store/index.js';
+import useStore from '-/scripts/store/index.js';
+import { GHPubSub_EventTypes, type ConnectedTarget } from '-/scripts/store/types.js';
 import { StyledEventViewer } from '-/scripts/styles/eventViewer.js';
 import { useMantineTheme } from '@mantine/core';
 import { useEffect, useState } from 'react';
